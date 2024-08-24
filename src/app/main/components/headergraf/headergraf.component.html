@@ -1,0 +1,41 @@
+            <form>                
+                <fieldset class="border p-2 animated fadeIn" style="margin-bottom: -10px;">
+                  
+                    <div class="container">
+                        <div class="col-md-12 mb-2"  *ngIf="idPerfil==1">
+                            <label for="inputEmpresa" class="mb-2">Empresa</label>
+                            <select class="form-select " id="inputEmpresa" aria-label="Default select example"
+                                    (change)="onChangeEmpresa($event)">
+                                <option value="">Seleccione</option>
+                                <option  *ngFor="let empresa of listaEmpresa"
+                                        [value]="empresa.idEmpresa">{{ empresa.nombreCortoEmpresa }}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-12 mb-2">
+                            <label for="inputPeriodo" class="mb-2">Periodo</label>
+                            <select class="form-select" id="inputPeriodo" aria-label="Default select example"
+                                    (change)="onChangePeriodo($event)">
+                                <option value=""> Seleccione</option>
+                                <option *ngFor="let periodo of listaPeriodo"
+                                        [value]="periodo.idPeriodo">{{ periodo.deAnioPeriodo  }}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-12 mb-2">
+                            <label for="inputTipoMatriz" class="mb-2">Matriz Nivel</label>
+                            <select class="form-select" id="inputTipoMatriz" aria-label="Default select example"
+                                    (change)="onChangeTipoMatriz($event)" >
+                                <option value="">Seleccione</option>
+                                <option *ngFor="let tipo of listaTiposMatriz"
+                                        [value]="tipo.nombreParametro">{{ tipo.deValor1}}</option>
+                            </select>
+                            <!--<label *ngIf="idTipoMatrizNoValido" id="validation-nombre-error"
+                                   class="error jquery-validation-error small form-text invalid-feedback">Seleccione
+                                el tipo de Matriz</label>-->
+                        </div>
+
+                </div>                
+                </fieldset>
+    
+            </form>

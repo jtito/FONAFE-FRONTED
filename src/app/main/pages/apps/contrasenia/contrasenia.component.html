@@ -1,0 +1,82 @@
+<div style="height: 50px;" class="bg-light"></div>
+<div class="bg-light">
+    <div class="container pt-4 bg-white">
+        <div class="container sombraCards espacioBody pb-5">
+            <div class="row d-flex">
+                <div style="width: 4%">
+                    <button pButton type="button" icon="pi pi-arrow-left" class="p-button-danger p-button-rounded"
+                        [routerLink]="['../menu']"></button>
+                </div>
+                <div style="width: 96%">
+                    <h3 class="animated fadeIn fast" style="margin-bottom: -10px;">Cambiar Contraseña</h3>
+                </div>
+            </div>
+            <hr>
+            <form [formGroup]="formularioContrasenia" (ngSubmit)="actualizarContrasenia()">
+                <br>
+
+                <fieldset class="border p-2 animated fadeIn" style="margin-bottom: 50px;">
+                    <!-- <div class="container card-body">
+                        <h5>Configuración de notificación de plan de acción</h5>
+                    </div> -->
+                    <div class="container">
+                        <div class="row">
+                            <div class="form-group col-sm-12 mb-2">
+                                <label for="contraseniaActual" class="mb-2">Contraseña actual</label>
+                                <input type="password" class="form-control" formControlName="contraseniaActual"
+                                    id="contraseniaActual" placeholder=""
+                                    autocomplete="nope">
+                                    <!-- [class.is-invalid]="contraseniaActualNoValido"  -->
+                                <label id="validation-contraseniaActual-error"
+                                    class="error jquery-validation-error small form-text invalid-feedback">Ingrese un
+                                    valor válido</label>
+                            </div>
+                            <div class="form-group col-sm-12 mb-2 p-fluid">
+                                <label for="nuevaContrasenia" class="mb-2">Nueva Contraseña</label>
+                                <p-password class="form-contrasenia" formControlName="nuevaContrasenia"
+                                    [class.is-invalid]="nuevaContraseniaNoValido" tooltipPosition="bottom" pTooltip="Sugerencia:
+                                        - Mínimo 8 caracteres
+                                        - Minúsculas y mayúsculas
+                                        - Numérico y caracteres especiales" id="nuevaContrasenia" weakLabel="Débil"
+                                    mediumLabel="Medio" strongLabel="Fuerte" promptLabel="Ingrese la nueva contraseña"
+                                    autocomplete="nope"></p-password>
+                                    <!-- <label id="validation-nuevaContrasenia-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese un valor válido</label> -->
+                                <div *ngIf="formularioContrasenia.get('nuevaContrasenia').invalid && formularioContrasenia.get('nuevaContrasenia').touched"
+                                    class="invalid-feedback">
+                                    <small *ngIf="formularioContrasenia.get('nuevaContrasenia').errors.required">La
+                                        contraseña es requerida.</small>
+                                    <small *ngIf="formularioContrasenia.get('nuevaContrasenia').errors.minlength">La
+                                        contraseña debe tener al menos 8 caracteres.</small>
+                                    <small
+                                        *ngIf="formularioContrasenia.get('nuevaContrasenia').errors.passwordStrength">La
+                                        contraseña debe tener al menos una letra mayúscula, una letra
+                                        minúscula, un número y un carácter especial.</small>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-12 mb-2">
+                                <label for="confirmContrasenia" class="mb-2">Confirmar Contraseña</label>
+                                <input type="password" class="form-control" formControlName="confirmContrasenia"
+                                    [class.is-invalid]="confirmContraseniaNoValido" id="confirmContrasenia"
+                                    placeholder="" autocomplete="nope"  
+                                    [ngClass]="{'is-invalid': formularioContrasenia.hasError('passwordMismatch') && formularioContrasenia.get('confirmContrasenia').touched}" />
+                                <!--  <label id="validation-confirmContrasenia-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese un valor válido</label> -->
+                                <div *ngIf="formularioContrasenia.hasError('passwordMismatch') && formularioContrasenia.get('confirmContrasenia').touched"
+                                    class="invalid-feedback">
+                                    <small>Las contraseñas no coinciden.</small>
+                                </div>
+                            </div>
+                            <div class="container card-body p-text-right" style="margin-left: -15px;">
+                                <button type="submit" class="btn btn-primary" style="margin-right: 10px;">Guardar
+                                </button>
+                                <button type="button" class="btn btn-danger" [routerLink]="['../menu']">Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

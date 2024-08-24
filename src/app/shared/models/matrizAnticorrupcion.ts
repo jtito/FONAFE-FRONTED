@@ -1,0 +1,64 @@
+import { SubProceso } from './subproceso';
+import { Proceso } from './proceso';
+
+export class MatrizAnticorrupcion {
+    idMatrizRiesgo?: number;
+    idCartera?: number;
+    ordenTabla?:number;
+    idEmpresa?: number;
+    idSede?: number;
+    idPeriodo?: number;
+    codMatriz?: string;
+    idTipoMatriz?: number;
+    idMatrizNivel?: number;
+    matrizNivel?: number;
+    idCodigoControl?:number;
+    listaDetalleMatrizAnticorrupcion: MatrizAnticorrupcion[];
+    listaProcesos?:Proceso[];
+    listaSubProcesos?:SubProceso[];
+    fechaCreacion?: string;
+    indicadorBaja?: string;
+    usuarioCreacion?: string;
+    ipCreacion?: string;
+    usuarioModificacion?: string;
+    ipModificacion?: string;
+    fechaModificacion?: string;
+    idDetaMatrizAntic?:number;
+    deCartera?:string;
+    idGerencia?:number;
+    idProceso?:number;
+    idSubProceso?:number;
+    decargoRiesgo?:string;
+    deRiesgo?:string;
+    deSociodelRiesgo?:string;
+    idTipoRiesgo?:number;
+    nuImpaInhe?:number;
+    nuPuntaInhe?:number;
+    dePuntaInhe?:string;
+    deControl?:string;
+    nuFrecuInhe?:number;
+    nuFrecuRes?:number;
+    nuPuntaRes?:number;
+    nuImpaRes?:number;
+    deSeveridadRes?:string;
+
+    codRiesgo?:string;
+    codControl?:string;
+    idRespEstrategia?:number;
+    codPlanAccion?:string;
+    dePlanAccion?:string;
+    idEficaciaControl?:number;
+    idRespPlanAccion?:number;
+    idEstadoPlanAccion?:number;
+    feFinPlanAccion?:string;
+    inFicaz?:string;
+    feVerificacion?:string;
+    idTipoDelito?:number;							
+    idDebidaDilig?:number;
+    indFinPlanAccion?:number;
+    codigoResultado?:string;
+    descripcionResultado?:string;
+    deAccion?:string;
+    modified?:boolean;
+
+}

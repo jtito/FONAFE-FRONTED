@@ -1,0 +1,861 @@
+<p-toast></p-toast>
+<div style="height: 50px;" class="bg-light"></div>
+<!--DIALOGO AGREGAR / REPLICAR-->
+<p-dialog header="Control" [(visible)]="DisplayControl" [style]="{width: '40vw'}">
+
+    <div class="container">
+
+
+        <div class="form-group col-sm-12">
+            <label for="float-input" class="mb-2">Cantidad</label>
+
+            <select class="form-select" [(ngModel)]="SelectedCant">
+                <option value="">Seleccione</option>
+                <option *ngFor="let control of listaCantControl"
+                    [value]="control.nombreParametro">{{ control.nombreParametro }}</option>
+
+            </select>
+
+        </div>
+        <br>
+
+        <div class="row">
+            <div class="form-group col-sm-12 p-text-right">
+                <button type="button" class="btn btn-primary" (click)="AgregarControl()" >
+                    Agregar
+                </button>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</p-dialog>
+
+
+<div class="bg-light pb-5">
+    <div class="container matriz-amplitud pt-2 bg-white mb-5">
+        <div class="container matriz-amplitud sombraCards espacioBody pb-5" *ngIf="!loading">
+            <div class="row d-flex">
+                <div style="width: 4%" class="mt-4">
+                    <button pButton type="button"
+                            icon="pi pi-arrow-left"
+                            class="p-button-danger p-button-rounded"
+                            [routerLink]="[matrizRiesgo == null ? '../':'../../']"
+                    ></button>
+                </div>
+                <div style="width: 96%">
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;" *ngIf="matrizRiesgo == null">
+                        Crear Matriz de Riesgo de Fraude</h3>
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;" *ngIf="matrizRiesgo != null && editar == true">Actualizar Matriz de Riesgo de Fraude</h3>
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;" *ngIf="matrizRiesgo != null && editar == false">Ver Matriz de Riesgo de Fraude</h3>
+                </div>
+            </div>
+
+            <hr>
+            <br>
+            <fieldset class="border p-2 animated fadeIn">
+            <form id="formMatriz" [formGroup]="formularioMatrizRiesgo"
+                  (ngSubmit)=" matrizRiesgo == null ? registrarMatrizRiesgo() : actualizarMatrizRiesgo()">
+
+                    <!-- <legend class="w-auto" *ngIf="matrizRiesgo == null">&nbsp;Crear Matriz de Riesgo de Fraude&nbsp;</legend>
+                    <legend class="w-auto" *ngIf="matrizRiesgo != null && editar == true">&nbsp;Actualizar Matriz de Riesgo de Fraude&nbsp;</legend>
+                    <legend class="w-auto" *ngIf="matrizRiesgo != null && editar == false">&nbsp;Ver Matriz de Riesgo de Fraude&nbsp;</legend>
+                    <br><br> -->
+                    <div class="container matriz-amplitud">
+                        <div class="row">
+
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="inputCartera" class="mb-2">Cartera</label>
+                                <select class="form-select" id="inputCartera" disabled
+                                        formControlName="cartera" (change)="onChangeCartera($event)">
+                                    <option value="" selected>Seleccione</option>
+                                    <option *ngFor="let cartera of listaCarteras"
+                                            [value]="cartera.idParametro">{{ cartera.nombreParametro  }}</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="inputEmpresa" class="mb-2">Empresa</label>
+                                <select class="form-select " id="inputEmpresa" [attr.disabled]="notadmin ? '' : null"  aria-label="Default select example"
+                                        formControlName="empresa" (change)="onChangeEmpresa($event)">
+                                    <option value="" selected>Seleccione</option>
+                                    <option *ngFor="let empresa of listaEmpresas"
+                                            [value]="empresa.idEmpresa">{{ empresa.nombreCortoEmpresa  }}</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="inputSede" class="mb-2">Sede</label>
+                                <select class="form-select" id="inputSede" [attr.disabled]="notadmin ? '' : null" 
+                                        formControlName="sede" (change)="onChangeSede($event)">
+                                    <option value="" selected>Seleccione</option>
+                                    <option *ngFor="let sede of listaSedes"
+                                            [value]="sede.idSede">{{ sede.descripcionSede  }}</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="inputPeridoo" class="mb-2">Periodo</label>
+                                <select class="form-select" id="inputPeridoo" [class.is-invalid]="periodoNoValido"
+                                        (change)="onChangePeriodo($event)" formControlName="periodo" >
+                                    <option value="" selected>Seleccione</option>
+                                    <option *ngFor="let periodo of listaPeriodos"
+                                            [value]="periodo.idPeriodo">{{ periodo.deAnioPeriodo  }}</option>
+                                </select>
+
+                                <label *ngIf="periodoNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Seleccione
+                                    el periodo</label>
+                            </div>
+
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="idTipoMatriz" class="mb-2">Matriz Nivel</label>
+                                <select formControlName="idTipoMatriz" class="form-select" id="idTipoMatriz" [class.is-invalid]="idTipoMatrizNoValido"
+                                        (change)="onChangeTipoMatriz($event)" [class.is-invalid]="IdTipoMatrizNoValido" disabled>
+                                    <option value="" selected>Seleccione</option>
+                                    <option selected *ngFor="let tipo of listaTiposMatriz"
+                                            [value]="tipo.nombreParametro">{{ tipo.deValor1}}</option>
+                                </select>
+                                <label *ngIf="idTipoMatrizNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Seleccione
+                                    el tipo de Matriz</label>
+                            </div>
+
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="inputMatrizNivel" class="mb-2">Tipo Matriz</label>
+                                <select formControlName="idMatrizNivel" class="form-select"  id="inputMatrizNivel" aria-label="Default select example"
+                                        (change)="onChangeMatrizNivel($event)" disabled>
+                                    <option value="" selected>Seleccione</option>
+                                    <option *ngFor="let tipoMatriz of listaTiposMatrizRiesgo"
+                                            [value]="tipoMatriz.idParametro">{{ tipoMatriz.nombreParametro }}</option>
+                                </select>
+                            </div>
+
+                             <div *ngIf="matrizRiesgo != null && editar == true && matrizRiesgo.indicadorBaja == '0'"
+                                 class="form-group col-md-4  mb-4">
+                                <label for="idEstado" class="mb-2">Estado</label>
+                                <select formControlName="idEstado" class="form-select" id="idEstado">
+                                    <option selected *ngFor="let estado of listaEstados"
+                                            [value]="estado.nombreParametro">{{ estado.deValor1}}</option>
+                                </select>
+                            </div>
+
+                            <div class="container card-body p-text-left">
+                                <button type="button" label="Añadir" pButton pRipple icon="pi pi-eye"
+                                        class="p-button-secondary p-mr-2" [disabled] = "matrizRiesgo != null && editar == false"
+                                        (click)="agregarMatrizRiesgo()" pButton icon="pi pi-plus" *ngIf="idPerfil!=tipoPerfilAuditor && idPerfil!=tipoPerfilUsuario"></button>
+                                
+                                <img src="assets/imagenes/btnxls.png"
+                                        pTooltip="XLS" style="float: right; width: 3%; cursor: pointer;"
+                                        tooltipPosition="bottom" *ngIf="matrizRiesgo != null && editar == true"
+                                        class="btnxls" (click)="exportExcel()">
+                                        
+                            </div>
+
+
+                            <!-- Tabla de matriz de riesgo-->
+
+
+                        </div>
+                        <br>
+                    </div>
+
+            </form>
+
+            <div class="">
+                <p-table [value]="matricesRiesgo" dataKey="ordenTabla" [columns]="cols"
+                         styleClass="p-datatable-responsive-demo p-datatable-gridlines"
+                         [scrollable]="true"
+                         scrollDirection="both"
+                         scrollHeight="500px"
+                         editMode="row" 
+                         class="static-table">
+
+
+                    <ng-template pTemplate="header" let-columns>
+
+                        <tr *ngIf="idTipoMatrizSelect==0">
+                            <th
+                                class="text-center" colspan="8" style="width: 120rem;background: #D72F17;color: white;">
+                                DATOS GENERALES DEL RIESGO
+                            </th>
+
+                            <th
+                                class="text-center" colspan="8" style="width: 120rem;background: #D72F17;color: white;">
+                                EVALUACIÓN DE RIESGO INHERENTE
+                            </th>
+
+                            <th
+                                class="text-center" colspan="7" style="width: 105rem;background: #D72F17;color: white;">
+                                CONTROL
+                            </th>
+
+                            <th
+                                class="text-center" colspan="9" style="width: 135rem;background: #D72F17;color: white;">
+                                EVALUACIÓN DE RIESGO RESIDUAL
+                            </th>
+
+                            <th
+                                class="text-center" colspan="7" style="width: 105rem;background: #D72F17;color: white;">
+                                PLAN DE ACCION
+                            </th>
+
+                            <th
+                                class="text-center" colspan="13" style="width: 165rem;background: #D72F17;color: white;">
+                                VERIFICACION DE LA EFICACION
+                            </th>
+                        </tr>
+
+                        <tr *ngIf="idTipoMatrizSelect==1" >
+                            <th
+                                class="text-center" colspan="26" style="width: 156rem;background: #D72F17;color: white;">
+                                DATOS GENERALES DEL RIESGO
+                            </th>
+
+                            <th
+                                class="text-center" colspan="8" style="width: 48rem;background: #D72F17;color: white;">
+                                EVALUACIÓN DE RIESGO INHERENTE
+                            </th>
+
+                            <th
+                                class="text-center" colspan="24" style="width: 144rem;background: #D72F17;color: white;">
+                                CONTROL
+                            </th>
+
+                            <th
+                                class="text-center" colspan="8" style="width: 48rem;background: #D72F17;color: white;">
+                                EVALUACIÓN DE RIESGO RESIDUAL
+                            </th>
+
+                            <th
+                                class="text-center" colspan="15" style="width: 90rem;background: #D72F17;color: white;">
+                                PLAN DE ACCIÓN
+                            </th>
+
+                            <th
+                                class="text-center" colspan="13" style="width: 78rem;background: #D72F17;color: white;">
+                                VERIFICACIÓN DE LA EFICACIA
+                            </th>
+                            <th
+                                class="text-center" colspan="12" style="width: 72rem;background: #D72F17;color: white;">
+                                INDICADORES
+                            </th>
+                        </tr>
+
+                        <tr style="justify-content: space-around;align-items: flex-start;">
+                            <th pSortableColumn="{{col.ordenadmiento}}" [attr.colspan]="col.colspan" *ngFor="let col of columns"
+                                class="{{col.headerClass}}" pTooltip = "{{col.header}}">
+                                {{col.header}}
+                            </th>
+                            <th class="text-center tdsmall" colspan="1">
+                                Acción
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns"
+                                 let-editing="editing" let-ri="rowIndex">
+                        <tr [pEditableRow]="rowData" style="justify-content: space-around;align-items: flex-start;">
+                            <td *ngFor="let col of columns" [attr.colspan]="col.colspan" class="{{col.class}}" pEditableColumn>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <!-- <input pInputText class="text-center" type="text" [value]="rowData[col.field] == undefined ? rowData[col.field] = '' : rowData[col.field]">-->
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field != 'ordenTabla' && col.field != 'idMatrizRiesgo' && col.field != 'idCodigoControl' &&  col.field != 'idGerencia' && col.field != 'idProceso' && col.field != 'idSubProceso' && col.field != 'estadoPlanAccion' && col.field != 'fueEficaz'
+                                                   && col.field != 'idOrigenRiesgo' && col.field != 'idFrecuenciaRiesgo' && col.field != 'idTipoRiesgo' && col.field != 'nuPuntajeInherente' && col.field != 'nuPuntajeResidual' && col.field != 'fechaInicioPlanAccion' && col.field != 'fechaFinPlanAccion' 
+                                                   && col.field != 'fechaPrevista' && col.field != 'fechaVerificacion' && col.field != 'idFrecuenciaControl' && col.field != 'idOportunidadControl' && col.field != 'deSeveridadInherente' && col.field != 'deSeveridadResidual' && col.field != 'idEstrategiaResp'
+                                                   && col.field != 'idAutomatizacionControl' && col.field != 'nuProbabilidadInherente' && col.field != 'nuImpactoInherenteE' && col.field != 'nuImpactoInherenteL' && col.field != 'nuImpactoInherenteR' && col.field != 'nuImpactoInherenteC' 
+                                                   && col.field != 'nuImpactoInherenteG' && col.field != 'nuProbabilidadResidual' && col.field != 'nuImpactoResidualG' && col.field != 'nuImpactoResidualE'  && col.field != 'nuImpactoResidualL'
+                                                   && col.field != 'nuImpactoResidualR' && col.field != 'nuImpactoResidualC' && col.field != 'idMatrizNivel' && col.field != 'frecuencia' && col.field != 'limitaOportunidaControl' && col.field != 'motivaActoControl' && col.field != 'actitudPotencialControl'
+                                                   && col.field != 'deControl' && col.field != 'desPlanAccion' && col.field != 'deRiesgo' && col.field != 'defkri'"
+                                               class="text-center" type="text" [(ngModel)]="rowData[col.field]" placeholder="{{col.placeholder}}"
+                                               [value]="rowData[col.field] == undefined ? rowData[col.field] = '' : rowData[col.field]">
+
+
+                                        <textarea pInputTextarea [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null"  *ngIf="col.field == 'deRiesgo'" rows="2" cols="40" autoResize="autoResize"
+                                        [(ngModel)]="rowData[col.field]" ></textarea>
+
+                                        <textarea pInputTextarea [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'deControl'" rows="2" cols="40" autoResize="autoResize"
+                                        [(ngModel)]="rowData[col.field]" ></textarea>
+
+                                        <textarea pInputTextarea [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'desPlanAccion'" rows="2" cols="40" autoResize="autoResize"
+                                        [(ngModel)]="rowData[col.field]" ></textarea>
+
+                                        <textarea pInputTextarea [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'defkri'" rows="2" cols="40" autoResize="autoResize"
+                                        [(ngModel)]="rowData[col.field]" ></textarea>
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'fechaInicioPlanAccion'" [(ngModel)]="rowData[col.field]" type="date">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'fechaFinPlanAccion'" [(ngModel)]="rowData[col.field]" type="date">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'fechaPrevista'" [(ngModel)]="rowData[col.field]" type="date">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'fechaVerificacion'" [(ngModel)]="rowData[col.field]" type="date">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'nuProbabilidadInherente'" [(ngModel)]="rowData[col.field]"  
+                                               class="text-center" (keyup)="limit_number_prob_inhe($event,ri)" (keydown)="limit_number_prob_inhe($event,ri)" type="number" 
+                                               [value]="rowData[col.field] == undefined ? rowData[col.field] = '' : rowData[col.field]"
+                                               min="1.00" max="4.00" step="0.01">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'nuImpactoInherenteE'" [(ngModel)]="rowData[col.field]"
+                                               class="text-center" (keyup)="limit_number_impa_inhe($event,ri,'E')"  (keydown)="limit_number_impa_inhe($event,ri,'E')" type="number"
+                                               [value]="rowData[col.field] == undefined ? rowData[col.field] = '' : rowData[col.field]"
+                                               min="1.00" max="4.00" step="0.01">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'nuImpactoInherenteL'" [(ngModel)]="rowData[col.field]"
+                                               class="text-center" (keyup)="limit_number_impa_inhe($event,ri,'L')"  (keydown)="limit_number_impa_inhe($event,ri,'L')" type="number"
+                                               [value]="rowData[col.field] == undefined ? rowData[col.field] = '' : rowData[col.field]"
+                                               min="1.00" max="4.00" step="0.01">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'nuImpactoInherenteR'" [(ngModel)]="rowData[col.field]"
+                                               class="text-center" (keyup)="limit_number_impa_inhe($event,ri,'R')"  (keydown)="limit_number_impa_inhe($event,ri,'R')" type="number"
+                                               [value]="rowData[col.field] == undefined ? rowData[col.field] = '' : rowData[col.field]"
+                                               min="1.00" max="4.00" step="0.01">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'nuImpactoInherenteC'" [(ngModel)]="rowData[col.field]"
+                                               class="text-center" (keyup)="limit_number_impa_inhe($event,ri,'C')"  (keydown)="limit_number_impa_inhe($event,ri,'C')" type="number"
+                                               [value]="rowData[col.field] == undefined ? rowData[col.field] = '' : rowData[col.field]"
+                                               min="1.00" max="4.00" step="0.01">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'nuImpactoInherenteG'" disabled
+                                               class="text-center"
+                                              type="number" [(ngModel)]="rowData[col.field]">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'nuPuntajeInherente'" disabled
+                                              class="text-center"
+                                             type="number" [(ngModel)]="rowData[col.field]">
+
+                                        <div *ngIf="col.field == 'deSeveridadInherente'">
+
+
+                                                <div *ngIf="rowData[col.field]=='Bajo'">
+                                                    <div class="circle-green">{{rowData[col.field]}}</div>
+                                                </div>
+
+                                                <div *ngIf="rowData[col.field]=='Moderado'">
+                                                    <div class="circle-yellow">{{rowData[col.field]}}</div>
+                                                </div>
+
+                                                <div *ngIf="rowData[col.field]=='Alto'">
+                                                    <div class="circle-orange">{{rowData[col.field]}}</div>
+                                                </div>
+
+                                                <div *ngIf="rowData[col.field]=='Extremo'">
+                                                    <div class="circle-red">{{rowData[col.field]}}</div>
+                                                </div>
+
+                                        </div>
+
+                                        <div *ngIf="col.field == 'deSeveridadResidual'">
+
+
+                                            <div *ngIf="rowData[col.field]=='Bajo'">
+                                                <div class="circle-green">{{rowData[col.field]}}</div>
+                                            </div>
+
+                                            <div *ngIf="rowData[col.field]=='Moderado'">
+                                                <div class="circle-yellow">{{rowData[col.field]}}</div>
+                                            </div>
+
+                                            <div *ngIf="rowData[col.field]=='Alto'">
+                                                <div class="circle-orange">{{rowData[col.field]}}</div>
+                                            </div>
+
+                                            <div *ngIf="rowData[col.field]=='Extremo'">
+                                                <div class="circle-red">{{rowData[col.field]}}</div>
+                                            </div>
+
+                                    </div>
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'nuProbabilidadResidual'" (keyup)="limit_number_prob_res($event,ri)" (keydown)="limit_number_prob_res($event,ri)"
+                                        class="text-center" type="number" [(ngModel)]="rowData[col.field]" min="1.00" max="4.00" step="0.01"
+                                        [value]="rowData[col.field] == undefined ? rowData[col.field] = '' : rowData[col.field]">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'nuImpactoResidualE'"  (keyup)="limit_number_impa_res($event,ri,'E')" (keydown)="limit_number_impa_res($event,ri,'E')"
+                                        class="text-center" type="number" [(ngModel)]="rowData[col.field]" min="1.00" max="4.00" step="0.01"
+                                        [value]="rowData[col.field] == undefined ? rowData[col.field] = '' : rowData[col.field]">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'nuImpactoResidualL'"  (keyup)="limit_number_impa_res($event,ri,'L')" (keydown)="limit_number_impa_res($event,ri,'L')"
+                                        class="text-center" type="number" [(ngModel)]="rowData[col.field]" min="1.00" max="4.00" step="0.01"
+                                        [value]="rowData[col.field] == undefined ? rowData[col.field] = '' : rowData[col.field]">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'nuImpactoResidualR'"  (keyup)="limit_number_impa_res($event,ri,'R')" (keydown)="limit_number_impa_res($event,ri,'R')"
+                                        class="text-center" type="number" [(ngModel)]="rowData[col.field]" min="1.00" max="4.00" step="0.01"
+                                        [value]="rowData[col.field] == undefined ? rowData[col.field] = '' : rowData[col.field]">
+
+                                        <input pInputText [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'nuImpactoResidualC'"  (keyup)="limit_number_impa_res($event,ri,'C')" (keydown)="limit_number_impa_res($event,ri,'C')"
+                                        class="text-center" type="number" [(ngModel)]="rowData[col.field]" min="1.00" max="4.00" step="0.01"
+                                        [value]="rowData[col.field] == undefined ? rowData[col.field] = '' : rowData[col.field]">
+
+                                        <input pInputText  *ngIf="col.field == 'nuImpactoResidualG'" disabled
+                                               class="text-center"
+                                              type="number" [(ngModel)]="rowData[col.field]">
+
+                                        <input pInputText  *ngIf="col.field == 'nuPuntajeResidual'" disabled
+                                              class="text-center"
+                                             type="number" [(ngModel)]="rowData[col.field]">
+                                        <!--<p-dropdown  *ngIf="col.field == 'idGerencia'" [options]="this.listaGerencias"
+                                                    [value]="rowData[col.field] == undefined ? rowData[col.field] = '' : rowData[col.field]"
+                                                    [style]="{'width':'100%'}"></p-dropdown>-->
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'idMatrizNivel'" [(ngModel)]="rowData[col.field]"  class="form-select" id="idMatrizNivel"
+                                                disabled>
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let tipo of listaTiposMatriz"
+                                                    [value]="tipo.nombreParametro">{{ tipo.deValor1}}</option>
+                                        </select>
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'idGerencia'" [(ngModel)]="rowData[col.field]"  class="form-select" id="idGerencia"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let gerencia of listaGerencias"
+                                                    [value]="gerencia.idGerencia">{{ gerencia.descripcionGerencia}}</option>
+                                        </select>
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'idEstrategiaResp'" [(ngModel)]="rowData[col.field]"  class="form-select" id="idEstrategiaResp"
+                                                 >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let estrategia of listaEstrategiaRespuesta"
+                                                  [value]="estrategia.idParametro">{{ estrategia.nombreParametro  }}</option>
+                                        </select>
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'limitaOportunidaControl'" [(ngModel)]="rowData[col.field]"  class="form-select" id="limitaOportunidaControl"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let indicador of listaIndicador"
+                                                   [value]="indicador.deValor1">{{ indicador.nombreParametro  }}</option>
+                                        </select>
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'motivaActoControl'" [(ngModel)]="rowData[col.field]"  class="form-select" id="motivaActoControl"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let indicador of listaIndicador"
+                                                   [value]="indicador.deValor1">{{ indicador.nombreParametro  }}</option>
+                                        </select>
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'actitudPotencialControl'" [(ngModel)]="rowData[col.field]"  class="form-select" id="actitudPotencialControl"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let indicador of listaIndicador"
+                                                   [value]="indicador.deValor1">{{ indicador.nombreParametro  }}</option>
+                                        </select>
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'idProceso'" [(ngModel)]="rowData[col.field]"  class="form-select" id="idProceso"
+                                                (change)="onChangeProceso($event,ri)">
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let proceso of matricesRiesgo[ri].listaProcesos"
+                                                    [value]="proceso.idProceso">{{ proceso.deProceso}}</option>
+                                        </select>
+                                        <!-- <select *ngIf="col.field == 'idSubProceso'" [(ngModel)]="rowData[col.field]"  class="form-select" id="idSubProceso"
+                                                (change)="onChangeSubProceso($event)">
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let subproceso of matricesRiesgo[ri].listaSubProcesos"
+                                                    [value]="subproceso.idSubProceso">{{ subproceso.deSubProceso}}</option>
+                                        </select> -->
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'idOrigenRiesgo' " [(ngModel)]="rowData[col.field]"   class="form-select" id="idOrigenRiesgo"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let origen of listaOrigenRiesgo"
+                                              [value]="origen.idParametro">{{ origen.nombreParametro  }}</option>
+                                        </select>
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'idFrecuenciaRiesgo' " [(ngModel)]="rowData[col.field]"  class="form-select" id="idFrecuenciaRiesgo"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let frecuencia of listaFrecuenciaRiesgo"
+                                              [value]="frecuencia.idParametro">{{ frecuencia.nombreParametro  }}</option>
+                                        </select>
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'idTipoRiesgo' " [(ngModel)]="rowData[col.field]"  class="form-select" id="idTipoRiesgo"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let tipo of listaTipoRiesgo"
+                                              [value]="tipo.idParametro">{{ tipo.nombreParametro  }}</option>
+                                        </select>
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'idFrecuenciaControl' " [(ngModel)]="rowData[col.field]"  class="form-select" id="idFrecuenciaControl"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let tipo of listaFrecuenciaControl"
+                                              [value]="tipo.idParametro">{{ tipo.nombreParametro  }}</option>
+                                        </select>
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'frecuencia' " [(ngModel)]="rowData[col.field]"  class="form-select" id="frecuencia"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let tipo of listaFrecuenciaControl"
+                                              [value]="tipo.idParametro">{{ tipo.nombreParametro  }}</option>
+                                        </select>
+
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'idOportunidadControl' " [(ngModel)]="rowData[col.field]"  class="form-select" id="idOportunidadControl"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let tipo of listaOportunidadControl"
+                                              [value]="tipo.idParametro">{{ tipo.nombreParametro  }}</option>
+                                        </select>
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'idAutomatizacionControl' " [(ngModel)]="rowData[col.field]"  class="form-select" id="idAutomatizacionControl"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let tipo of listaAutomatizacionControl"
+                                              [value]="tipo.idParametro">{{ tipo.nombreParametro  }}</option>
+                                        </select>
+
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'estadoPlanAccion'" [(ngModel)]="rowData[col.field]"  class="form-select" id="estadoPlanAccion"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let estado of listaEstadoPlanAccion"
+                                                    [value]="estado.idParametro">{{ estado.nombreParametro}}</option>
+                                        </select>
+
+                                        <select [attr.disabled]="ver ? '' : null || idPerfil==tipoPerfilUsuario ? '' : null" *ngIf="col.field == 'fueEficaz'" [(ngModel)]="rowData[col.field]"  class="form-select" id="fueEficaz"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let estado of listaEficazPlanAccion"
+                                                    [value]="estado.deValor1">{{ estado.nombreParametro}}</option>
+                                        </select>
+
+                                    </ng-template>
+                                    <ng-template *ngIf="col.field != 'idGerencia' && col.field != 'idProceso' && col.field != 'estadoPlanAccion' && col.field != 'fueEficaz' && col.field != 'fechaPrevista' && col.field != 'fechaVerificacion'
+                                    && col.field != 'idSubProceso' && col.field != 'idOrigenRiesgo'  && col.field != 'deSeveridadInherente' && col.field != 'deSeveridadResidual' && col.field != 'fechaFinPlanAccion'
+                                    && col.field != 'idFrecuenciaRiesgo' && col.field != 'idTipoRiesgo' && col.field != 'frecuencia'
+                                     && col.field != 'idFrecuenciaControl' && col.field != 'idOportunidadControl' && col.field != 'fechaInicioPlanAccion' && col.field != 'idMatrizNivel'
+                                     && col.field != 'limitaOportunidaControl' && col.field != 'motivaActoControl' && col.field != 'actitudPotencialControl'"  pTemplate="output">
+                                        <!--{{rowData[col.field]}}-->
+                                        
+                                        <p>{{rowData[col.field]}}</p>
+
+
+
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'fechaInicioPlanAccion'" pTemplate="output">
+
+                                        <input pInputText  *ngIf="col.field == 'fechaInicioPlanAccion'"  class="form-select-hide" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" [(ngModel)]="rowData[col.field]" type="date">
+
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'fechaFinPlanAccion'" pTemplate="output">
+
+                                        <input pInputText  *ngIf="col.field == 'fechaFinPlanAccion'"  class="form-select-hide" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" [(ngModel)]="rowData[col.field]" type="date">
+
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'fechaPrevista'" pTemplate="output">
+
+                                        <input pInputText  *ngIf="col.field == 'fechaPrevista'"  class="form-select-hide" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" [(ngModel)]="rowData[col.field]" type="date">
+
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'fechaVerificacion'" pTemplate="output">
+
+                                        <input pInputText  *ngIf="col.field == 'fechaVerificacion'"  class="form-select-hide" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" [(ngModel)]="rowData[col.field]" type="date">
+
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'idMatrizNivel'" pTemplate="output">
+                                        <select *ngIf="col.field == 'idMatrizNivel'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="idMatrizNivel"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let tipo of listaTiposMatriz"
+                                                    [value]="tipo.nombreParametro">{{ tipo.deValor1}}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'idGerencia'" pTemplate="output">
+                                        <select *ngIf="col.field == 'idGerencia'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="idGerencia"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let gerencia of listaGerencias"
+                                                    [value]="gerencia.idGerencia">{{ gerencia.descripcionGerencia}}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'limitaOportunidaControl'" pTemplate="output">
+                                        <select *ngIf="col.field == 'limitaOportunidaControl'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="limitaOportunidaControl"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let indicador of listaIndicador"
+                                                   [value]="indicador.deValor1">{{ indicador.nombreParametro  }}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'motivaActoControl'" pTemplate="output">
+                                        <select *ngIf="col.field == 'motivaActoControl'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="motivaActoControl"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let indicador of listaIndicador"
+                                                   [value]="indicador.deValor1">{{ indicador.nombreParametro  }}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'actitudPotencialControl'" pTemplate="output">
+                                        <select *ngIf="col.field == 'actitudPotencialControl'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="actitudPotencialControl"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let indicador of listaIndicador"
+                                                   [value]="indicador.deValor1">{{ indicador.nombreParametro  }}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'deSeveridadInherente'" pTemplate="output">
+
+                                        <div *ngIf="rowData[col.field]=='Bajo'">
+                                            <div class="circle-green">{{rowData[col.field]}}</div>
+                                        </div>
+
+                                        <div *ngIf="rowData[col.field]=='Moderado'">
+                                            <div class="circle-yellow">{{rowData[col.field]}}</div>
+                                        </div>
+
+                                        <div *ngIf="rowData[col.field]=='Alto'">
+                                            <div class="circle-orange">{{rowData[col.field]}}</div>
+                                        </div>
+
+                                        <div *ngIf="rowData[col.field]=='Extremo'">
+                                            <div class="circle-red">{{rowData[col.field]}}</div>
+                                        </div>
+
+                                    </ng-template>
+
+
+                                    <ng-template *ngIf="col.field == 'deSeveridadResidual'" pTemplate="output">
+
+                                        <div *ngIf="rowData[col.field]=='Bajo'">
+                                            <div class="circle-green">{{rowData[col.field]}}</div>
+                                        </div>
+
+                                        <div *ngIf="rowData[col.field]=='Moderado'">
+                                            <div class="circle-yellow">{{rowData[col.field]}}</div>
+                                        </div>
+
+                                        <div *ngIf="rowData[col.field]=='Alto'">
+                                            <div class="circle-orange">{{rowData[col.field]}}</div>
+                                        </div>
+
+                                        <div *ngIf="rowData[col.field]=='Extremo'">
+                                            <div class="circle-red">{{rowData[col.field]}}</div>
+                                        </div>
+
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'idProceso'" pTemplate="output">
+                                        <select *ngIf="col.field == 'idProceso'" [(ngModel)]="rowData[col.field]"   disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="idProceso"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let proceso of matricesRiesgo[ri].listaProcesos"
+                                                    [value]="proceso.idProceso">{{ proceso.deProceso}}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <!-- <ng-template *ngIf="col.field == 'idSubProceso'" pTemplate="output">
+                                        <select *ngIf="col.field == 'idSubProceso'" [(ngModel)]="rowData[col.field]"   disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="idSubProceso"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let subproceso of matricesRiesgo[ri].listaSubProcesos"
+                                                    [value]="subproceso.idSubProceso">{{ subproceso.deSubProceso}}</option>
+                                        </select>
+                                    </ng-template> -->
+
+
+                                    <ng-template *ngIf="col.field == 'idOrigenRiesgo'" pTemplate="output">
+                                        <select *ngIf="col.field == 'idOrigenRiesgo'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="idOrigenRiesgo"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let origen of listaOrigenRiesgo"
+                                              [value]="origen.idParametro">{{ origen.nombreParametro  }}</option>
+                                        </select>
+                                    </ng-template>
+
+
+                                    <ng-template *ngIf="col.field == 'idFrecuenciaRiesgo'" pTemplate="output">
+                                        <select *ngIf="col.field == 'idFrecuenciaRiesgo'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="idFrecuenciaRiesgo"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let frecuencia of listaFrecuenciaRiesgo"
+                                              [value]="frecuencia.idParametro">{{ frecuencia.nombreParametro  }}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'idTipoRiesgo'" pTemplate="output">
+                                        <select *ngIf="col.field == 'idTipoRiesgo'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="idTipoRiesgo"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let tipo of listaTipoRiesgo"
+                                              [value]="tipo.idParametro">{{ tipo.nombreParametro  }}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'idFrecuenciaControl'" pTemplate="output">
+                                        <select *ngIf="col.field == 'idFrecuenciaControl'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="idFrecuenciaControl"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let frecuencia of listaFrecuenciaControl"
+                                              [value]="frecuencia.idParametro">{{ frecuencia.nombreParametro  }}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'frecuencia'" pTemplate="output">
+                                        <select *ngIf="col.field == 'frecuencia'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="frecuencia"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let frecuencia of listaFrecuenciaControl"
+                                              [value]="frecuencia.idParametro">{{ frecuencia.nombreParametro  }}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'idOportunidadControl'" pTemplate="output">
+                                        <select *ngIf="col.field == 'idOportunidadControl'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="idOportunidadControl"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let oportunidad of listaOportunidadControl"
+                                              [value]="oportunidad.idParametro">{{ oportunidad.nombreParametro  }}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'idAutomatizacionControl'" pTemplate="output">
+                                        <select *ngIf="col.field == 'idAutomatizacionControl'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="idAutomatizacionControl"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let automatizacion of listaAutomatizacionControl"
+                                              [value]="automatizacion.idParametro">{{ automatizacion.nombreParametro  }}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'estadoPlanAccion'" pTemplate="output">
+                                        <select *ngIf="col.field == 'estadoPlanAccion'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="estadoPlanAccion"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let estado of listaEstadoPlanAccion"
+                                                    [value]="estado.idParametro">{{ estado.nombreParametro}}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'fueEficaz'" pTemplate="output">
+                                        <select *ngIf="col.field == 'fueEficaz'" [(ngModel)]="rowData[col.field]"  disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="fueEficaz"
+                                                >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let estado of listaEficazPlanAccion"
+                                                    [value]="estado.deValor1">{{ estado.nombreParametro}}</option>
+                                        </select>
+                                    </ng-template>
+
+                                    <ng-template *ngIf="col.field == 'idEstrategiaResp'" pTemplate="output">
+                                        <select *ngIf="col.field == 'idEstrategiaResp'" [(ngModel)]="rowData[col.field]" disabled class="form-select-hide form-select" style="border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;" id="idEstrategiaResp"
+                                                 >
+                                            <option value="" selected>Seleccione</option>
+                                            <option *ngFor="let estrategia of listaEstrategiaRespuesta"
+                                                  [value]="estrategia.idParametro">{{ estrategia.nombreParametro  }}</option>
+                                        </select>
+                                    </ng-template>
+
+                                </p-cellEditor>
+                            </td>
+                            <td style="text-align:center;" class="tdsmall" colspan="1">
+
+                                <button *ngIf="(matrizRiesgo != null && editar == true && idPerfil!=tipoPerfilUsuario) || matrizRiesgo == null" pButton pRipple type="button" icon="pi pi-plus"
+                                        (click)="replicarMatrices(rowData, ri)"
+                                        class="p-button-rounded p-button-text"></button>
+                                <!-- <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow
+                                        icon="pi pi-check" (click)="guardarRegistroEditado(rowData)"
+                                        class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                                <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow
+                                        icon="pi pi-times" (click)="cancelarEdicion(rowData, ri)"
+                                        class="p-button-rounded p-button-text p-button-danger"></button> -->
+
+                                <button *ngIf="(matrizRiesgo != null && editar == true && idPerfil!=tipoPerfilUsuario) || matrizRiesgo == null" pButton pRipple type="button"
+                                        icon="pi pi-trash" (click)="borrarRegistro(rowData, ri)"
+                                        class="p-button-rounded p-button-text"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+            <div>
+                <div class="row justify-content-between d-flex">
+                    <div class="col">
+                        <div class="container card-body">
+                            <button pButton pRipple type="button"
+                                    label="Riesgo Inherente"
+                                    class="p-button-raised p-button-warning"
+                                    (click)="openDiagramRiesgoInherente()">
+                            </button>
+                            <button pButton pRipple type="button"
+                                    label="Riesgo Residual"
+                                    class="p-button-raised p-button-warning"
+                                    (click)="openDiagramRiesgoResidual()">
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col">
+
+                        <div class="container card-body p-text-right" style="margin-left: -15px;">
+                            <button type="submit" class="btn btn-primary" form="formMatriz" style="margin-right: 10px;"
+                                    *ngIf="matrizRiesgo == null">Crear
+                            </button>
+                            <button type="submit" class="btn btn-primary" form="formMatriz" style="margin-right: 10px;"
+                                    *ngIf="matrizRiesgo != null && editar == true">Actualizar
+                            </button>
+                            <button type="button" class="btn btn-danger" [routerLink]="['..']"
+                                    *ngIf="matrizRiesgo == null">
+                                Cancelar
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    [routerLink]="['/pages','main','transaccion','matrizFraude']"
+                                    *ngIf="matrizRiesgo != null">Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+
+            <br>
+
+            <!-- Tabla de matriz de riesgo-->
+
+        </div>
+
+
+        <!--Skeleton -->
+        <div class="container matriz-amplitud sombraCards espacioBody" *ngIf="loading">
+            <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;">
+                <p-skeleton height="2rem" styleClass="p-mb-2"></p-skeleton>
+            </h3>
+
+            <br>
+            <hr>
+            <form [formGroup]="formularioMatrizRiesgo"
+                  (ngSubmit)=" matrizRiesgo == null ? registrarMatrizRiesgo() : actualizarMatrizRiesgo()">
+                <br>
+
+                <fieldset class="border p-2 animated fadeIn">
+                    <p-skeleton height="2rem" styleClass="p-mb-2"></p-skeleton>
+                    <br><br>
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="form-group col-sm-12 mb-4">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                            <div class="form-group col-sm-12 mb-4">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                            <div class="container card-body p-text-right">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

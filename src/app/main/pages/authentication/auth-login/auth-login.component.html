@@ -1,0 +1,115 @@
+<!-- Login Content -->
+<div class="login-background container-fluid min-vh-100" style="height: 100%">
+    <div class="login-imagen-background row min-vh-100 justify-content-center align-items-center">
+        <div class=" container">
+            <div class="container login-card"
+                 style="background-color: #f20016;">
+                <div class="col-auto m-4">
+                    <div class="row" style="font-family: Roboto;">
+
+                        <div class="d-flex justify-content-center align-items-center col-md-7 p-4">
+
+                            <div class="col-md-12" style="text-align: center;">
+
+                             <div style="width: 400px;margin: auto;">
+
+                                 <div style="font-size: 80px;color: white;font-weight: 700;;text-align: center;
+                                 display: table-row;
+                                 text-align-last: center;line-height: 70px;">GRC</div>
+                                 
+                                 <div class="col-md-12" style="font-size: 27px;color: white;text-align: justify;
+                                 display: table-row;
+                                 text-align-last: justify;line-height: 29px;">
+                                     PLATAFORMA GOBIERNO,
+                                      
+                                 </div>
+                                 <div class="col-md-12" style="font-size: 27px;color: white;text-align: justify;
+                                 display: table-row;
+                                 text-align-last: justify;line-height: 29px;">
+                                     RIESGO Y CUMPLIMIENTO
+
+                                    <p style="margin-top: 7px;
+                                     margin-right: 5px;border: 0;background-color: white;height: 2px;"></p>
+ 
+                                 </div>
+
+                             </div>
+
+                             </div>
+                        </div>
+
+                        <div class="col-md-5 bg-light p-2 login-form col-10 mx-auto mb-3">
+                            <div class="text-center m-5">
+                                <img src="assets/imagenes/logoFonafe.png" class="col-md-12 col-12">
+                            </div>
+                            <div class="container">
+                                <form [formGroup]="formularioLogin" (ngSubmit)="iniciarSesion()">
+                                    <div class="form-group">
+                                        <!-- <label for="usuarioForm">
+                                            Usuario
+                                        </label> -->
+                                        <input type="text" class="form-control mt-1" id="usuarioForm"
+                                               [class.is-invalid]="usuarioNoValido" autocomplete="off"
+                                               placeholder="Correo electrónico" formControlName="usuario"/>
+                                        <label *ngIf="usuarioNoValido" id="validation-email-error"
+                                               class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                            un usuario
+                                            válido</label>
+                                    </div>
+                                    <div class="form-group mt-4">
+
+                                        <!-- <label for="passwordForm">
+                                            Contraseña
+                                        </label> -->
+                                        <input type="password" class="form-control mt-1" id="passwordForm"
+                                               [class.is-invalid]="passwordNoValido"
+                                               placeholder="Contraseña" formControlName="password"/>
+                                        <label *ngIf="passwordNoValido" id="validation-password-error"
+                                               class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                            una
+                                            contraseña</label> <br>
+                                    </div>
+
+                                    <div *ngIf="errorLogin" class="alert alert-danger" role="alert"
+                                         style="padding-left: 5px; padding-right: 5px">Error al iniciar sesión,
+                                        intente
+                                        nuevamente
+                                    </div>
+                                    <!-- retcath -->
+                                    
+                                    <ngx-captcha  [config]="captchaConfig"  class="custom"></ngx-captcha>
+
+                                    <!-- <div *ngIf="captcha.errors?.invalid" class="error">El CAPTCHA es inválido</div> -->
+                                    <button  [disabled]="!captchaStatus" class="btn btn-primary btn-lg col-md-12 col-12 mb-4"
+                                            style="font-size: 17px !important;"
+                                            type="submit"><span>Iniciar Sesión</span></button>
+                                    
+                                            <!-- <div class="text-center mb-3">
+                                                <a (click)="showInfoForgotPassowrd=!showInfoForgotPassowrd"
+                                                   class="text-link fw-bold text-decoration-none" style="cursor: pointer;"
+                                                >¿Olvidaste tu contraseña?</a>
+                                            </div> -->
+                                            <div class="text-center mb-3">
+                                                <a [routerLink]="['forgotPassword']" class="text-link fw-bold text-decoration-none" style="cursor: pointer;">
+                                                    ¿Olvidaste tu contraseña?
+                                                </a>
+                                            </div>
+                                            <p class="text-center" *ngIf="showInfoForgotPassowrd"
+                                               style="text-align: center; font-size: 8pt; font-family: Calibri; color: #83858e;">
+                                                ComunÍcate con el área de ...
+                                                 de FONAFE al correo
+                                                <a href="mailto:excelenciaoperacional@fonafe.gob.pe">...@fonafe.gob.pe</a>
+                                                o llámanos al <a href="tel:014404222">+51 ...</a>
+                                            </p>
+                                </form>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

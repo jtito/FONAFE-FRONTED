@@ -1,0 +1,42 @@
+<div>
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #CD202C">
+        <div class="container-fluid">
+            <div class="mx-auto" id="navbarCompany">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown text-light">
+                        {{datosToken.data.datosEmpresa.nombreCortoEmpresa}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        
+        <div class="float-right" id="navbarSupportedContent" style="margin-left: auto">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false" style=" margin-left: auto;">
+                        <i class="fas fa-user m-lg-2"></i>
+                        {{datosToken.data.nombre}}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" style="text-align: right;">
+                        <li>
+                            <form class="d-flex">
+                                <a class="dropdown-item" (click)="cambiarContrasenia()" style="cursor: pointer;">Cambiar Contraseña</a>
+                            </form>
+                        </li>
+                        <li>
+                            <form class="d-flex">
+                                <a class="dropdown-item" (click)="cerrarSesion()" style="cursor: pointer;">Cerrar
+                                    Sesión</a>
+                            </form>
+                        </li>
+                        
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        
+    </nav>
+
+</div>

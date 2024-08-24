@@ -1,0 +1,19 @@
+img {
+    width:100%;
+    height: fit-content;
+}
+
+.auto-resize-big{
+    width:100%;
+    height:80%;
+}
+
+.main {
+    background-image: url("src/assets/imagenes/main-background-2.jpg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-size: 100% 100%;
+    background-position: center center;
+    /* padding-top: 50px; */
+}
+

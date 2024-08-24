@@ -1,0 +1,50 @@
+<div>
+    <p *ngIf="(!existDoc && ver==false)||(existDoc)">Documento de resolución de designación de responsable</p>
+    <div id="file-manager">
+        <div class="container-upload-file" appDnd
+             (fileDropped)="onFileDropped($event)" *ngIf="!existDoc && ver==false">
+            <input type="file" #fileDropRef id="fileDropRef"
+                   (change)="fileBrowseHandler($event.target)"/>
+            <img src="assets/imagenes/upload.svg" alt="" width="44">
+            <h3>Arrastra y suelta tus archivos aquí</h3>
+            <h3>o</h3>
+            <label for="fileDropRef"
+                   pTooltip="Busca los archivos en tu computadora"
+                   tooltipPosition="top">Buscar</label>
+        </div>
+        <div class="files-list w-50" *ngIf="existDoc">
+            <div class="row align-items-start p-0">
+                <div class="col-1">
+                    <img src="assets/imagenes/icon-xlsx.png" alt="" width="44"
+                         *ngIf="fileModel.type=='xlsx'||fileModel.type=='xls'">
+                    <img src="assets/imagenes/icon-ppt.png" alt="" width="44" *ngIf="fileModel.type=='ppt'">
+                    <img src="assets/imagenes/icon-docx.png" alt="" width="60"
+                         *ngIf="fileModel.type=='doc' || fileModel.type=='docx'">
+                    <img src="assets/imagenes/icon-pdf.png" alt="" width="44" *ngIf="fileModel.type=='pdf'">
+                    <img src="assets/imagenes/icon-jpg.png" alt="" width="44"
+                         *ngIf="fileModel.type=='jpg'|| fileModel.type=='png'">
+                </div>
+                <div class="col">
+                    <h6 class="name">
+                        {{fileModel.name}}
+                    </h6>
+                    <p class="size">
+                        {{ formatBytes(fileModel?.size, 2) }}
+                    </p>
+                </div>
+                <div class="col-1">
+                    <div class="delete" (click)="downloadFile(fileModel)">
+                        <img src="assets/imagenes/icon-download.png" alt=""
+                             width="25" style="cursor: pointer;">
+                    </div>
+                </div>
+                <div class="col-1">
+                    <div class="delete pointer" (click)="deleteFile(fileModel)">
+                        <img src="assets/imagenes/delete.svg" alt=""
+                             width="25" *ngIf="ver==false" style="cursor: pointer;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

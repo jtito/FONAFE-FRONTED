@@ -1,0 +1,169 @@
+<div style="height: 50px;" class="bg-light"></div>
+<div class="bg-light pb-5">
+    <div class="container pt-2 bg-white mb-5">
+        <div class="container sombraCards espacioBody pb-5" *ngIf="!loading">
+            <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;"
+                *ngIf="indicador == null && editar == false">OPCIÓN
+                NUEVO</h3>
+            <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;"
+                *ngIf="indicador != null && editar == true">EDITAR</h3>
+            <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;"
+                *ngIf="indicador != null && editar == false">DETALLE</h3>
+            <br>
+            <hr>
+            <form [formGroup]="formularioIndicador"
+                  (ngSubmit)=" indicador == null ? registrarIndicador() : actualizarIndicador()">
+                <br>
+
+                <fieldset class="border p-2 animated fadeIn">
+                    <legend class="w-auto" *ngIf="indicador == null">&nbsp;Crear indicador&nbsp;</legend>
+                    <legend class="w-auto" *ngIf="indicador != null && editar == true">&nbsp;Actualizar indicador&nbsp;</legend>
+                    <legend class="w-auto" *ngIf="indicador != null && editar == false">&nbsp;Detalle indicador&nbsp;
+                    </legend>
+
+                    <br><br>
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="form-group col-md-12 mb-2">
+                                <label for="idEmpresa" class="mb-2">Empresa</label>
+                                <select formControlName="empresa" id="idEmpresa" class="form-select"
+                                        (change)="onChangeEmpresa($event)"
+                                        [class.is-invalid]="empresaNoValido">
+                                    <option value="" selected>Seleccione</option>
+                                    <option *ngFor="let empresa of listaEmpresas"
+                                            [value]="empresa.idEmpresa">{{ empresa.nombreCortoEmpresa}}</option>
+                                </select>
+                                <label *ngIf="empresaNoValido" id="validation-empresa-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Seleccione
+                                    una empresa</label>
+                            </div>
+
+                            <div class="form-group col-sm-12 mb-4">
+                                <label for="numeroIndicador" class="mb-2">Número Indicador</label>
+                                <input type="text" class="form-control" formControlName="numeroIndicador"
+                                       [class.is-invalid]="NumeroIndicadorNoValido"
+                                       id="numeroIndicador" placeholder="Ingrese el número de indicador"
+                                       autocomplete="nope">
+                                <label *ngIf="NumeroIndicadorNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    el número de indicador válido</label>
+                            </div>
+
+                            <div class="form-group col-sm-12 mb-4">
+                                <label for="descripcionIndicador" class="mb-2">Descripción Indicador</label>
+                                <input type="text" class="form-control" formControlName="descripcionIndicador"
+                                       [class.is-invalid]="DescripcionIndicadorNoValido"
+                                       id="descripcionIndicador" placeholder="Ingrese la descripción del indicador"
+                                       autocomplete="nope">
+                                <label *ngIf="DescripcionIndicadorNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    la descripción del indicador válido</label>
+                            </div>
+
+                            <div class="form-group col-sm-6 mb-4">
+                                <label for="frecuenciaIndicador" class="mb-2">Frecuencia</label>
+                                <input type="text" class="form-control" formControlName="frecuenciaIndicador"
+                                       [class.is-invalid]="FrecuenciaIndicadorNoValido"
+                                       id="frecuenciaIndicador" placeholder="Ingrese la frecuencia"
+                                       autocomplete="nope">
+                                <label *ngIf="FrecuenciaIndicadorNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    la frecuencia del indicador válido</label>
+                            </div>
+
+                            <div class="form-group col-sm-6 mb-4">
+                                <label for="metaIndicador" class="mb-2">Meta del KRI</label>
+                                <input type="text" class="form-control" formControlName="metaIndicador"
+                                       [class.is-invalid]="MetaIndicadorNoValido"
+                                       id="metaIndicador" placeholder="Ingrese la meta del KRI"
+                                       autocomplete="nope">
+                                <label *ngIf="MetaIndicadorNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    la meta del KRI válido</label>
+                            </div>
+
+                            <div class="form-group col-sm-6 mb-4">
+                                <label for="indicadorActual" class="mb-2">KRI Actual</label>
+                                <input type="text" class="form-control" formControlName="indicadorActual"
+                                       [class.is-invalid]="IndicadorActualNoValido"
+                                       id="indicadorActual" placeholder="Ingrese el KRI actual"
+                                       autocomplete="nope">
+                                <label *ngIf="IndicadorActualNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    el KRI actual válido</label>
+                            </div>
+
+                            <div  class="form-group col-sm-6 mb-4">
+                                <label for="idResponsable" class="mb-2">Responsable</label>
+                                <select formControlName="idResponsable" class="form-select" id="idResponsable"
+                                        (change)="onChangeTipo($event)" [class.is-invalid]="IdResponsableNoValido">
+                                    <option value="" selected>Seleccione</option>
+                                    <option [value]="">Gestor de Riesgo</option>
+                                    <!-- <option selected *ngFor="let tipo of listaTipos"
+                                            [value]="tipo.idParametro">{{ tipo.nombreParametro}}</option> -->
+                                </select>
+                                <label *ngIf="IdResponsableNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Seleccione el responsable</label>
+                            </div>
+
+
+                            <div class="container card-body p-text-right pt-5" style="margin-left: -15px;">
+                                <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                                        *ngIf="indicador == null">Crear
+                                </button>
+                                <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                                        *ngIf="indicador != null && editar == true">Actualizar
+                                </button>
+                                <button type="button" class="btn btn-danger" [routerLink]="['..']"
+                                        *ngIf="indicador == null">
+                                    Cancelar
+                                </button>
+                                <button type="button" class="btn btn-danger"
+                                        [routerLink]="['/pages','main','configuracion','indicador']"
+                                        *ngIf="indicador != null">Cancelar
+                                </button>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+
+        <!--Skeleton -->
+        <div class="container sombraCards espacioBody" *ngIf="loading">
+            <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;">
+                <p-skeleton height="2rem" styleClass="p-mb-2"></p-skeleton>
+            </h3>
+
+            <br>
+            <hr>
+            <form [formGroup]="formularioIndicador"
+                  (ngSubmit)=" indicador == null ? registrarIndicador() : actualizarIndicador()">
+                <br>
+
+                <fieldset class="border p-2 animated fadeIn">
+                    <p-skeleton height="2rem" styleClass="p-mb-2"></p-skeleton>
+                    <br><br>
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="form-group col-sm-12 mb-4">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                            <div class="form-group col-sm-12 mb-4">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+
+                            <div class="container card-body p-text-right">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

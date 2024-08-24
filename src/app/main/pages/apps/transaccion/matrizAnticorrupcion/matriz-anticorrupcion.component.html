@@ -1,0 +1,237 @@
+<div style="height: 50px;" class="bg-light"></div>
+<div class="bg-light pb-5">
+    <div class="container pt-4 bg-white mb-5">
+        <div class="container sombraCards espacioBody pb-5">
+            <div class="row d-flex">
+                <div style="width: 4%">
+                    <button pButton type="button" icon="pi pi-arrow-left" class="p-button-danger p-button-rounded"
+                        [routerLink]="['../menu']"></button>
+                </div>
+                <div style="width: 96%">
+                    <h3 class="animated fadeIn fast" style="margin-bottom: -10px;">Transacción/Matriz de Riesgo Anticorrupción</h3>
+                </div>
+            </div>
+            <hr>
+            <form>
+                <br>
+
+                <fieldset class="border p-2 animated fadeIn" style="margin-bottom: 50px;">
+                    
+                    <app-search (empresaChange)="empresaChange($event)" (periodoChange)="periodoChange($event)"></app-search>
+                    <!--
+                    <legend class="w-auto">&nbsp;Búsqueda&nbsp;</legend>
+                    <div class="container">
+                        <div class="col-md-12 mb-2">
+                            <label for="inputEmpresa" class="mb-2">Empresa</label>
+                            <select class="form-select " id="inputEmpresa" aria-label="Default select example"
+                                    (change)="onChangeEmpresa($event)">
+                                <option value="0">Todos</option>
+                                <option *ngFor="let empresa of listaEmpresa"
+                                        [value]="empresa.idEmpresa">{{ empresa.nombreCortoEmpresa  }}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-12 mb-2">
+                            <label for="inputPeriodo" class="mb-2">Periodo</label>
+                            <select class="form-select" id="inputPeriodo" aria-label="Default select example"
+                                    (change)="onChangePeriodo($event)">
+                                <option value="0"> Todos</option>
+                                <option *ngFor="let periodo of listaPeriodo"
+                                        [value]="periodo.idPeriodo">{{ periodo.dePeriodo  }}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-12 mb-2" style="display: none;">
+                            <label for="inputMatrizNivel" class="mb-2">Matriz Nivel</label>
+                            <select class="form-select" id="inputMatrizNivel" aria-label="Default select example"
+                                    (change)="onChangeMatrizNivel($event)">
+                                <option value="0"> Todos</option>
+                                <option *ngFor="let matriz of listaMatrizNivel"
+                                        [value]="matriz.nombreParametro">{{ matriz.deValor1}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    -->
+
+                    <div class="container card-body">
+                        <h5>Lista de Matrices</h5>
+                        <div class="container card-body" style="margin-left: -15px; margin-top: -10px;">
+                            <button pButton pRipple label="Crear Matriz de Riesgo Anticorrupción" icon="pi pi-plus"
+                                    class="p-button-success p-mr-2" [routerLink]="['registrar']"
+                                    *ngIf="idPerfil!=tipoPerfilAuditor && idPerfil!=tipoPerfilusuario"></button>
+                        </div>
+                        <div *ngIf="!loading">
+                            <p-table #dt1 [value]="listaMatrizRiesgo" [columns]="cols" dataKey="id" [rows]="5"
+                                     [showCurrentPageReport]="true"
+                                     [rowsPerPageOptions]="[5,15,25]"
+                                     styleClass="p-datatable-responsive-demo p-datatable-gridlines"
+                                     [paginator]="true"
+                                     currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros"
+                                     [globalFilterFields]="['idMatrizRiesgo','deCartera','nombreCortoEmpresa','deAnioPeriodo', 'deTipoMatriz','fechaCreacion']">
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                            <span class="p-input-icon-left p-ml-auto">
+                                <input pInputText type="text" class="form-control"
+                                       (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                       placeholder="Buscar"/>
+                            </span>
+                                        </div>
+                                        <div class="col-md-6 p-text-right">
+                                            <img src="assets/imagenes/btnxls.png"
+                                                    pTooltip="XLS"
+                                                    tooltipPosition="bottom"
+                                                    class="btnxls" (click)="exportExcel()">
+                                        </div>
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th pSortableColumn="{{col.ordenadmiento}}" *ngFor="let col of columns"
+                                            class="text-center">
+                                            {{col.header}}
+                                            <p-sortIcon field="{{col.ordenadmiento}}"></p-sortIcon>
+                                            <p-columnFilter field="indicadorBaja" matchMode="equals"
+                                                            display="menu" [showMatchModes]="false"
+                                                            [showOperator]="false" [showAddButton]="false"
+                                                            *ngIf="col.header == 'Estado'">
+                                                <ng-template pTemplate="header">
+                                                    <div class="p-px-3 p-pt-3 p-pb-0">
+                                                        <span class="p-text-bold">Indicador Estado</span>
+                                                    </div>
+                                                </ng-template>
+                                                <ng-template pTemplate="filter" let-listaIndicadoresBaja2
+                                                             let-filter="filterCallback">
+                                                    <p-dropdown [ngModel]="estado"
+                                                                name = "estado"
+                                                                [options]="listaIndicadoresBaja"
+                                                                (onChange)="onChange($event.value)">
+                                                        <ng-template let-indicadorBaja pTemplate="item">
+                                                            <div
+                                                                class="p-multiselect-listaIndicadoresBaja2-option">
+                                                                <!-- <span class="p-ml-1">{{indicadorBaja}}</span> -->
+                                                                <span
+                                                                    [class]="'customer-badge indicadorBaja-' + indicadorBaja">{{indicadorBaja}}</span>
+                                                            </div>
+                                                        </ng-template>
+                                                    </p-dropdown>
+                                                </ng-template>
+                                            </p-columnFilter>
+                                        </th>
+
+                                        <th class="text-center">
+                                            Acción
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                    <tr>
+
+                                        <td *ngFor="let col of columns" class="{{col.class}}" [ngClass]="{'color-inactivo': rowData.indicadorBaja == 'Inactivo'}">
+                                            <span class="p-column-title">{{col.header}}</span>
+                                            {{rowData[col.field]}}
+                                            <!--<span *ngIf="col.header == 'Activo'" [class]="'product-badge status-' + (rowData.indicadorBaja ? rowData.indicadorBaja.toLowerCase() : '')">{{rowData.indicadorBaja}}</span>-->
+                                            <span *ngIf="col.header == 'Estado'"
+                                                  [class]="rowData.indicadorBaja + '-badge status-'+ rowData.indicadorBaja"></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <button pButton pRipple icon="pi pi-pencil"
+                                                    class="p-button-rounded p-button-help p-mr-2"
+                                                    [routerLink]="['editar', rowData.idMatrizRiesgo]"
+                                                    *ngIf="idPerfil!=tipoPerfilAuditor"></button>
+                                            <button pButton pRipple icon="pi pi-eye"
+                                                    class="p-button-rounded p-button-primary p-mr-2"
+                                                    [routerLink]="['ver', rowData.idMatrizRiesgo]"></button>
+                                                    <button *ngIf="rowData.indicadorBaja == 'Activo' && idPerfil!=tipoPerfilAuditor && idPerfil!=tipoPerfilusuario" pButton pRipple
+                                                    icon="pi pi-trash"
+                                                    class="p-button-rounded p-button-danger"
+                                                    (click)="eliminarMatrizRiesgo(rowData.idMatrizRiesgo)"></button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="summary" class="mb-5">
+                                    <div class="p-d-flex p-ai-center p-jc-between">
+                                        En total hay
+                                        registrados {{this.listaMatrizRiesgo ? this.listaMatrizRiesgo.length : 0 }}
+                                        matrices.
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="8">No se encontró ningún registro de Matriz de Riesgo Anticorrupción.</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                        <!-- Skeleton -->
+                        <div *ngIf="loading">
+                            <p-table [value]="listaVacia" [columns]="cols"
+                                     styleClass="p-datatable-responsive-demo p-datatable-gridlines"
+                                     [rows]="5" [showCurrentPageReport]="true">
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                            <span class="p-input-icon-left p-ml-auto">
+                                <input pInputText type="text" class="form-control"
+                                       (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                       placeholder="Buscar"/>
+                            </span>
+                                        </div>
+                                        <div class="col-md-6 p-text-right">
+                                            <img src="assets/imagenes/btnxls.png"
+                                                    pTooltip="XLS"
+                                                    tooltipPosition="bottom"
+                                                    class="btnxls" (click)="exportExcel()">
+                                        </div>
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th *ngFor="let col of columns" class="text-center">
+                                            {{col.header}}
+                                        </th>
+                                        <th class="text-center">
+                                            Acción
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                    <tr>
+                                        <td>
+                                            <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2"></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2"></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2"></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2"></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2"></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2"></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2"></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2"></p-skeleton>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+
+                    </div>
+
+                </fieldset>
+                <br>
+            </form>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+<div class="container">
+    <div class="row">
+        <form  [formGroup]="formularioComentarioAuditoria" (ngSubmit)="actualizarComentario()">
+            <div class="form-group col-sm-12 mb-2">
+                <textarea pInputTextarea  type="text" class="form-control" formControlName="coAuditoria"
+                        id="CoAuditoria" placeholder="Ingrese su comentario" autocomplete="nope"></textarea>
+            </div>
+            <div class="container card-body p-text-right">
+                <button *ngIf="idPerfil==tipoPerfilAuditor" type="submit" class="btn btn-primary" style="margin-right: 10px;" >Guardar
+                </button>
+                <button type="button" class="btn btn-danger" (click)="closeDialogC()" >
+                    Cancelar
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>

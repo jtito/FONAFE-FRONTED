@@ -1,0 +1,40 @@
+export interface Responsable {
+    idUsuario?: number;
+    username?: string;
+    password?: string;
+    nombre?: string;
+    apellidoPaterno?: string;
+    apellidoMaterno?: string;
+    dni?: string;
+    correo?: string;
+    prefijoTelefono?: string;
+    numeroTelefono?: string;
+    anexo?: string;
+    celular?: string;
+    idEmpresa?: number;
+    idCartera?: number;
+    idSede?: number;
+    idCargo?: string;
+    descripcionCartera?: string;
+    descripcionCargo?: string;
+    idResponsabilidad?: number;
+    idPerfil?: number;
+    indicadorBaja?: string;
+    usuarioCreacion?: string;
+    ipCreacion?: string;
+    fechaCreacion?: string;
+    usuarioModificacion?: string;
+    ipModificacion?: string;
+    fechaModificacion?: string;
+    responsable?: String;
+    descripcionEmpresa?: String;
+    descripcionSede?: String;
+    responsabilidad?: String;
+    procesos?: number[];
+    correoJefe?: string;
+    indResolucion?: string;
+    dePerfil?: string;
+    actPassword?: string;
+    newPassword?: string;
+
+}

@@ -1,0 +1,574 @@
+<div style="height: 50px;" class="bg-light"></div>
+<!-- Inicio Modal Sede-->
+<p-dialog header="Crear Sede" [(visible)]="displayc" [style]="{width: '60vw'}">
+
+    <div class="container">
+
+        <form [formGroup]="formularioEmpresa"
+        (ngSubmit)="sede == null ? null : null">
+        
+        <div class="form-group col-sm-12 mb-4">
+            <label for="idDescripcionSede" class="mb-2">Descripción de sede</label>
+            <input formControlName="descripcionSede" type="text" class="form-control"
+                   [class.is-invalid]="descripcionSedeNoValido"
+                   id="idDescripcionSede" placeholder="Ingrese la descripción de la sede"
+                   autocomplete="nope">
+            <label *ngIf="descripcionSedeNoValido" id="validation-nombre-error"
+                   class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                descripción de la sede válido</label>
+        </div>
+
+        <div class="container card-body p-text-right" style="margin-left: -15px;">
+            <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                    *ngIf="sede == null" onsubmit="return false;"
+                    (click)="agregarSede()">Añadir
+            </button>
+            <button type="button" class="btn btn-danger" (click)="closeDialogC()" >
+                Cancelar
+            </button>
+
+        </div>
+        </form>
+    </div>
+
+</p-dialog>
+
+<!--Modal modificar sede-->
+<p-dialog header="Actualizar Sede" [(visible)]="displaySedesel" [style]="{width: '60vw'}">
+    
+    <div class="container">
+        <div class="form-group col-sm-12 mb-4">
+            <label for="float-input" class="mb-2">Descripción de sede</label>
+                <input id="float-input" class="form-control" type="text" [(ngModel)]="sedeDescripEdit" pInputText> 
+        </div>
+
+        <div class="form-group col-sm-12 mb-4" *ngIf="empresa != null && editar == true && this.sedeLista.listaSedes[this.sedeIndex].indicadorBaja == '0'">
+            <label for="indicadorBaja" class="mb-2">Estado</label>
+            <br>
+            <p-inputSwitch (onChange)="obtenerValorEstado($event)"
+                [(ngModel)]="indicadorEstado"></p-inputSwitch>
+        </div>
+        
+        <div class="container card-body p-text-right" style="margin-left: -15px;">
+            <button type="button" class="btn btn-primary" (click)="modificarSede()" 
+            style="margin-right: 10px;">
+                Actualizar
+            </button>
+            <button type="button" class="btn btn-danger" (click)="closeDisplaySedesel()" >
+                Cancelar
+            </button>  
+
+        </div>
+    </div>
+
+</p-dialog>
+<!-- Fin Modal Sede-->
+
+<!-- Inicio Modal Gerencia-->
+<p-dialog header="Crear Gerencia" [(visible)]="displayg" [style]="{width: '60vw'}">
+
+    <div class="container">
+
+        <form [formGroup]="formularioEmpresa"
+        (ngSubmit)="gerencia == null ? null : null">
+        
+        <div class="form-group col-sm-12 mb-4">
+            <label for="idDescripcionGerencia" class="mb-2">Descripción de gerencia</label>
+            <input formControlName="descripcionGerencia" type="text" class="form-control"
+                   [class.is-invalid]="descripcionSedeNoValido"
+                   id="idDescripcionGerencia" placeholder="Ingrese descripción de la gerencia"
+                   autocomplete="nope">
+            <label *ngIf="descripcionSedeNoValido" id="validation-nombre-error"
+                   class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                descripción de la gerencia válido</label>
+        </div>
+
+        <div class="container card-body p-text-right" style="margin-left: -15px;">
+            <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                    *ngIf="gerencia == null" onsubmit="return false;"
+                    (click)="agregarGerencia()">Añadir
+            </button>
+            <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                    *ngIf="gerencia != null">Actualizar
+            </button>
+            <button type="button" class="btn btn-danger" (click)="closeDialogg()" >
+                Cancelar
+            </button>
+
+        </div>
+        </form>
+    </div>
+
+</p-dialog>
+
+<!--Modal modificar gerencia-->
+<p-dialog header="Actualizar Gerencia" [(visible)]="displayGerenciasel" [style]="{width: '60vw'}">
+    
+    <div class="container">
+        <div class="form-group col-sm-12 mb-4">
+            <label for="float-input" class="mb-2">Descripción de gerencia</label>
+                <input id="float-input" class="form-control" type="text" [(ngModel)]="gerenciaDescripEdit" pInputText> 
+        </div>
+
+        <div class="form-group col-sm-12 mb-4" *ngIf="empresa != null && editar == true && this.sedeSel>-1 && this.mostrarEstadoGer == true">
+            <label for="indicadorBaja" class="mb-2">Estado</label>
+            <br>
+            <p-inputSwitch (onChange)="obtenerValorEstadoGer($event)"
+                [(ngModel)]="indicadorEstadoGer"></p-inputSwitch>
+        </div>
+        
+        <div class="container card-body p-text-right" style="margin-left: -15px;">
+            <button type="button" class="btn btn-primary" (click)="modificarGerencia()" 
+            style="margin-right: 10px;">
+                Editar
+            </button>
+            <button type="button" class="btn btn-danger" (click)="closeDisplayGerenciasel()" >
+                Cancelar
+            </button>  
+
+        </div>
+    </div>
+
+</p-dialog>
+<!-- Fin Modal Gerencia-->
+
+<div class="bg-light">
+    <div class="container pt-2 bg-white">
+        <div class="container sombraCards espacioBody pb-5" *ngIf="!loading">
+            <div class="row d-flex">
+                <div style="width: 4%" class="mt-4">
+                    <button pButton type="button"
+                            icon="pi pi-arrow-left"
+                            class="p-button-danger p-button-rounded"
+                            [routerLink]="[empresa == null ? '../':'../../']"
+                    ></button>
+                </div>
+                <div style="width: 96%">
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;" *ngIf="empresa == null">Configuración/Empresa/Crear Empresa</h3>
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;" *ngIf="empresa != null && editar == true">Configuración/Empresa/Actualizar Empresa</h3>
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;" *ngIf="empresa != null && editar == false">Configuración/Empresa/Ver Empresa</h3>
+                </div>
+            </div>
+            <hr>
+            <form [formGroup]="formularioEmpresa"
+                  (ngSubmit)=" empresa == null ? registrarEmpresa() : actualizarEmpresa()">
+                <br>
+
+                <fieldset class="border p-2 animated fadeIn">
+                    <!-- <legend class="w-auto" *ngIf="empresa == null">&nbsp;Crear Empresa&nbsp;</legend>
+                    <legend class="w-auto" *ngIf="empresa != null && editar == true">&nbsp;Actualizar Empresa&nbsp;</legend>
+                    <legend class="w-auto" *ngIf="empresa != null && editar == false">&nbsp;Ver Empresa&nbsp;</legend>
+                    <br><br> -->
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="form-group col-md-12 mb-4">
+                                <label for="idCartera" class="mb-2">Cartera</label>
+                                <select formControlName="idCartera" class="form-select " id="idCartera" aria-label="Default select example"
+                                        [class.is-invalid]="carteraNoValido">
+                                    <option value="" selected>Seleccione</option>
+                                    <option *ngFor="let cartera of listaCarteras"
+                                            [value]="cartera.idParametro">{{ cartera.nombreParametro  }}</option>
+                                </select>
+                                <label *ngIf="carteraNoValido" id="validation-sistema-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Seleccione una cartera</label>
+                            </div>
+                            
+                            <div class="form-group col-sm-12 mb-4">
+                                <label for="idRazonSocial" class="mb-2">Razón Social</label>
+                                <input type="text" class="form-control" formControlName="razonSocial"
+                                       [class.is-invalid]="razonSocialNoValido"
+                                       id="idRazonSocial" placeholder="Ingrese la razón social"
+                                       autocomplete="nope">
+                                <label *ngIf="razonSocialNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    razón social de la empresa válido</label>
+                            </div>
+
+                            <div class="form-group col-sm-6 mb-4">
+                                <label for="idNombreCorto" class="mb-2">Nombre Corto</label>
+                                <input type="text" class="form-control" formControlName="nombreCortoEmpresa"
+                                       [class.is-invalid]="nombreCortoEmpresaNoValido" (keyup)="cambiarMayuscula($event)"
+                                       id="idNombreCorto" placeholder="Ingrese el nombre corto"
+                                       autocomplete="nope">
+                                <label *ngIf="nombreCortoEmpresaNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    nombre corto de la empresa válido</label>
+                            </div>
+
+                            <div class="form-group col-sm-6 mb-4">
+                                <label for="idRuc" class="mb-2">RUC</label>
+                                <input type="text" class="form-control" formControlName="ruc"
+                                       [class.is-invalid]="rucNoValido" 
+                                       id="idRuc" placeholder="Ingrese el RUC"
+                                       autocomplete="nope">
+                                <label *ngIf="rucNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    RUC de la empresa válido</label>
+                            </div>
+
+                            <div class="form-group col-sm-12 mb-4">
+                                <label for="idDireccion" class="mb-2">Dirección</label>
+                                <input type="text" class="form-control" formControlName="direccion"
+                                       [class.is-invalid]="direccionNoValido"
+                                       id="idDireccion" placeholder="Ingrese la dirección"
+                                       autocomplete="nope">
+                                <label *ngIf="direccionNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    dirección de la empresa válido</label>
+                            </div>
+
+                            <div *ngIf="empresa != null && editar == true && empresa.indicadorBaja == '0'" class="form-group col-sm-12  mb-4">
+                                <label for="idEstado" class="mb-2">Estado</label>
+                                <select formControlName="idEstado" class="form-select" id="idEstado"
+                                        (change)="onChangeEstado($event)">
+                                    <option selected *ngFor="let estado of listaEstados"
+                                            [value]="estado.nombreParametro">{{ estado.deValor1}}</option>
+                                </select>
+                            </div>
+
+                            <div  class="form-group col-sm-12 mb-4">
+                                <label for="idIndicadorSede" class="mb-2">Tiene Sede</label>
+                                <br>
+                                <p-inputSwitch (onChange)="obtenerValorCheck($event)" formControlName="tieneSede" [(ngModel)]="tieneSede"></p-inputSwitch>
+                                <label *ngIf="IndicadorSedeNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Seleccione si tiene sede</label>
+                            </div>
+                       
+                            <!-- <div class="form-group col-sm-12 mb-4" *ngIf="tieneSede">
+                                <label for="idDescripcionSede" class="mb-2">Nombre Sede</label>
+                                <input formControlName="descripcionSede" type="text" class="form-control"
+                                       [class.is-invalid]="descripcionSedeNoValido"
+                                       id="idDescripcionSede" placeholder="Ingrese el nombre de la sede"
+                                       autocomplete="nope">
+                                <label *ngIf="descripcionSedeNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    nombre de la sede válido</label>
+                            </div>                         -->
+
+                            <div class="container card-body p-text-left" *ngIf="tieneSede">
+                                <button type="button" label="Añadir Sede" pButton pRipple icon="pi pi-eye"
+                                        class="p-button-secondary p-mr-2" onsubmit="return false;" [disabled] = "empresa != null && editar == false"
+                                        (click)="showDialogC()" pButton icon="pi pi-plus"></button>
+                            </div>
+
+                            <!-- Tabla para agregar las sedes  -->
+                            <div class="container card-body" *ngIf="tieneSede">
+                                <div *ngIf="!loading">
+                                    <p-table #dt1 [value]="listaSedes" [columns]="cols" dataKey="id" [rows]="5"
+                                             [showCurrentPageReport]="true"
+                                             [rowsPerPageOptions]="[5,15,25]"
+                                             styleClass="p-datatable-responsive-demo p-datatable-gridlines"
+                                             [paginator]="true"
+                                             currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros"
+                                             [globalFilterFields]="['idSede','descripcionSede','indicadorBaja']">
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <span class="p-input-icon-left p-ml-auto">
+                                                        <input pInputText type="text" class="form-control"
+                                                               (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                                               placeholder="Buscar"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header" let-columns>
+                                            <tr>
+                                                <th class="text-center">
+                                                    Selección
+                                                </th>
+                                                <th pSortableColumn="{{col.ordenadmiento}}" *ngFor="let col of columns"
+                                                    class="{{col.headerClass}}">
+                                                    {{col.header}}
+                                                    <p-sortIcon field="{{col.ordenadmiento}}"></p-sortIcon>
+                                                </th>
+                                                <th class="text-center">
+                                                    Acción
+                                                </th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
+                                            <tr >
+                                                <td class="text-center">
+                                                    <input *ngIf="listaSedes.length==1" type="checkbox"  id="check{{rowIndex}}" (change)="selectSede(rowIndex,$event)">
+                                                    <input *ngIf="listaSedes.length>1"  type="checkbox"  id="check{{rowIndex}}" (change)="selectSede(rowIndex,$event)">
+
+                                                </td>
+                                                <td *ngFor="let col of columns" class="{{col.class}}">
+                                                    <!-- <span class="p-column-title">{{col.header}}</span> -->
+                                                    <span *ngIf="col.header == 'Estado'">{{rowData.indicadorBaja == 0 ? 'Inactivo' : 'Activo'}}</span>
+                                                    <span *ngIf="col.header != 'Estado'">{{rowData[col.field]}}</span>
+                                                    
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" pButton pRipple icon="pi pi-pencil"
+                                                            class="p-button-rounded p-button-primary p-mr-2"
+                                                            *ngIf="(empresa != null && editar == true)||empresa == null"
+                                                            (click)="showDisplaySedesel(rowIndex)"></button>
+
+                                                    <button type="button" pButton pRipple icon="pi pi-trash"
+                                                            class="p-button-rounded p-button-danger"
+                                                            *ngIf="(empresa != null && editar == true)||empresa == null"
+                                                            (click)="eliminarSede(rowIndex)"></button>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="summary" class="mb-5">
+                                            <div class="p-d-flex p-ai-center p-jc-between">
+                                                En total hay
+                                                registradas {{this.listaSedes ? this.listaSedes.length : 0 }}
+                                                sedes.
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="emptymessage">
+                                            <tr>
+                                                <td colspan="4">No se encontró ninguna sede.</td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                                <!-- Skeleton -->
+                                <div *ngIf="loading">
+                                    <p-table [value]="listaVacia" [columns]="cols"
+                                             styleClass="p-datatable-responsive-demo p-datatable-gridlines"
+                                             [rows]="5" [showCurrentPageReport]="true">
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                    <span class="p-input-icon-left p-ml-auto">
+                                    </span>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header" let-columns>
+                                            <tr>
+                                                <th *ngFor="let col of columns" class="text-center">
+                                                    {{col.header}}
+                                                </th>
+                                                <th class="text-center">
+                                                    Acción
+                                                </th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                            <tr>
+                                                <td>
+                                                    <p-skeleton class="col-sm-6" height="3rem"
+                                                                styleClass="p-mb-2"></p-skeleton>
+                                                </td>
+                                                <td>
+                                                    <p-skeleton class="col-sm-6" height="3rem"
+                                                                styleClass="p-mb-2"></p-skeleton>
+                                                </td>
+                                                <td>
+                                                    <p-skeleton class="col-sm-6" height="3rem"
+                                                                styleClass="p-mb-2"></p-skeleton>
+                                                </td>
+                                                <td>
+                                                    <p-skeleton class="col-sm-6" height="3rem"
+                                                                styleClass="p-mb-2"></p-skeleton>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+
+                            </div>
+                            <!-- Tabla para agregar las sedes  -->
+                         
+
+                            <!-- <div class="form-group col-sm-12 mb-4">
+                                <label for="idDescripcionGerencia" class="mb-2">Nombre Gerencia</label>
+                                <input formControlName="descripcionGerencia" type="text" class="form-control"
+                                       [class.is-invalid]="descripcionSedeNoValido"
+                                       id="idDescripcionGerencia" placeholder="Ingrese el nombre de la gerencia"
+                                       autocomplete="nope">
+                                <label *ngIf="descripcionSedeNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    nombre de la gerencia válido</label>
+                            </div> -->
+
+                            <div class="container card-body p-text-left">
+                                <button type="button" label="Añadir Gerencia" pButton pRipple icon="pi pi-eye"
+                                        [disabled] = "empresa != null && editar == false"
+                                        class="p-button-secondary p-mr-2" onsubmit="return false;"
+                                        (click)="showDialogg()" pButton icon="pi pi-plus"></button>
+                            </div>
+
+                            <!-- Tabla para agregar las Gerencias  -->
+                            <div class="container card-body">
+                                <div *ngIf="!loading">
+                                    <p-table #dt1 [value]="listaGerencias" [columns]="colsGer" dataKey="id" [rows]="5"
+                                             [showCurrentPageReport]="true"
+                                             [rowsPerPageOptions]="[5,15,25]"
+                                             styleClass="p-datatable-responsive-demo p-datatable-gridlines"
+                                             [paginator]="true"
+                                             currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros"
+                                             [globalFilterFields]="['idGerencia','descripcionGerencia','indicadorBaja']">
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <span class="p-input-icon-left p-ml-auto">
+                                                        <input pInputText type="text" class="form-control"
+                                                               (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                                               placeholder="Buscar"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header" let-columns>
+                                            <tr>
+                                                <th pSortableColumn="{{col.ordenadmiento}}" *ngFor="let col of columns"
+                                                    class="{{col.headerClass}}">
+                                                    {{col.header}}
+                                                    <p-sortIcon field="{{col.ordenadmiento}}"></p-sortIcon>
+                                                </th>
+                                                <th class="text-center">
+                                                    Acción
+                                                </th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
+                                            <tr *ngIf="rowData.indicadorBaja != '2'">  <!-- No mostrar gerencias eliminadas -->
+                                                <td *ngFor="let col of columns" class="{{col.class}}">
+                                                    <!-- <span class="p-column-title">{{col.header}}</span> -->
+                                                    <span *ngIf="col.header == 'Estado'">
+                                                        {{ rowData.indicadorBaja == '0' ? 'Inactivo' : (rowData.indicadorBaja == '2' ? 'Eliminado' : 'Activo') }}
+                                                    </span>
+                                                    <span *ngIf="col.header != 'Estado'">{{rowData[col.field]}}</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" pButton pRipple icon="pi pi-pencil"
+                                                            class="p-button-rounded p-button-primary p-mr-2"
+                                                            onsubmit="return false;"
+                                                            *ngIf="(empresa != null && editar == true)||empresa == null"
+                                                            (click)="showDisplayGerenciasel(rowIndex)"></button>
+                                                    <button type="button" pButton pRipple icon="pi pi-trash"
+                                                            class="p-button-rounded p-button-danger"
+                                                            *ngIf="(empresa != null && editar == true)||empresa == null"
+                                                            (click)="eliminarGerencia(rowIndex)"></button>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="summary" class="mb-5">
+                                            <div class="p-d-flex p-ai-center p-jc-between">
+                                                En total hay
+                                                registradas {{this.listaGerencias ? this.listaGerencias.length : 0 }}
+                                                gerencias.
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="emptymessage">
+                                            <tr>
+                                                <td colspan="3">No se encontró ninguna gerencia.</td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                                <!-- Skeleton -->
+                                <div *ngIf="loading">
+                                    <p-table [value]="listaVacia" [columns]="cols"
+                                             styleClass="p-datatable-responsive-demo p-datatable-gridlines"
+                                             [rows]="5" [showCurrentPageReport]="true">
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                    <span class="p-input-icon-left p-ml-auto">
+                                    </span>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header" let-columns>
+                                            <tr>
+                                                <th *ngFor="let col of columns" class="text-center">
+                                                    {{col.header}}
+                                                </th>
+                                                <th class="text-center">
+                                                    Acción
+                                                </th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                            <tr>
+                                                <td>
+                                                    <p-skeleton class="col-sm-6" height="3rem"
+                                                                styleClass="p-mb-2"></p-skeleton>
+                                                </td>
+                                                <td>
+                                                    <p-skeleton class="col-sm-6" height="3rem"
+                                                                styleClass="p-mb-2"></p-skeleton>
+                                                </td>
+                                                <td>
+                                                    <p-skeleton class="col-sm-6" height="3rem"
+                                                                styleClass="p-mb-2"></p-skeleton>
+                                                </td>
+                                                <td>
+                                                    <p-skeleton class="col-sm-6" height="3rem"
+                                                                styleClass="p-mb-2"></p-skeleton>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+
+                            </div>
+                            <!-- Tabla para agregar las Gerencias  -->
+
+                            <div class="container card-body p-text-right" style="margin-left: -15px;">
+                                <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                                        *ngIf="empresa == null">Crear
+                                </button>
+                                <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                                        *ngIf="empresa != null && editar == true">Actualizar
+                                </button>
+                                <button type="button" class="btn btn-danger" [routerLink]="['..']"
+                                        *ngIf="empresa == null">
+                                    Cancelar
+                                </button>
+                                <button type="button" class="btn btn-danger"
+                                        [routerLink]="['/pages','main','configuracion','empresa']"
+                                        *ngIf="empresa != null">Cancelar
+                                </button>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+
+        <!--Skeleton -->
+        <div class="container sombraCards espacioBody" *ngIf="loading">
+            <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;">
+                <p-skeleton height="2rem" styleClass="p-mb-2"></p-skeleton>
+            </h3>
+
+            <br>
+            <hr>
+            <form [formGroup]="formularioEmpresa"
+                  (ngSubmit)=" empresa == null ? registrarEmpresa() : actualizarEmpresa()">
+                <br>
+
+                <fieldset class="border p-2 animated fadeIn">
+                    <p-skeleton height="2rem" styleClass="p-mb-2"></p-skeleton>
+                    <br><br>
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="form-group col-sm-12 mb-4">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                            <div class="form-group col-sm-12 mb-4">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                            <div class="container card-body p-text-right">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

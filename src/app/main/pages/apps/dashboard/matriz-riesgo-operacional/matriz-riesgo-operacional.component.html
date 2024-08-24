@@ -1,0 +1,93 @@
+<div style="height: 50px;" class="bg-light"></div>
+<div class="bg-light">
+  <div class="container pt-4 bg-white">
+    <div class="container sombraCards espacioBody pb-5">
+          <div class="row d-flex">
+            <div style="width: 4%">
+                <button pButton type="button" icon="pi pi-arrow-left" class="p-button-danger p-button-rounded"
+                        [routerLink]="['../menu']"></button>
+            </div>
+            <div style="width: 96%">
+                <h3 class="animated fadeIn fast" style="margin-bottom: -10px;">Dashboard/Matriz de Riesgo Operacional</h3>
+            </div>
+          </div>
+
+            <br>
+            <hr>
+
+            <app-headergraf (empresaChange)="empresaChange($event)" (periodoChange)="periodoChange($event)" (tipomatrizChange)="tipomatrizChange($event)"></app-headergraf>
+
+            <br>
+
+
+<!--<div style="height: 50px;" ></div>-->
+  <div class="pb-5">
+    <div class="container pt-2 bg-white mb-5">
+              <div class="container sombraCards espacioBody pb-5" *ngIf="ocultarTitulo">
+
+                 <div style="text-align:left;">
+
+                    <table style="margin: 0 auto;">
+                      <header>
+                        <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;">Cantidad de Riesgos</h3>
+                     </header>
+                        <tr >
+                            <td style="  border: 1px;">
+
+                               <app-piegraf [idEmpresa]="idEmpresa" [idPeriodo]="idPeriodo" [idTipoMatriz]="idTipoMatriz" [idMatriz]="idMatriz"></app-piegraf>
+
+                            </td>
+
+
+                       </tr>
+
+                       <tr>
+                        <td style="border: 1px;">
+                          <app-barr [idEmpresa]="idEmpresa" [idPeriodo]="idPeriodo" [idTipoMatriz]="idTipoMatriz" [idMatriz]="idMatriz"></app-barr>
+                        </td>
+                       </tr>
+                      </table>
+                  </div>
+              </div>
+
+              <div class="container sombraCards espacioBody pb-5" *ngIf="ocultarCumplimiento">
+                  <header>
+                    <h3 class="animated fadeIn fast mt-4">KRI: Cumplimiento de Planes de Acción</h3>
+                    <div class="cumplimiento" style="margin-bottom: -25px;"><b>Cumplimiento de planes de acción : <h1><p style="font-weight: bold;">{{ porcentaje }} </p></h1></b></div>
+                  </header>
+                  <td style="height: 30px;"></td>
+                    <table style="margin: 0 auto;">
+
+                        <tr >
+                          <td >
+                            <app-bargraf2 [isoperacional]="isoperacional" [idEmpresa]="idEmpresa" [idPeriodo]="idPeriodo"  [idTipoMatriz]="idTipoMatriz" [idMatriz]="idMatriz"></app-bargraf2>
+
+                          </td>
+                         
+                        </tr>
+                        <tr >
+
+
+                        </tr>
+                    </table>
+              </div>
+
+
+    </div>
+
+  </div>
+  </div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,52 @@
+<div class="container-fluid" style="margin-top: -55px;">
+    <p-button type="button" (click)="visibleSidebar1 = true"
+              [style]="{backgroundColor:'#CD202C', borderColor: '#FFFFFF'}"
+              icon="pi pi-bars"></p-button>
+</div>
+<p-sidebar [(visible)]="visibleSidebar1" [style]="{width:'17em', backgroundColor:'#CD202C'}" [showCloseIcon]="false">
+    <div class="mb-3 bg-light p-4">
+        <a [routerLink]="'/pages/main/menu'">
+            <img src="assets/imagenes/logoFonafe.png" style="max-width: 160px;" alt="logo-fonafe">
+        </a>
+    </div>
+    <div style="background-color: #CD202C; margin-top: 10px;">
+        <ul *ngFor="let opcion of listaOpciones">
+
+            <a [routerLink]="opcion.listaSubmenu.length == 0 ? opcion.rutaMenu : null" class="opciones">
+                <li (click)="opcion.listaSubmenu.length > 0 && mostrarSubmenu(opcion.idMenu)" class="mb-3 p-2">
+                    <i class="material-icons mr-2"
+                       style="margin-right: 10px; vertical-align: bottom">{{opcion.iconoMenu}}</i>
+                    {{ decode_utf8(opcion.nombreMenu) }}
+                </li>
+            </a>
+
+            <div *ngIf="opcion.listaSubmenu != []">
+                <div *ngFor="let subopcion of opcion.listaSubmenu" style="margin-left: -10px;">
+                    <ul *ngIf="submenu && opcionId === opcion.idMenu"
+                        class="secnav animate__animated animate__fadeIn"
+                        style="margin-left: 50px;">
+                        <div>
+                            <a [routerLink]="subopcion.rutaSubmenu" class="opciones">
+                                <li (click)="ocultarSubmenu()" class="mb-3 p-2" style="vertical-align: bottom; margin-left: 6px">
+                                    <i class="material-icons mr-2"
+                                       style="vertical-align: bottom">{{subopcion.iconoSubmenu}}</i>
+                                    {{ decode_utf8(subopcion.nombreSubmenu) }}
+                                </li>
+                            </a>
+                        </div>
+                    </ul>
+
+                </div>
+
+                <div>
+
+                </div>
+            </div>
+        </ul>
+
+    </div>
+</p-sidebar>
+<div class="bg-full">
+    <!-- <div class="text-center" style="padding: 20px;"><h4>{{payload.data.datosEmpresa.nombreCortoEmpresa}} - {{descripcionSede}}</h4></div> -->
+    <router-outlet></router-outlet>
+</div>

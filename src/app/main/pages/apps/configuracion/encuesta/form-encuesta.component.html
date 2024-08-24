@@ -1,0 +1,593 @@
+<div style="height: 50px;" class="bg-light"></div>
+<p-dialog [header]="preguntasList.listaPreguntas[preguntaIndex] == null ? 'Crear Pregunta' : 'Actualizar Pregunta'"
+    [(visible)]="popUpPregunta" [style]="{width: '60vw'}">
+    <div class="container">
+        <div class="row">
+            <form [formGroup]="formularioPregunta"
+                (ngSubmit)="preguntasList.listaPreguntas[preguntaIndex] == null ? agregarPreguntas() : actualizarPregunta()">
+
+                <div class="form-group col-sm-12 mb-4">
+                    <label for="grupoPregunta" class="mb-2">Grupo</label>
+                    <select class="form-select " id="grupoPregunta" aria-label="Default select example"
+                            formControlName="grupoPregunta" [class.is-invalid]="grupoPreguntaNoValido">
+                        <option value="" selected>Seleccione</option>
+                        <option *ngFor="let grupoPregunta of listaGrupoPregunta" [value]="grupoPregunta.idParametro">{{
+                            grupoPregunta.nombreParametro}}</option>
+                    </select>
+                    <label *ngIf="grupoPreguntaNoValido" id="validation-pregunta-error"
+                           class="error jquery-validation-error small form-text invalid-feedback">Seleccione el grupo de la
+                        pregunta</label>
+                </div>
+                <div class="form-group col-md-12 mb-2">
+                    <label for="idTipoPregunta" class="mb-2">Tipo Pregunta</label>
+                    <select class="form-select " id="idTipoPregunta" aria-label="Default select example"
+                        formControlName="idTipoPregunta" [class.is-invalid]="tipoPreguntaNoValido">
+                        <option value="" selected>Seleccione</option>
+                        <option *ngFor="let tipoPregunta of listaTipoPregunta" [value]="tipoPregunta.idParametro">{{
+                            tipoPregunta.nombreParametro}}</option>
+                    </select>
+                    <label *ngIf="tipoPreguntaNoValido" id="validation-pregunta-error"
+                        class="error jquery-validation-error small form-text invalid-feedback">Seleccione el tipo de
+                        pregunta</label>
+                </div>
+
+                <div class="form-group col-sm-12 mb-4">
+                    <label for="idPregunta" class="mb-2">Pregunta</label>
+                    <input type="text" class="form-control" formControlName="pregunta"
+                        [class.is-invalid]="preguntaNoValido" id="idPregunta" placeholder="Ingrese la pregunta"
+                        autocomplete="nope">
+                    <label *ngIf="preguntaNoValido" id="validation-pregunta-error"
+                        class="error jquery-validation-error small form-text invalid-feedback">Ingrese la
+                        pregunta</label>
+                </div>
+                <div class="form-group col-sm-12 mb-4">
+                    <label for="puntaje" class="mb-2">Puntaje</label>
+                    <input type="text" class="form-control" formControlName="puntaje"
+                        [class.is-invalid]="puntajeNoValido" id="puntaje" placeholder="Ingrese el puntaje"
+                        autocomplete="nope">
+                    <label *ngIf="puntajeNoValido" id="validation-pregunta-error"
+                        class="error jquery-validation-error small form-text invalid-feedback">Ingrese el
+                        puntaje</label>
+                </div>
+
+                <div class="form-group col-sm-12 mb-4">
+                    <label for="notaPregunta" class="mb-2">Nota</label>
+                    <input type="text" class="form-control" formControlName="notaPregunta"
+                           [class.is-invalid]="notaPreguntaNoValido" id="notaPregunta" placeholder="Ingrese la nota"
+                           autocomplete="nope">
+                    <label *ngIf="notaPreguntaNoValido" id="validation-notaPregunta-error"
+                           class="error jquery-validation-error small form-text invalid-feedback">Ingrese la
+                        nota</label>
+                </div>
+
+                <div class="form-group col-sm-12 mb-4" *ngIf="encuesta != null && editar == true && this.preguntasList.listaPreguntas[this.indicePreg].indicadorBaja == '0'">
+                    <label for="indicadorBaja" class="mb-2">Estado</label>
+                    <br>
+                    <p-inputSwitch (onChange)="obtenerValorEstado($event)" formControlName="indicadorEstadoPreg"
+                        [(ngModel)]="indicadorEstadoPreg"></p-inputSwitch>
+                </div>
+
+                <div class="container card-body p-text-right" style="margin-left: -15px;">
+                    <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                        *ngIf="preguntasList.listaPreguntas[preguntaIndex] == null">Crear
+                    </button>
+                    <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                        *ngIf="preguntasList.listaPreguntas[preguntaIndex] != null">Actualizar
+                    </button>
+                    <button type="button" class="btn btn-danger" (click)="cerrarPopUp()">
+                        Cancelar
+                    </button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog [header]="listaRespuestas[respuestaIndex] == null ? 'Crear Respuesta' : 'Actualizar Respuesta'"
+    [(visible)]="popUpRespuesta" [style]="{width: '60vw'}">
+    <div class="container">
+        <div class="row">
+            <form [formGroup]="formularioRespuesta"
+                (ngSubmit)="listaRespuestas[respuestaIndex] == null ? agregarRespuesta() : actualizarRespuesta()">
+
+                <div class="form-group col-sm-12 mb-4">
+                    <label for="deRespuesta" class="mb-2">Respuesta</label>
+                    <input type="text" class="form-control" formControlName="deRespuesta"
+                        [class.is-invalid]="respuestaNoValido" id="deRespuesta" placeholder="Ingrese la respuesta"
+                        autocomplete="nope">
+                    <label *ngIf="respuestaNoValido" id="validation-pregunta-error"
+                        class="error jquery-validation-error small form-text invalid-feedback">Ingrese la
+                        Respuesta</label>
+                </div>
+
+                <div class="form-group col-sm-12 mb-4">
+                    <label for="idIndicadorAlternativa" class="mb-2">Indicador de alternativa correcta</label>
+                    <br>
+                    <p-inputSwitch (onChange)="obtenerValorCheck($event)" formControlName="indicadorAlternativa"
+                        [(ngModel)]="indicadorAlternativa"></p-inputSwitch>
+                </div>
+
+                <div class="form-group col-sm-12 mb-4" *ngIf="encuesta != null && editar == true && this.preguntasSel>-1 && this.mostrarEstado == true">
+                    <label for="indicadorBaja" class="mb-2">Estado</label>
+                    <br>
+                    <p-inputSwitch (onChange)="obtenerValorEstadoResp($event)" formControlName="indicadorEstadoResp"
+                        [(ngModel)]="indicadorEstadoResp"></p-inputSwitch>
+                </div>
+
+                <div class="container card-body p-text-right" style="margin-left: -15px;">
+                    <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                        *ngIf="listaRespuestas[respuestaIndex] == null">Crear
+                    </button>
+                    <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                        *ngIf="listaRespuestas[respuestaIndex] != null">Actualizar
+                    </button>
+                    <button type="button" class="btn btn-danger" (click)="cerrarPopUpRespuesta()">
+                        Cancelar
+                    </button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</p-dialog>
+
+
+<div class="bg-light pb-5">
+    <div class="container pt-2 bg-white mb-5">
+        <div class="container sombraCards espacioBody pb-5" *ngIf="!loading">
+            <div class="row d-flex">
+                <div style="width: 4%" class="mt-4">
+                    <button pButton type="button"
+                            icon="pi pi-arrow-left"
+                            class="p-button-danger p-button-rounded"
+                            [routerLink]="[encuesta == null ? '../':'../../']"
+                    ></button>
+                </div>
+                <div style="width: 96%">
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;"
+                        *ngIf="encuesta == null && editar == false">Configuración/Encuesta/Crear Encuesta
+                        </h3>
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;"
+                        *ngIf="encuesta != null && editar == true">Configuración/Encuesta/Actualizar Encuesta</h3>
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;"
+                        *ngIf="encuesta != null && editar == false">Configuración/Encuesta/Ver Encuesta</h3>
+                </div>
+            </div>
+            <hr>
+            <form [formGroup]="formularioEncuesta"
+                (ngSubmit)=" encuesta == null ? registrarEncuesta() : actualizarEncuesta()">
+                <br>
+
+                <fieldset class="border p-2 animated fadeIn">
+                    <!-- <legend class="w-auto" *ngIf="encuesta == null">&nbsp;Crear encuesta&nbsp;
+                    </legend>
+                    <legend class="w-auto" *ngIf="encuesta != null && editar == true">&nbsp;Actualizar encuesta
+                    </legend>
+                    <legend class="w-auto" *ngIf="encuesta != null && editar == false">&nbsp;Ver encuesta&nbsp;
+                    </legend>
+
+                    <br><br> -->
+                    <div class="container">
+
+                        <div class="p-fluid p-grid p-formgrid">
+                            <!-- <div class="p-field p-col-6">
+                                <label for="idEmpresa" class="mb-2">Empresa</label>
+                                <select class="form-select " id="idEmpresa" formControlName="idEmpresa"
+                                    (change)="onChangeEmpresa($event)" [class.is-invalid]="empresaNoValido">
+                                    <option value="">Seleccione</option>
+                                    <option *ngFor="let empresa of listaEmpresas" [value]="empresa.idEmpresa">{{
+                                        empresa.nombreCortoEmpresa}}</option>
+                                </select>
+                                <label *ngIf="empresaNoValido" id="validation-sistema-error"
+                                    class="error jquery-validation-error small form-text invalid-feedback">Seleccione
+                                    una empresa</label>
+                            </div>
+
+                            <div class="p-field p-col-6">
+                                <label for="idPeriodo" class="mb-2">Periodo</label>
+                                <select class="form-select " id="idPeriodo" formControlName="idPeriodo"
+                                    [class.is-invalid]="periodoNoValido">
+                                    <option value="">Seleccione</option>
+                                    <option *ngFor="let periodo of listaPeriodos" [value]="periodo.idPeriodo">{{
+                                        periodo.dePeriodo}}</option>
+                                </select>
+                                <label *ngIf="periodoNoValido" id="validation-sistema-error"
+                                    class="error jquery-validation-error small form-text invalid-feedback">Seleccione un
+                                    periodo</label>
+                            </div> -->
+                            <div class="p-field p-col-4">
+                                <div class="col-sm-6">
+                                    <label for="feEncuesta" class="mb-2">Fecha de inicio</label>
+                                </div>
+                                <p-calendar class="calendario" formControlName="feEncuesta" id="feEncuesta" dateFormat="dd/mm/yy"
+                                    [showIcon]="true" inputId="icon" (onSelect)="onSelectFechaEncuesta($event)" 
+                                    [class.is-invalid]="fechaEncuestaNoValido">
+                                </p-calendar>
+                                <label *ngIf="fechaEncuestaNoValido" id="validation-sistema-error"
+                                    class="error jquery-validation-error small form-text invalid-feedback">Seleccione
+                                    una fecha</label>
+                            </div>
+
+                            <div class="p-field p-col-4">
+                                <div class="col-sm-6">
+                                    <label for="feFinEncuesta" class="mb-2">Fecha de caducidad</label>
+                                </div>
+                                <p-calendar class="calendario" formControlName="feFinEncuesta" id="feFinEncuesta" dateFormat="dd/mm/yy"
+                                    [showIcon]="true" inputId="icon" (onSelect)="onSelectFechaFinEncuesta($event)"
+                                    [class.is-invalid]="fechaFinEncuestaNoValido">
+                                </p-calendar>
+                                <label *ngIf="fechaFinEncuestaNoValido" id="validation-sistema-error"
+                                    class="error jquery-validation-error small form-text invalid-feedback">Seleccione
+                                    una fecha</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-12 mb-3">
+                            <label for="tituloEncuesta" class="mb-2">Título</label>
+                            <input type="text" class="form-control" id="tituloEncuesta" placeholder="Ingrese el título"
+                                autocomplete="nope" formControlName="tituloEncuesta" [class.is-invalid]="tituloNoValido">
+                            <label *ngIf="tituloNoValido" id="validation-nombre-error"
+                                class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                             título de la encuesta válido</label>
+                        </div>
+
+                        <div class="form-group col-md-12 mb-3">
+                            <label for="subtituloEncuesta" class="mb-2">Subtítulo</label>
+                            <input type="text" class="form-control" id="subtituloEncuesta"
+                                placeholder="Ingrese el subtítulo" autocomplete="nope"
+                                formControlName="subtituloEncuesta" [class.is-invalid]="subtituloNoValido">
+                            <label *ngIf="subtituloNoValido" id="validation-nombre-error"
+                                class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                             subtítulo de la encuesta válido</label>
+                        </div>
+
+                        <div class="form-group col-md-12 mb-3">
+                            <label for="textoEncuesta" class="mb-2">Texto</label>
+                            <input type="text" class="form-control" id="textoEncuesta" placeholder="Ingrese el texto"
+                                autocomplete="nope" formControlName="textoEncuesta" [class.is-invalid]="textoNoValido">
+                            <label *ngIf="textoNoValido" id="validation-nombre-error"
+                                class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                             texto de la encuesta válido</label>
+                        </div>
+
+                        <div class="form-group col-md-12 mb-3">
+                            <label for="contTextoEncuesta" class="mb-2">Contenido Texto</label> <br>
+                            <textarea formControlName="contTextoEncuesta" pInputTextarea class="form-control"
+                                placeholder="Ingrese el contenido del texto"
+                                id="contTextoEncuesta" rows="5" [class.is-invalid]="contenidoTextoNoValido"></textarea>
+                            <label *ngIf="contenidoTextoNoValido" id="validation-texto-error"
+                                class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                el contenido del texto</label>
+                        </div>
+
+                        <div *ngIf="encuesta != null && editar == true && encuesta.indicadorBaja == 0" class="form-group col-sm-12 mb-3">
+                            <label for="idEstado" class="mb-2">Estado</label>
+                            <select formControlName="idEstado" class="form-select" id="idEstado"
+                                    (change)="onChangeEstado($event)">
+                                <option selected *ngFor="let estado of listaEstados"
+                                        [value]="estado.nombreParametro">{{ estado.deValor1}}</option>
+                            </select>
+                        </div>
+
+                        <div class="container card-body p-text-left">
+                            <button type="button" label="Añadir pregunta" pButton pRipple icon="pi pi-eye"
+                                class="p-button-secondary p-mr-2" onsubmit="return false;" [disabled]="encuesta != null && editar == false"
+                                (click)="mostrarPopUpAgregaPregunta()" pButton icon="pi pi-plus"></button>
+                        </div>
+
+                        <!-- Tabla para agregar las preguntas con alernativa -->
+                        <div class="container card-body">
+                            <div *ngIf="!loading">
+                                <p-table #dt1 [value]="listaPreguntas" [columns]="cols" dataKey="id" [rows]="5"
+                                    [showCurrentPageReport]="true" [rowsPerPageOptions]="[5,15,25]"
+                                    styleClass="p-datatable-responsive-demo p-datatable-gridlines" [paginator]="true"
+                                    currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros"
+                                    [globalFilterFields]="['dePregunta','puntaje','grupoPregunta', 'deTipoPregunta']">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <span class="p-input-icon-left p-ml-auto">
+                                                    <input pInputText type="text" class="form-control"
+                                                        (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                                        placeholder="Buscar" />
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="header" let-columns>
+                                        <tr>
+                                            <th class="text-center">
+                                                Selección
+                                            </th>
+                                            <th pSortableColumn="{{col.ordenadmiento}}" *ngFor="let col of columns"
+                                                class="{{col.headerClass}}">
+                                                {{col.header}}
+                                                <p-sortIcon field="{{col.ordenadmiento}}"></p-sortIcon>
+                                            </th>
+                                            <th class="text-center">
+                                                Acción
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex"
+                                        let-columns="columns">
+                                        <tr>
+                                            <td class="text-center">
+                                                <input *ngIf="listaPreguntas.length==1" type="checkbox"
+                                                    id="check{{rowIndex}}" (change)="selectPregunta(rowIndex,$event)">
+                                                <input *ngIf="listaPreguntas.length>1" type="checkbox"
+                                                    id="check{{rowIndex}}" (change)="selectPregunta(rowIndex,$event)">
+                                            </td>
+                                            <td *ngFor="let col of columns" class="{{col.class}}">
+                                                <span class="p-column-title"></span>
+                                                <span *ngIf="col.header == 'Estado'">{{rowData.indicadorBaja == 0 ? 'Inactivo' : 'Activo'}}</span>
+                                                <span *ngIf="col.header != 'Estado'">{{rowData[col.field]}}</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <button type="button" pButton pRipple icon="pi pi-pencil"
+                                                    class="p-button-rounded p-button-primary p-mr-2"
+                                                    onsubmit="return false;"
+                                                    *ngIf="(encuesta != null && editar == true)||encuesta == null"
+                                                    (click)="showPopUpPreguntaSel(rowIndex)"></button>
+                                                <button type="button" pButton pRipple icon="pi pi-trash"
+                                                    class="p-button-rounded p-button-danger" onsubmit="return false;"
+                                                    *ngIf="(encuesta != null && editar == true)||encuesta == null"
+                                                    (click)="eliminarPregunta(rowIndex)"></button>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="summary" class="mb-5">
+                                        <div class="p-d-flex p-ai-center p-jc-between">
+                                            En total hay
+                                            agregadas {{this.listaPreguntas ? this.listaPreguntas.length : 0 }}
+                                            preguntas.
+                                        </div>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="emptymessage">
+                                        <tr>
+                                            <td colspan="7">No se encontró ninguna pregunta.</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                            <!-- Skeleton -->
+                            <div *ngIf="loading">
+                                <p-table [value]="listaVacia" [columns]="cols"
+                                    styleClass="p-datatable-responsive-demo p-datatable-gridlines" [rows]="5"
+                                    [showCurrentPageReport]="true">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <span class="p-input-icon-left p-ml-auto">
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="header" let-columns>
+                                        <tr>
+                                            <th *ngFor="let col of columns" class="text-center">
+                                                {{col.header}}
+                                            </th>
+                                            <th class="text-center">
+                                                Acción
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                        <tr>
+                                            <td>
+                                                <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2">
+                                                </p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2">
+                                                </p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2">
+                                                </p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2">
+                                                </p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2">
+                                                </p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2">
+                                                </p-skeleton>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+
+                        </div>
+                        <!-- Tabla para agregar las preguntas con alernativa -->
+
+                        <div class="container card-body p-text-left" *ngIf="listaPreguntas.length>0">
+                            <button type="button" label="Añadir Respuesta" pButton pRipple icon="pi pi-eye"
+                                class="p-button-secondary p-mr-2" onsubmit="return false;" [disabled]="encuesta != null && editar == false"
+                                (click)="mostrarPopUpAgregaRespuesta()" pButton icon="pi pi-plus"></button>
+                        </div>
+
+                        <!-- Tabla para agregar las respuestas -->
+                        <div class="container card-body" *ngIf="listaPreguntas.length>0">
+                            <div *ngIf="!loading">
+                                <p-table #dt1 [value]="listaRespuestas" [columns]="colsRespuesta" dataKey="id"
+                                    [rows]="5" [showCurrentPageReport]="true" [rowsPerPageOptions]="[5,15,25]"
+                                    styleClass="p-datatable-responsive-demo p-datatable-gridlines" [paginator]="true"
+                                    currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros"
+                                    [globalFilterFields]="['deRespuesta','inAlternativa']">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <span class="p-input-icon-left p-ml-auto">
+                                                    <input pInputText type="text" class="form-control"
+                                                        (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                                        placeholder="Buscar" />
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="header" let-columns>
+                                        <tr>
+                                            <th pSortableColumn="{{col.ordenadmiento}}" *ngFor="let col of columns"
+                                                class="{{col.headerClass}}">
+                                                {{col.header}}
+                                                <p-sortIcon field="{{col.ordenadmiento}}"></p-sortIcon>
+                                            </th>
+                                            <th class="text-center">
+                                                Acción
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex"
+                                        let-columns="columns">
+                                        <tr>
+                                            <td *ngFor="let col of columns" class="{{col.class}}">
+                                                <span class="p-column-title"></span>
+                                                <span *ngIf="col.header == 'Estado'">{{rowData.indicadorBaja == 0 ? 'Inactivo' : 'Activo'}}</span>
+                                                <span *ngIf="col.header != 'Estado'">{{rowData[col.field]}}</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <button type="button" pButton pRipple icon="pi pi-pencil"
+                                                    class="p-button-rounded p-button-primary p-mr-2"
+                                                    onsubmit="return false;"
+                                                    *ngIf="(encuesta != null && editar == true)||encuesta == null"
+                                                    (click)="showPopUpRespuestaSel(rowIndex)"></button>
+                                                <button type="button" pButton pRipple icon="pi pi-trash"
+                                                    class="p-button-rounded p-button-danger"
+                                                    *ngIf="(encuesta != null && editar == true)||encuesta == null"
+                                                    (click)="eliminarRespuesta(rowIndex)"></button>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="summary" class="mb-5">
+                                        <div class="p-d-flex p-ai-center p-jc-between">
+                                            En total hay
+                                            agregadas {{this.listaRespuestas ? this.listaRespuestas.length : 0 }}
+                                            respuestas.
+                                        </div>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="emptymessage">
+                                        <tr>
+                                            <td colspan="4">No se encontró ninguna respuesta.</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                            <!-- Skeleton -->
+                            <div *ngIf="loading">
+                                <p-table [value]="listaVacia" [columns]="cols"
+                                    styleClass="p-datatable-responsive-demo p-datatable-gridlines" [rows]="5"
+                                    [showCurrentPageReport]="true">
+                                    <ng-template pTemplate="caption">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <span class="p-input-icon-left p-ml-auto">
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="header" let-columns>
+                                        <tr>
+                                            <th *ngFor="let col of columns" class="text-center">
+                                                {{col.header}}
+                                            </th>
+                                            <th class="text-center">
+                                                Acción
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                        <tr>
+                                            <td>
+                                                <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2">
+                                                </p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2">
+                                                </p-skeleton>
+                                            </td>
+                                            <td>
+                                                <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2">
+                                                </p-skeleton>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+
+                        </div>
+                        <!-- Tabla para agregar las Respuestas -->
+
+                        <div class="container card-body p-text-left" *ngIf="encuesta != null">
+                            <label for="linkEncuesta" class="mb-2">Link</label>
+                            <input type="text" class="form-control" id="linkEncuesta"
+                                   autocomplete="nope" formControlName="linkEncuesta" disabled="true">
+                        </div>
+
+                        <div class="container card-body p-text-right pt-5" style="margin-left: -15px;">
+                            <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                                *ngIf="encuesta == null">Crear
+                            </button>
+                            <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                                *ngIf="encuesta != null && editar == true">Actualizar
+                            </button>
+                            <button type="button" class="btn btn-danger" [routerLink]="['..']" *ngIf="encuesta == null">
+                                Cancelar
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                [routerLink]="['/pages','main','configuracion','encuesta']"
+                                *ngIf="encuesta != null">Cancelar
+                            </button>
+                        </div>
+                        <br>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+
+        <!--Skeleton -->
+        <div class="container sombraCards espacioBody" *ngIf="loading">
+            <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;">
+                <p-skeleton height="2rem" styleClass="p-mb-2"></p-skeleton>
+            </h3>
+
+            <br>
+            <hr>
+            <form [formGroup]="formularioEncuesta"
+                (ngSubmit)="encuesta == null ? registrarEncuesta() : actualizarEncuesta()">
+                <br>
+
+                <fieldset class="border p-2 animated fadeIn">
+                    <p-skeleton height="2rem" styleClass="p-mb-2"></p-skeleton>
+                    <br><br>
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="form-group col-sm-12 mb-4">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                            <div class="form-group col-sm-12 mb-4">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                            <div class="container card-body p-text-right">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

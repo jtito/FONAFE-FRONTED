@@ -1,0 +1,341 @@
+<div style="height: 50px;" class="bg-light"></div>
+<div class="bg-light">
+    <div class="container pt-2 bg-white">
+        <div class="container sombraCards espacioBody pb-5" *ngIf="!loading">
+            <div class="row d-flex">
+                <div style="width: 4%" class="mt-4">
+                    <button pButton type="button"
+                            icon="pi pi-arrow-left"
+                            class="p-button-danger p-button-rounded"
+                            [routerLink]="[responsable == null ? '../':'../../']"
+                    ></button>
+                </div>
+                <div style="width: 96%">
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;" *ngIf="responsable == null">Configuración/Usuario/Crear usuario</h3>
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;"
+                        *ngIf="responsable != null && editar == true">Configuración/Usuario/Actualizar Usuario</h3>
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;"
+                        *ngIf="responsable != null && editar == false">Configuración/Usuario/Ver Usuario</h3>
+                </div>
+            </div>
+            <hr>
+            <form [formGroup]="formularioResponsable"
+                  (ngSubmit)=" responsable == null ? registrarResponsable() : actualizarResponsable()">
+                <br>
+
+                <fieldset class="border p-2 animated fadeIn">
+                    <!-- <legend class="w-auto" *ngIf="responsable == null">&nbsp;Crear Responsable&nbsp;</legend>
+                    <legend class="w-auto" *ngIf="responsable != null && editar == true">&nbsp;Actualizar Responsable&nbsp;</legend>
+                    <legend class="w-auto" *ngIf="responsable != null && editar == false">&nbsp;Ver Responsable&nbsp;
+                    </legend>
+                    <br><br> -->
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="form-group col-md-12 mb-4">
+                                <label for="idCartera" class="mb-2">Cartera</label>
+                                <select formControlName="idCartera" class="form-select " id="idCartera"
+                                        aria-label="Default select example"
+                                        [class.is-invalid]="carteraNoValido" disabled="disabled">
+                                    <option value="" selected>Seleccione</option>
+                                    <option *ngFor="let cartera of listaCarteras"
+                                            [value]="cartera.idParametro">{{ cartera.nombreParametro  }}</option>
+                                </select>
+                                <label *ngIf="carteraNoValido" id="validation-sistema-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Seleccione
+                                    una cartera</label>
+                            </div>
+
+                            <div class="form-group col-md-12 mb-4">
+                                <label for="idEmpresa" class="mb-2">Empresa</label>
+                                <select formControlName="idEmpresa" class="form-select " id="idEmpresa"
+                                        aria-label="Default select example"
+                                        (change)="onChangeEmpresa($event)"
+                                        [class.is-invalid]="empresaNoValido">
+                                    <option value="" selected>Seleccione</option>
+                                    <option *ngFor="let op of listaEmpresa"
+                                            [value]="op.idEmpresa">{{ op.nombreCortoEmpresa  }}</option>
+                                </select>
+                                <label *ngIf="empresaNoValido" id="validation-sistema-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Seleccione
+                                    una empresa</label>
+                            </div>
+
+                            <div *ngIf="mostrarSede" class="form-group col-md-12 mb-4">
+                                <label for="idSede" class="mb-2">Sede</label>
+                                <select formControlName="idSede" class="form-select" id="idSede"
+                                        aria-label="Default select example"
+                                        [class.is-invalid]="sedeNoValido">
+                                    <option value="" selected>Seleccione</option>
+                                    <option *ngFor="let op of listaSede"
+                                            [value]="op.idSede">{{ op.descripcionSede }}</option>
+                                </select>
+                                <label *ngIf="sedeNoValido" id="validation-sistema-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Seleccione
+                                    una sede</label>
+                            </div>
+
+                            
+
+                            <div class="form-group col-sm-4 mb-4">
+                                <label for="idNombreResponsable" class="mb-2">Nombres</label>
+                                <input type="text" class="form-control" formControlName="nombre"
+                                       (keyup)="cambiarMayuscula($event)"
+                                       [class.is-invalid]="nombreNoValido"
+                                       id="idNombreResponsable" placeholder="Ingrese el nombre"
+                                       autocomplete="nope">
+                                <label *ngIf="nombreNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    el nombre del usuario válido</label>
+                            </div>
+
+                            <div class="form-group col-sm-4 mb-4">
+                                <label for="idApePaterno" class="mb-2">Apellido Paterno</label>
+                                <input type="text" class="form-control" formControlName="apellidoPaterno"
+                                       [class.is-invalid]="apellidoPaternoNoValido"
+                                       (keyup)="cambiarMayuscula($event)"
+                                       id="idApePaterno" placeholder="Ingrese el apellido paterno"
+                                       autocomplete="nope">
+                                <label *ngIf="apellidoPaternoNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    el apellido paterno del usuario válido</label>
+                            </div>
+
+                            <div class="form-group col-sm-4 mb-4">
+                                <label for="idApeMaterno" class="mb-2">Apellido Materno</label>
+                                <input type="text" class="form-control" formControlName="apellidoMaterno"
+                                       [class.is-invalid]="apellidoMaternoNoValido"
+                                       (keyup)="cambiarMayuscula($event)"
+                                       id="idApeMaterno" placeholder="Ingrese el apellido materno"
+                                       autocomplete="nope">
+                                <label *ngIf="apellidoMaternoNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    el apellido materno del usuario válido</label>
+                            </div>
+                            
+                            <div class="form-group col-sm-4 mb-4">
+                                <label for="idDniResponsable" class="mb-2">DNI</label>
+                                <input type="text" class="form-control" formControlName="dni"
+                                       [class.is-invalid]="dniNoValido"
+                                       id="idDniResponsable" placeholder="Ingrese el DNI"
+                                       autocomplete="nope" maxlength="20">
+                                <label *ngIf="dniNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    el DNI del usuario válido</label>
+                            </div>
+
+                            <div class="form-group col-sm-4 mb-4">
+                                <label for="idPerfil" class="mb-2">Perfil</label>
+                                <select formControlName="idPerfil" class="form-select" id="idPerfil"
+                                        [class.is-invalid]="idPerfilNoValido"
+                                        (change)="onChangePerfil($event)">
+                                    <option value="" selected>Seleccione</option>
+                                    <option selected *ngFor="let perfil of listaPerfiles"
+                                            [value]="perfil.idPerfil">{{ perfil.descripcionPerfil}}</option>
+                                </select>
+                                <label *ngIf="idPerfilNoValido" id="validation-idPerfil-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Seleccione
+                                    el perfil</label>
+                            </div>
+
+                            <div *ngIf="mostrarResponsabilidad" class="form-group col-sm-4 mb-4">
+                                <label for="idResponsabilidad" class="mb-2">Responsabilidad</label>
+                                <select formControlName="idResponsabilidad" class="form-select" id="idResponsabilidad"
+                                        [class.is-invalid]="idResponsabilidadNoValido">
+                                    <option value="" selected>Seleccione</option>
+                                    <option selected *ngFor="let responsabilidad of listaResponsabilidades"
+                                            [value]="responsabilidad.idParametro">{{ responsabilidad.nombreParametro}}</option>
+                                </select>
+                                <label *ngIf="idResponsabilidadNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Seleccione
+                                    el tipo de responsabilidad</label>
+                            </div>
+
+                            <div class="form-group col-sm-4 mb-4">
+                                <label for="idCargo" class="mb-2">Cargo</label>
+                                <input type="text" class="form-control" formControlName="idCargo"
+                                       (keyup)="cambiarMayuscula($event)"
+                                       [class.is-invalid]="idCargoNoValido"
+                                       id="idCargo" placeholder="Ingrese el cargo"
+                                       autocomplete="nope">
+                                <label *ngIf="idCargoNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    el cargo del usuario válido</label>
+                            </div>
+
+<!-- 
+                            <div class="form-group col-sm-4 mb-4">
+                                <label for="idpassword" class="mb-2">Contraseña para ingresar a la plataforma</label>
+                                <input type="password" class="form-control" formControlName="password"
+                                       [class.is-invalid]="passwordNoValido"
+                                       id="idpassword" placeholder="Ingrese la contraseña"
+                                       autocomplete="nope" tooltipPosition="bottom"
+                                       pTooltip="Sugerencia:
+                                       - Mínimo 8 caracteres
+                                       - Minúsculas y mayúsculas
+                                       - Numérico y caracteres especiales">
+                                <label *ngIf="passwordNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    la contraseña del usuario válido</label>
+                            </div> -->
+
+                            <!-- <div class="form-group col-sm-1 mb-4">
+                                <label for="prefijoTelefono" class="mb-2">Prefijo</label>
+                                <input type="text" class="form-control" formControlName="prefijoTelefono"
+                                       [class.is-invalid]="prefijoTelefonoNoValido"
+                                       id="prefijoTelefono" autocomplete="nope"
+                                       tooltipPosition="bottom"
+                                       pTooltip="Ejemplo: +51">
+                                <label *ngIf="prefijoTelefonoNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    el prefijo del teléfono válido</label>
+                            </div> -->
+
+                            <div class="form-group col-sm-4 mb-4">
+                                <label for="numeroTelefono" class="mb-2">Teléfono</label>
+                                <input type="number" class="form-control" formControlName="numeroTelefono"
+                                       [class.is-invalid]="numeroTelefonoNoValido"
+                                       id="numeroTelefono" placeholder="Ingrese el número de teléfono"
+                                       pTooltip="Ejemplo: (084) - 233700" tooltipPosition="bottom"
+                                       autocomplete="nope">
+                                <label *ngIf="numeroTelefonoNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    el teléfono válido</label>
+                            </div>
+
+                            <div class="form-group col-sm-4 mb-4">
+                                <label for="anexo" class="mb-2">Anexo</label>
+                                <input type="number" class="form-control" formControlName="anexo"
+                                       [class.is-invalid]="anexoNoValido"
+                                       id="anexo" placeholder="Ingrese el número de anexo"
+                                       autocomplete="nope">
+                                <label *ngIf="anexoNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    el anexo válido</label>
+                            </div>
+
+                            <div class="form-group col-sm-4 mb-4">
+                                <label for="celular" class="mb-2">Celular</label>
+                                <input type="number" class="form-control" formControlName="celular"
+                                       [class.is-invalid]="celularNoValido"
+                                       id="celular" placeholder="Ingrese el número de celular"
+                                       autocomplete="nope">
+                                <label *ngIf="celularNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    el número de celular válido</label>
+                            </div>
+                            
+                            <div class="form-group col-sm-4 mb-4">
+                                <label for="idCorreoResponsable" class="mb-2">Correo</label>
+                                <input type="email" class="form-control" formControlName="correo"
+                                       [class.is-invalid]="correoNoValido"
+                                       id="idCorreoResponsable" placeholder="Ingrese el correo"
+                                       autocomplete="nope">
+                                <label *ngIf="correoNoValido" id="validation-nombre-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    el correo del usuario válido</label>
+                            </div>
+
+                            <div *ngIf="mostrarCorreoJefe" class="form-group col-sm-4 mb-4">
+                                <label for="idCorreoJefe" class="mb-2">Correo jefe inmediato</label>
+                                <input type="email" class="form-control" formControlName="correoJefe"
+                                       id="idCorreoJefe" placeholder="Ingrese el correo del jefe inmediato"
+                                       autocomplete="nope" [class.is-invalid]="correoJefeNoValido">
+                                <label *ngIf="correoJefeNoValido" id="validation-correoJefe-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Ingrese
+                                    un correo válido</label>
+                            </div>
+
+                            <div *ngIf="mostrarProceso" class="form-group col-sm-12 mb-12">
+                                <label for="nombreProceso" class="mb-2">Proceso</label><br>
+                                <p-multiSelect
+                                    id="nombreProceso"
+                                    optionLabel="deProceso"
+                                    placeholder="Seleccione"
+                                    [options]="listaProceso"
+                                    formControlName="listaProcesos"
+                                    class="multiselect-custom"
+                                    [class.is-invalid]="listaProcesosNoValido"
+                                    [style]="{'width':'100%'}"
+                                    emptyMessage="No se encontraron resultados"
+                                    emptyFilterMessage="{{mensajeFiltroVacio}}"
+                                    defaultLabel="Seleccione un proceso">
+                                </p-multiSelect>
+                                <label *ngIf="listaProcesosNoValido" id="validation-listaProcesos-error"
+                                       class="error jquery-validation-error small form-text invalid-feedback">Este
+                                    campo es obligatorio</label>
+                            </div>
+
+                            <div *ngIf="responsable != null && editar == true && responsable.indicadorBaja == 0"
+                                 class="form-group col-sm-12  mb-4">
+                                <label for="idEstado" class="mb-2">Estado</label>
+                                <select formControlName="idEstado" class="form-select" id="idEstado"
+                                        (change)="onChangeEstado($event)">
+                                    <option selected *ngFor="let estado of listaEstados"
+                                            [value]="estado.nombreParametro">{{ estado.deValor1}}</option>
+                                </select>
+                            </div>
+
+
+                            <div class="form-group mt-2" *ngIf="idUser">
+                                <app-img-upload [idUser]="idUser" [fileModel]="fileModel"></app-img-upload>
+                            </div>
+
+                            <div class="container card-body p-text-right" style="margin-left: -15px;">
+                                <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                                        *ngIf="responsable == null && showButtonSave">Crear
+                                </button>
+                                <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+                                        *ngIf="responsable != null && editar == true">Actualizar
+                                </button>
+                                <button type="button" class="btn btn-danger" [routerLink]="['..']"
+                                        *ngIf="responsable == null">
+                                    {{cancelButtonText}}
+                                </button>
+                                <button type="button" class="btn btn-danger"
+                                        [routerLink]="['/pages','main','configuracion','responsable']"
+                                        *ngIf="responsable != null">{{cancelButtonText}}
+                                </button>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+
+        <!--Skeleton -->
+        <div class="container sombraCards espacioBody" *ngIf="loading">
+            <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;">
+                <p-skeleton height="2rem" styleClass="p-mb-2"></p-skeleton>
+            </h3>
+
+            <br>
+            <hr>
+            <form [formGroup]="formularioResponsable"
+                  (ngSubmit)=" responsable == null ? registrarResponsable() : actualizarResponsable()">
+                <br>
+
+                <fieldset class="border p-2 animated fadeIn">
+                    <p-skeleton height="2rem" styleClass="p-mb-2"></p-skeleton>
+                    <br><br>
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="form-group col-sm-12 mb-4">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                            <div class="form-group col-sm-12 mb-4">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                            <div class="container card-body p-text-right">
+                                <p-skeleton height="3rem" styleClass="p-mb-2"></p-skeleton>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

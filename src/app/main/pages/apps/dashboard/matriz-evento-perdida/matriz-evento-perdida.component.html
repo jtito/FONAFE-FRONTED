@@ -1,0 +1,102 @@
+<div style="height: 50px;" class="bg-light"></div>
+<div class="bg-light">
+  <div class="container pt-4 bg-white">
+    <div class="container sombraCards espacioBody pb-5">
+
+          <div class="row d-flex">
+            <div style="width: 4%">
+                <button pButton type="button" icon="pi pi-arrow-left" class="p-button-danger p-button-rounded"
+                        [routerLink]="['../menu']"></button>
+            </div>
+            <div style="width: 96%">
+                <h3 class="animated fadeIn fast" style="margin-bottom: -10px;">Dashboard/Matriz de Eventos de Pérdida</h3>
+            </div>
+          </div>
+           
+            <br>
+            <hr>
+
+            <app-headergraf2 (empresaChange)="empresaChange($event)" (periodoChange)="periodoChange($event)"></app-headergraf2>
+
+            <br>
+
+          <div class="container pt-2 bg-white mb-3" *ngIf="ocultarTitulo">
+
+            <header>
+              <h3 class="animated fadeIn" style="margin-bottom: -10px;">Cantidad de Eventos de Perdida (S/.)</h3>
+           </header>
+           <div style="text-align:center;" >
+              <table style="margin: 0 auto;">
+                <tr>
+                    <td style="width: 500px;  border: 1px;margin-bottom: 90px;">
+
+                    <app-bargrafevento  #chart4 [idEmpresa]="idEmpresa" [idPeriodo]="idPeriodo"></app-bargrafevento>
+
+                    </td>
+
+                    <td style="width: 200px;  border: 1px; margin-bottom: 250px;">
+                      <!--<div class="caja-frecuencia">Frecuencia Trimestral</div>  -->
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <td style="height: 10px;"></td>
+
+          <div class="container pt-2 bg-white mb-5" *ngIf="ocultarCumplimiento">
+
+              <header>
+                  <h3 class="animated fadeIn fast mt-4" style="margin-bottom: 10px;">KRI: Cumplimiento de Reporte</h3>
+              </header>
+            <table style="margin: 0 auto;">
+
+                <!--<div class="selector">Selector por trimestre:</div>-->
+
+              <tr colspan=2>
+                <td>
+                  <app-piegrafevento #chart5 [idEmpresa]="idEmpresa" [idPeriodo]="idPeriodo"></app-piegrafevento>
+
+                </td>
+                <td style="width: 150px;  border: 1px;">
+
+                  <div class="cumplimiento container mt-3 col-md-4"><b>Cumplimiento de reporte : <h1>{{ porcentaje }} </h1></b></div>
+
+                </td>
+              </tr>
+              </table>
+          </div>
+              <td style="height: 5px;"></td>
+
+          <div class="container pt-2 bg-white mb-5" *ngIf="ocultarVolicimetro">
+
+            <table style="margin: 0 auto;">
+              <tr>
+
+                <td style="text-align: center;">
+                  <header>
+                  <h3  class="animated fadeIn fast mt-4" >Velocímetro de Pérdidas</h3>
+                </header>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <app-gaugegraf #chart6 [idEmpresa]="idEmpresa" [idPeriodo]="idPeriodo"></app-gaugegraf>
+                </td>
+              </tr>
+            </table>
+
+          </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,184 @@
+p {
+    font-family: Lato;
+  }
+  header {
+    background:#fff;
+    border: 1px solid white;
+    color: #233a5b;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    padding: 0.25rem;
+    font-size: 1.25rem;
+    margin: 0.75rem;
+    border-radius: 1rem;
+  }
+  h3,h4 {
+    margin: 0;
+  }
+  
+  
+  :host ::ng-deep {
+    .p-datatable-responsive-demo .p-datatable-tbody > tr > td .p-column-title {
+        display: none;
+    }
+  }
+  
+  .form-select-hide {
+    border: 0px solid #ced4da;border-radius: .25rem;background-image:url();background-color: white;
+  }
+  
+  .formatmat1{
+  
+    width: 15rem;
+    /* position: absolute; */
+    position: absolute;
+    /* width: 5
+  em
+  ; */
+    /* left: 0; */
+    top: auto;
+    border-top-width: 1px;
+    margin-top: -1px;
+  }
+  
+  .formatmat2{
+  
+    width: 15rem;
+    /* position: absolute; */
+    position: absolute;
+    /* width: 5
+  em
+  ; */
+    /* left: 0; */
+    top: auto;
+    border-top-width: 1px;
+    margin-top: -1px;
+  }
+  
+  .formatmat3{
+  
+    width: 15rem;
+    /* position: absolute; */
+    position: absolute;
+    /* width: 5
+  em
+  ; */
+    left:20; 
+    top: auto;
+    border-top-width: 1px;
+    margin-top: -1px;
+  }
+  
+  .formatmat4{
+  
+    width: 15rem;
+    /* position: absolute; */
+    position: absolute;
+    /* width: 5em
+  ; */
+    top: 0; 
+    left: 15rem;
+    top: auto;
+    border-top-width: 1px;
+    margin-top: -1px;
+  }
+  
+  //  .container{
+  //     box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  //  }
+  
+  
+  .circle {
+    width: 500px;
+    height: 500px;
+    line-height: 500px;
+    border-radius: 50%;
+    font-size: 50px;
+    color: #fff;
+    text-align: center;
+    background: red;
+  }
+  @media screen and (max-width: 65rem) {
+    :host ::ng-deep {
+        .p-datatable {
+            &.p-datatable-responsive-demo {
+                .p-datatable-thead > tr > th,
+                .p-datatable-tfoot > tr > td {
+                    display: none !important;
+                }
+  
+                .p-datatable-tbody > tr > td {
+                    //text-align: left;
+                    text-align-last: left;
+                    display: block;
+                    width: 100%;
+                    float: left;
+                    clear: left;
+                    border: 0 none;
+  
+                    .p-column-title {
+                        padding: 0.4rem;
+                        min-width: 30%;
+                        display: inline-block;
+                        margin: -0.4em 1em -0.4em -0.4rem;
+                        font-weight: bold;
+                    }
+  
+                    &:last-child {
+                        border-bottom: 1px solid var(--surface-d);
+                    }
+                }
+            }
+        }
+    }
+  }
+  
+  .color-inactivo {
+    color: #ADAAA8; 
+  }
+  
+  
+  .static-table {
+    border: none;
+    border-right: solid 1px #DDEFEF;
+    border-collapse: separate;
+    border-spacing: 0;
+    font: normal 13px Arial, sans-serif;
+  }
+  .static-table thead th {
+    background-color: #DDEFEF;
+    border: none;
+    color: #336B6B;
+    padding: 10px;
+    text-align: left;
+    text-shadow: 1px 1px 1px #fff;
+    white-space: nowrap;
+  }
+  .static-table tbody td {
+    border-bottom: solid 1px #DDEFEF;
+    color: #333;
+    padding: 10px;
+    text-shadow: 1px 1px 1px #fff;
+    white-space: nowrap;
+  }
+  .static-wrapper {
+    position: relative;
+  }
+  .static-scroller {
+    margin-left: 141px;
+    overflow-x: scroll;
+    overflow-y: visible;
+    padding-bottom: 5px;
+    width: 300px;
+  }
+  .static-table .static-sticky-col {
+    border-left: solid 1px #DDEFEF;
+    border-right: solid 1px #DDEFEF;
+    left: 0;
+    position: absolute;
+    top: auto;
+    width: 8rem;
+  }
+  
