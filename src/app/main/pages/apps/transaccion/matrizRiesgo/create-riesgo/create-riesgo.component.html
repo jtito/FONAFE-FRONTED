@@ -1,144 +1,244 @@
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+
 <div class="bg-light pb-5">
     <div class="container matriz-amplitud pt-2 bg-white mb-5">
-        <div class="container matriz-amplitud sombraCards espacioBody pb-5" >
+        <div class="container matriz-amplitud sombraCards espacioBody pb-5">
             <div class="row d-flex">
-               
                 <div style="width: 96%">
-                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;" >
-                        Crear Matriz de Riesgo Operacional</h3>
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;">
+                        Crear Matriz de Riesgo Operacional
+                    </h3>
                 </div>
             </div>
             <hr>
             <br>
             <fieldset class="border p-2 animated fadeIn">
-
-            <form id="formMatriz" >
-
+                <form [formGroup]="matrizForm" (ngSubmit)="onSubmit()">
                     <div class="container matriz-amplitud">
                         <div class="row">
-
+                            <!-- Campos del formulario -->
                             <div class="form-group col-md-4 mb-4">
-                                <label for="inputCartera" class="mb-2">Tipo matriz</label>
-                                <select class="form-select" id="inputCartera" disabled
-                                        formControlName="cartera" >
+                                <label for="inputCartera" class="mb-2">Tipo Matriz</label>
+                                <select class="form-select" id="inputCartera" formControlName="tipoMatriz">
                                     <option value="" selected>Seleccione</option>
-                                    
-                                </select>
+                                    <option value="tipo1">Tipo 1</option>
+                                    <option value="tipo2">Tipo 2</option>
+                                    <!-- Más opciones -->
+                                  </select>
                             </div>
 
                             <div class="form-group col-md-4 mb-4">
-                                <label for="inputEmpresa" class="mb-2">Area ó Gerencia</label>
-                                <select class="form-select " id="inputEmpresa"  aria-label="Default select example"
-                                        formControlName="empresa"  >
+                                <label for="inputEmpresa" class="mb-2">Área o Gerencia</label>
+                                <select class="form-select" id="inputEmpresa" formControlName="areaGerencia">
                                     <option value="" selected>Seleccione</option>
-                                    
-                                </select>
+                                    <option value="gerencia1">Gerencia 1</option>
+                                    <option value="gerencia2">Gerencia 2</option>
+                                    <!-- Más opciones -->
+                                  </select>
                             </div>
 
                             <div class="form-group col-md-4 mb-4">
                                 <label for="inputSede" class="mb-2">Proceso</label>
-                                <select class="form-select" id="inputSede" 
-                                        formControlName="sede"  >
+                                <select class="form-select" id="inputSede" formControlName="proceso">
                                     <option value="" selected>Seleccione</option>
-                                   
-                                </select>
-                              
+                                    <option value="proceso1">Proceso 1</option>
+                                    <option value="proceso2">Proceso 2</option>
+                                    <!-- Más opciones -->
+                                  </select>
                             </div>
 
                             <div class="form-group col-md-4 mb-4">
-                                <label for="inputPeridoo" class="mb-2">Codigo de Riesgo</label>
-                                <select class="form-select" id="inputPeridoo">
+                                <label for="inputPeridoo" class="mb-2">Código de Riesgo</label>
+                                <select class="form-select" id="inputPeridoo" formControlName="codigoRiesgo">
                                     <option value="" selected>Seleccione</option>
-                                    
-                                </select>
-                               
-                            </div>
-                            
-                            <div class="form-group col-md-4 mb-4">
-                                <label class="mb-2"></label>
-                            </div>
-                            <div class="form-group col-md-4 mb-4">
-                                <label class="mb-2"></label>
+                                    <option value="codigo1">Código 1</option>
+                                    <option value="codigo2">Código 2</option>
+                                  </select>
                             </div>
 
                             <div class="form-group col-md-4 mb-4">
-                                <label for="idTipoMatriz" class="mb-2">Atributos de riesgo</label>
-                                <select formControlName="idTipoMatriz" class="form-select" id="idTipoMatriz" >
+                                <label for="idTipoMatriz" class="mb-2">Atributos de Riesgo</label>
+                                <select class="form-select" id="idTipoMatriz" formControlName="atributosRiesgo">
                                     <option value="" selected>Seleccione</option>
-                                    
-                                </select>
-                             
+                                    <option value="atributo1">Atributo 1</option>
+                                    <option value="atributo2">Atributo 2</option>
+                                  </select>
+                            </div>
+
+                            <div class="form-group col-md-6 mb-4">
+                                <label for="txtCausa" class="mb-2">Causa</label>
+                                <input type="text" class="form-control" id="txtCausa" formControlName="causa" placeholder="Escriba la causa">
+                            </div>
+
+                            <div class="form-group col-md-6 mb-4">
+                                <label for="txtConsecuencia" class="mb-2">Consecuencia</label>
+                                <input type="text" class="form-control" id="txtConsecuencia" formControlName="consecuencia" placeholder="Escriba la consecuencia">
+                            </div>
+
+                            <div class="form-group col-md-12 mb-4">
+                                <label for="txtDescripcionRiesgo" class="mb-2">Descripción de Riesgo</label>
+                                <textarea class="form-control" id="txtDescripcionRiesgo" formControlName="descripcionRiesgo" rows="3" placeholder="Escriba la descripción del riesgo"></textarea>
                             </div>
 
                             <div class="form-group col-md-4 mb-4">
-                                <label for="inputMatrizNivel" class="mb-2">Tipo Matriz</label>
-                                <select formControlName="idMatrizNivel" class="form-select" disabled id="inputMatrizNivel" aria-label="Default select example"
-                                       >
+                                <label for="selectOrigen" class="mb-2">Origen</label>
+                                <select class="form-select" id="selectOrigen" formControlName="origen">
                                     <option value="" selected>Seleccione</option>
-                                    
+                                    <option value="origen1">Origen 1</option>
+                                    <option value="origen2">Origen 2</option>
                                 </select>
                             </div>
 
-                             <div 
-                                 class="form-group col-md-4  mb-4">
-                                <label for="idEstado" class="mb-2">Estado</label>
-                                <select formControlName="idEstado" class="form-select" id="idEstado"
-                                        >
-                                    
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="txtAgente" class="mb-2">Agente</label>
+                                <input type="text" class="form-control" id="txtAgente" formControlName="agente" placeholder="Escriba el agente">
+                            </div>
+
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="selectFrecuencia" class="mb-2">Frecuencia</label>
+                                <select class="form-select" id="selectFrecuencia" formControlName="frecuencia">
+                                    <option value="" selected>Seleccione</option>
+                                    <option value="baja">Baja</option>
+                                    <option value="media">Media</option>
+                                    <option value="alta">Alta</option>
                                 </select>
                             </div>
 
-                           
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="selectTipo" class="mb-2">Tipo</label>
+                                <select class="form-select" id="selectTipo" formControlName="tipo">
+                                    <option value="" selected>Seleccione</option>
+                                    <option value="tipo1">Tipo 1</option>
+                                    <option value="tipo2">Tipo 2</option>
+                                </select>
+                            </div>
 
-                            <div class="container card-body p-text-left">
-
-                               
-                                <button type="button" label="Añadir" pButton pRipple icon="pi pi-eye"
-                                        class="p-button-secondary p-mr-2"  pButton icon="pi pi-plus" ></button>
-
-                                <input #f1 type="file" style="display: none;">
-
-                                <button type="button" label="Importar" pButton pRipple icon="pi pi-eye" 
-                                        class="p-button-secondary p-mr-2" 
-                                       pButton icon="pi pi-plus"></button>
-                                
-                            
-
-                                <button type="button" label="Cargar Matriz de periodo anterior" pButton pRipple icon="pi"
-                                        class="p-button-secondary p-mr-2" style="float: right;"
-                                         pButton ></button>
-                            
-                                <button type="button" label="Formato Entidad" pButton pRipple icon="pi pi-file-excel" 
-                                        class="p-button-secondary p-mr-2" style="float: right;"
-                                       ></button>
-
-                               
-
-                               
-                                
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="selectSubtipo" class="mb-2">Sub tipo</label>
+                                <select class="form-select" id="selectSubtipo" formControlName="subtipo">
+                                    <option value="" selected>Seleccione</option>
+                                    <option value="subtipo1">Subtipo 1</option>
+                                    <option value="subtipo2">Subtipo 2</option>
+                                </select>
                             </div>
 
 
-                            <!-- Tabla de matriz de riesgo-->
-
-
+                            <div class="form-group col-md-12 mb-4">
+                                <label for="txtAdicional" class="mb-2">Asociar al Riesgo</label>
+                                <div class="d-flex mb-2">
+                                    <button type="button" class="btn btn-primary me-2" id="btnAsociarRiesgo">Consultar</button>
+                                </div>
+                                <textarea class="form-control" id="txtAdicional" formControlName="adicional" rows="3" placeholder="Escriba más información aquí"></textarea>
+                            </div>
+                            <div class="form-group col-md-4 mb-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">AGREGAR</button>
+                            </div>
                         </div>
                         <br>
                     </div>
-
-            </form>
-
+                </form>
 
 
-        </fieldset>
+                <div class="table-container">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <!-- <th>Tipo Matriz</th>
+                                <th>Área o Gerencia</th>
+                                <th>Proceso</th>
+                                <th>Código de Riesgo</th>
+                                <th>Atributos de Riesgo</th> -->
+                                <th>Causa</th>
+                                <th>Consecuencia</th>
+                                <th>Descripción de Riesgo</th>
+                                <th>Origen</th>
+                                <th>Agente</th>
+                                <th>Frecuencia</th>
+                                <th>Tipo</th>
+                                <th>Subtipo</th>
 
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr *ngFor="let item of matrizData; let i = index">
+
+                                    <td>{{ i + 1 }}</td>
+                              <!-- <td>
+                                <span *ngIf="!editIndex[i]">{{ item.tipoMatriz }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.tipoMatriz" />
+                              </td>
+                              <td>
+                                <span *ngIf="!editIndex[i]">{{ item.areaGerencia }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.areaGerencia" />
+                              </td>
+                              <td>
+                                <span *ngIf="!editIndex[i]">{{ item.proceso }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.proceso" />
+                              </td>
+                              <td>
+                                <span *ngIf="!editIndex[i]">{{ item.codigoRiesgo }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.codigoRiesgo" />
+                              </td>
+                              <td>
+                                <span *ngIf="!editIndex[i]">{{ item.atributosRiesgo }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.atributosRiesgo" />
+                              </td> -->
+                              <td>
+                                <span *ngIf="!editIndex[i]">{{ item.causa }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.causa" />
+                              </td>
+                              <td>
+                                <span *ngIf="!editIndex[i]">{{ item.consecuencia }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.consecuencia" />
+                              </td>
+                              <td>
+                                <span *ngIf="!editIndex[i]">{{ item.descripcionRiesgo }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.descripcionRiesgo" />
+                              </td>
+                              <td>
+                                <span *ngIf="!editIndex[i]">{{ item.origen }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.origen" />
+                              </td>
+                              <td>
+                                <span *ngIf="!editIndex[i]">{{ item.agente }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.agente" />
+                              </td>
+                              <td>
+                                <span *ngIf="!editIndex[i]">{{ item.frecuencia }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.frecuencia" />
+                              </td>
+                              <td>
+                                <span *ngIf="!editIndex[i]">{{ item.tipo }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.tipo" />
+                              </td>
+                              <!-- <td>
+                                <span *ngIf="!editIndex[i]">{{ item.subtipo }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.subtipo" />
+                              </td> -->
+                              <td>
+                                <span *ngIf="!editIndex[i]">{{ item.adicional }}</span>
+                                <input *ngIf="editIndex[i]" [(ngModel)]="item.adicional" />
+                              </td>
+
+                              <td>
+                                <button type="button" class="btn btn-warning btn-sm" *ngIf="!editIndex[i]" (click)="editarFila(i)">
+                                  <i class="bi bi-pencil"></i>
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm" *ngIf="editIndex[i]" (click)="guardarFila(i)">
+                                  <i class="bi bi-check-lg"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+
+                    </table>
+                </div>
+            </fieldset>
             <br>
-
-            <!-- Tabla de matriz de riesgo-->
-
         </div>
-
-
-    
     </div>
 </div>
