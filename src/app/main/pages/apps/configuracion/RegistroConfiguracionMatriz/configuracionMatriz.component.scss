@@ -1,0 +1,12 @@
+input[type="radio"] {
+    &:checked {
+      background-color: #dc3545;
+      border-color: none;
+      box-shadow: 0 0 0 1px #dc3545;
+    }
+  
+    &::before {
+      background-color: #dc3545;
+    }
+  }
+  

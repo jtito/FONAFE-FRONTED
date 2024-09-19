@@ -45,6 +45,10 @@ const routes: Routes = [
     {
         path: 'notificacionCorreo',
         loadChildren: () => import('./notificacionCorreo/notificacionCorreo.module').then(m => m.notificacionCorreoModule)
+    },
+    {
+        path: 'configuracionMatriz',
+        loadChildren: () => import('./RegistroConfiguracionMatriz/configuracionMatriz.module').then(m => m.ConfiguracionMatrizModule)
     }
 ];
 

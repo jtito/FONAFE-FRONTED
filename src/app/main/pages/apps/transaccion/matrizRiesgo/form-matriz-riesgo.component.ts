@@ -1,36 +1,38 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
-import {MatrizRiesgo} from '../../../../../shared/models/matrizRiesgo';
-import {Parametro} from '../../../../../shared/models/parametro';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ChangeDetectorRef } from '@angular/core';
+
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatrizRiesgo } from '../../../../../shared/models/matrizRiesgo';
+import { Parametro } from '../../../../../shared/models/parametro';
 import Swal from 'sweetalert2';
-import {MatrizRiesgoService} from './matriz-riesgo.service';
-import {MessageService} from "primeng/api";
-import {Empresa} from "../../../../../shared/models/empresa";
-import {Sede} from "../../../../../shared/models/sede";
-import {Periodo} from "../../../../../shared/models/periodo";
-import {MATRIZ_OPERACIONAL} from "../../../../../shared/Constantes";
-import {DataLogin} from 'src/app/shared/models/data';
-import {AuthLoginService} from '../../../authentication/auth-login/auth-login.service';
-import {Gerencia} from "../../../../../shared/models/gerencia";
-import {Proceso} from "../../../../../shared/models/proceso";
-import {SubProceso} from "../../../../../shared/models/subproceso";
-import {Subject} from 'rxjs';
-import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
-import {RiesgoResidualComponent} from './riesgo-residual/riesgo-residual.component';
-import {RiesgoInherenteComponent} from './riesgo-inherente/riesgo-inherente.component';
-import {cartesianPoint} from 'src/app/shared/models/cartesianPoint';
+import { MatrizRiesgoService } from './matriz-riesgo.service';
+import { MessageService } from "primeng/api";
+import { Empresa } from "../../../../../shared/models/empresa";
+import { Sede } from "../../../../../shared/models/sede";
+import { Periodo } from "../../../../../shared/models/periodo";
+import { MATRIZ_OPERACIONAL } from "../../../../../shared/Constantes";
+import { DataLogin } from 'src/app/shared/models/data';
+import { AuthLoginService } from '../../../authentication/auth-login/auth-login.service';
+import { Gerencia } from "../../../../../shared/models/gerencia";
+import { Proceso } from "../../../../../shared/models/proceso";
+import { SubProceso } from "../../../../../shared/models/subproceso";
+import { Subject } from 'rxjs';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { RiesgoResidualComponent } from './riesgo-residual/riesgo-residual.component';
+import { RiesgoInherenteComponent } from './riesgo-inherente/riesgo-inherente.component';
+import { cartesianPoint } from 'src/app/shared/models/cartesianPoint';
 import FileSaver from 'file-saver';
 
-import {TipoMatrizRiesgo} from 'src/app/shared/models/tipoMatrizRiesgo';
-import {SubirArchivosComponent} from 'src/app/main/components/subir-archivos/subir-archivos.component';
+import { TipoMatrizRiesgo } from 'src/app/shared/models/tipoMatrizRiesgo';
+import { SubirArchivosComponent } from 'src/app/main/components/subir-archivos/subir-archivos.component';
 
-import {FilesService} from 'src/app/core/service/files.service';
-import {TipoEvidencia} from "../../../../../shared/models/tipoEvidencia";
+import { FilesService } from 'src/app/core/service/files.service';
+import { TipoEvidencia } from "../../../../../shared/models/tipoEvidencia";
 import * as XLSX from 'xlsx';
-import {TipoPerfil} from "../../../../../shared/models/tipoPerfil";
-import {ComentarioAuditoriaComponent} from "../../../../components/comentario-auditoria/comentario-auditoria.component";
-import {TipoMatriz} from "../../../../../shared/models/tipoMatriz";
+import { TipoPerfil } from "../../../../../shared/models/tipoPerfil";
+import { ComentarioAuditoriaComponent } from "../../../../components/comentario-auditoria/comentario-auditoria.component";
+import { TipoMatriz } from "../../../../../shared/models/tipoMatriz";
 import { CreateRiesgoComponent } from './create-riesgo/create-riesgo.component';
 
 @Component({
@@ -79,7 +81,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
     idSede: number;
     idCartera: number;
     idTipoMatriz: number;
-    idTipoMatrizSelect: number=0;
+    idTipoMatrizSelect: number = 0;
     severidad: string;
     indicadorBaja: number = 1;
 
@@ -119,36 +121,36 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
     isExcelFile: boolean;
     dataSheet = new Subject();
-    columns=[];
+    columns = [];
 
     idPerfil: number;
     tipoPerfilAuditor: TipoPerfil = TipoPerfil.auditor;
     tipoPerfilUsuario: TipoPerfil = TipoPerfil.user;
-    notadmin:boolean=false;
+    notadmin: boolean = false;
 
-    deSeveridadList:String[];
-    codRiesgoList:String[];
+    deSeveridadList: String[];
+    codRiesgoList: String[];
     //Filtros Model
 
     gerenciaModel;
     deSeveridadRModel;
     estadoPlanModel;
     procesosModel;
-    listaEstadosSel: Parametro[]=[];
-    ver:boolean=false;
+    listaEstadosSel: Parametro[] = [];
+    ver: boolean = false;
     dataIp: string = "";
 
-    idListaGerencia:number[];
-    idListaProceso:number[];
-    gerenciaList=[];
-    procesoList=[];
+    idListaGerencia: number[];
+    idListaProceso: number[];
+    gerenciaList = [];
+    procesoList = [];
     @ViewChild('f1') file1: ElementRef;
 
-    activeImport: boolean=true;
+    activeImport: boolean = true;
 
-    constructor(public dialogService: DialogService,private authLoginService: AuthLoginService, private formBuilder: FormBuilder, private router: Router,
-                private matrizRiesgoService: MatrizRiesgoService, private activatedRoute: ActivatedRoute,
-                private messageService: MessageService, private filesService: FilesService) {
+    constructor(public dialogService: DialogService, private authLoginService: AuthLoginService, private formBuilder: FormBuilder, private router: Router,
+        private matrizRiesgoService: MatrizRiesgoService, private activatedRoute: ActivatedRoute,
+        private messageService: MessageService, private filesService: FilesService, private cdr: ChangeDetectorRef) {
 
         this.payload = this.authLoginService.obtenerDatosToken(this.authLoginService.userToken);
         this.idEmpresa = this.payload.data.datosEmpresa.idEmpresa;
@@ -156,10 +158,10 @@ export class FormMatrizRiesgoComponent implements OnInit {
         this.idSede = this.payload.data.datosSede.idSede;
         this.deSeveridadList = [];
         this.codRiesgoList = [];
-        this.idListaGerencia=[];
-        this.idListaProceso=[];
-        this.gerenciaList=[];
-        this.procesoList=[];
+        this.idListaGerencia = [];
+        this.idListaProceso = [];
+        this.gerenciaList = [];
+        this.procesoList = [];
         this.obtenerListaEmpresas();
         this.obtenerListaCarteras();
         this.obtenerTipoMatriz();
@@ -183,13 +185,13 @@ export class FormMatrizRiesgoComponent implements OnInit {
         this.obtenerListaEficaciaPlanAccion();
         this.obtenerListaCantidadControl();
 
-        this.listaGerencias = [{idGerencia: 0, descripcionGerencia: 'Seleccione'}];
+        this.listaGerencias = [{ idGerencia: 0, descripcionGerencia: 'Seleccione' }];
 
 
         this.obtenermetodoIP();
     }
 
-    cargarListas(){
+    cargarListas() {
 
         this.obtenerListaSedes();
         this.obtenerListaPeriodos();
@@ -208,9 +210,9 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 this.ver = false;
                 this.formularioMatrizRiesgo.enable();
                 this.cargarMatrizRiesgo();
-            }else if(this.activatedRoute.snapshot.url[0].toString() === 'registrar') {
-              //  this.formularioMatrizRiesgo.disable();
-                this.cargarProcesos(this.idEmpresa,0);
+            } else if (this.activatedRoute.snapshot.url[0].toString() === 'registrar') {
+                //  this.formularioMatrizRiesgo.disable();
+                this.cargarProcesos(this.idEmpresa, 0);
                 this.cargarListas();
                 this.ver = false;
                 this.editar = false;
@@ -218,7 +220,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 this.formularioMatrizRiesgo.get('sede').setValue(this.payload.data.datosSede.idSede);
                 this.formularioMatrizRiesgo.get('cartera').setValue(this.payload.data.datosEmpresa.idCartera);
 
-            } else if(this.activatedRoute.snapshot.url[0].toString() === 'ver') {
+            } else if (this.activatedRoute.snapshot.url[0].toString() === 'ver') {
                 this.formularioMatrizRiesgo.disable();
                 this.ver = true;
                 this.editar = false;
@@ -255,7 +257,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'codMatriz',
                 header: 'COD',
                 class: 'text-center',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'codMatriz',
                 headerClass: 'text-center',
                 styleClass: 'width: 10%'
@@ -264,7 +266,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'idMatrizNivel',
                 header: 'Nivel',
                 class: 'text-center',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'idMatrizNivel',
                 headerClass: 'text-center',
                 styleClass: 'width: 10%'
@@ -273,7 +275,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'idGerencia',
                 header: 'Gerencia Responsable',
                 class: 'text-center',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'idGerencia',
                 headerClass: 'text-center'
             },
@@ -281,7 +283,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'idProceso',
                 header: 'Proceso',
                 class: 'text-center',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'idProceso',
                 headerClass: 'text-center'
             },
@@ -289,14 +291,14 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'idSubProceso',
                 header: 'Sub Proceso',
                 class: 'text-center',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'idSubProceso',
                 headerClass: 'text-center'
             },
             {
                 field: 'codRiesgo',
                 header: 'Código del Riesgo',
-                colspan:"1",
+                colspan: "1",
                 class: 'text-center static-sticky-col',
                 ordenadmiento: 'codRiesgo',
                 headerClass: 'text-center static-sticky-col'
@@ -306,7 +308,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'Descripción del Riesgo',
                 class: 'text-center  static-sticky-col1',
                 ordenadmiento: 'deRiesgo',
-                colspan:"2",
+                colspan: "2",
                 headerClass: 'text-center static-sticky-col1'
             },
             {
@@ -517,7 +519,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 ordenadmiento: 'evidenciaPlanAccion',
                 headerClass: 'text-center'
             },
-//Verificacion eficacia
+            //Verificacion eficacia
             {
                 field: 'fechaPrevista',
                 header: 'Fecha Prevista',
@@ -613,15 +615,15 @@ export class FormMatrizRiesgoComponent implements OnInit {
         console.log(this.loading);
     }
 
-    solverPermissions(){
+    solverPermissions() {
         this.payload = this.authLoginService.obtenerDatosToken(this.authLoginService.userToken);
         this.idPerfil = this.payload.data.idPerfil;
-        if(this.idPerfil==TipoPerfil.admin){
+        if (this.idPerfil == TipoPerfil.admin) {
             console.log("NOTADMIN FALS");
-            this.notadmin=false;
+            this.notadmin = false;
         }
-        else{
-            this.notadmin=true;
+        else {
+            this.notadmin = true;
             this.formularioMatrizRiesgo.get('empresa').setValue(this.payload.data.datosEmpresa.idEmpresa);
         }
     }
@@ -632,13 +634,13 @@ export class FormMatrizRiesgoComponent implements OnInit {
             const idMatrizRiesgo = params.idMatrizRiesgo;
             const idUsuario = this.payload.data.idUsuario;
             if (idMatrizRiesgo) {
-                this.matrizRiesgoService.obtenerMatrizRiesgo(idMatrizRiesgo,idUsuario).subscribe(
+                this.matrizRiesgoService.obtenerMatrizRiesgo(idMatrizRiesgo, idUsuario).subscribe(
                     resp => {
                         // console.log("MATRIZ RIESGO " + JSON.stringify(resp));
                         this.matrizRiesgo = resp.MatrizRiesgo;
 
-                      //  this.formularioMatrizRiesgo.get('empresa').setValue(this.matrizRiesgo.idEmpresa);
-                      //  this.formularioMatrizRiesgo.get('sede').setValue(this.matrizRiesgo.idSede);
+                        //  this.formularioMatrizRiesgo.get('empresa').setValue(this.matrizRiesgo.idEmpresa);
+                        //  this.formularioMatrizRiesgo.get('sede').setValue(this.matrizRiesgo.idSede);
                         this.obtenerEmpresa(this.matrizRiesgo.idEmpresa);
                         //this.formularioMatrizRiesgo.get('cartera').setValue(this.payload.data.datosEmpresa.idCartera);
                         this.formularioMatrizRiesgo.get('periodo').setValue(this.matrizRiesgo.idPeriodo);
@@ -653,11 +655,11 @@ export class FormMatrizRiesgoComponent implements OnInit {
                         this.idEmpresa = this.matrizRiesgo.idEmpresa;
                         this.idTipoMatriz = this.matrizRiesgo.idTipoMatriz;
                         this.idTipoMatrizSelect = this.matrizRiesgo.idMatrizNivel;
-                        let severidadList=[];
-                        let codList=[];
-                        let estadoList=[];
+                        let severidadList = [];
+                        let codList = [];
+                        let estadoList = [];
 
-                        this.listaGerenciasSel=[];
+                        this.listaGerenciasSel = [];
 
                         for (var j = 0; j < this.matrizRiesgo.listaDetalleMatriz.length; j++) {
 
@@ -666,52 +668,52 @@ export class FormMatrizRiesgoComponent implements OnInit {
                             var orden = this.matricesRiesgo.length;
                             this.matrizRiesgo.listaDetalleMatriz[j].ordenTabla = orden;
 
-                            if( this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosPlan== undefined || this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosPlan==0){
-                                this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosPlanString="Sustento";
+                            if (this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosPlan == undefined || this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosPlan == 0) {
+                                this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosPlanString = "Sustento";
                             }
-                            else{
-                                this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosPlanString="Sustentos:"+this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosPlan;
+                            else {
+                                this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosPlanString = "Sustentos:" + this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosPlan;
                             }
-                            if( this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosControl== undefined || this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosControl==0){
-                                this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosControlString="Sustento";
+                            if (this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosControl == undefined || this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosControl == 0) {
+                                this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosControlString = "Sustento";
                             }
-                            else{
-                                this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosControlString="Sustentos:"+this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosControl;
+                            else {
+                                this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosControlString = "Sustentos:" + this.matrizRiesgo.listaDetalleMatriz[j].cantidadArchivosControl;
                             }
                             this.matricesRiesgo.push(this.matrizRiesgo.listaDetalleMatriz[j]);
-                            if(this.matrizRiesgo.listaDetalleMatriz[j].deSeveridadResidual!=null && this.matrizRiesgo.listaDetalleMatriz[j].deSeveridadResidual.length>0){
+                            if (this.matrizRiesgo.listaDetalleMatriz[j].deSeveridadResidual != null && this.matrizRiesgo.listaDetalleMatriz[j].deSeveridadResidual.length > 0) {
                                 severidadList.push(this.matrizRiesgo.listaDetalleMatriz[j].deSeveridadResidual);
 
                             }
 
-                            if(this.matrizRiesgo.listaDetalleMatriz[j].codRiesgo!=null && this.matrizRiesgo.listaDetalleMatriz[j].codRiesgo.length>0){
+                            if (this.matrizRiesgo.listaDetalleMatriz[j].codRiesgo != null && this.matrizRiesgo.listaDetalleMatriz[j].codRiesgo.length > 0) {
                                 codList.push(this.matrizRiesgo.listaDetalleMatriz[j].codRiesgo);
 
                             }
 
                             this.listaEstadoPlanAccion.forEach(estado => {
-                                if(this.matricesRiesgo[j].estadoPlanAccion==estado.idParametro.toString()){
+                                if (this.matricesRiesgo[j].estadoPlanAccion == estado.idParametro.toString()) {
                                     estadoList.push(estado);
                                 }
                             })
                         }
 
-                        this.idEmpresa= this.matrizRiesgo.idEmpresa;
-                        this.idSede= this.matrizRiesgo.idSede;
+                        this.idEmpresa = this.matrizRiesgo.idEmpresa;
+                        this.idSede = this.matrizRiesgo.idSede;
 
                         this.obtenerListaGerencia();
 
                         let uniqueSev = new Set(severidadList);
                         let ArraySev = [...uniqueSev];
-                        this.deSeveridadList=ArraySev;
+                        this.deSeveridadList = ArraySev;
 
                         let uniqueCod = new Set(codList);
                         let ArrayCod = [...uniqueCod];
-                        this.codRiesgoList=ArrayCod;
+                        this.codRiesgoList = ArrayCod;
 
                         let uniqueEst = new Set(estadoList);
                         let ArrayEst = [...uniqueEst];
-                        this.listaEstadosSel=ArrayEst;
+                        this.listaEstadosSel = ArrayEst;
 
 
                         this.obtenerListaSedes();
@@ -724,10 +726,10 @@ export class FormMatrizRiesgoComponent implements OnInit {
                         this.formularioMatrizRiesgo.get('cartera').setValue(this.matrizRiesgo.idCartera);
 
 
-                        if(this.matrizRiesgo.idMatrizNivel==0){
+                        if (this.matrizRiesgo.idMatrizNivel == 0) {
                             this.showColumnasEntidad();
                         }
-                        else{
+                        else {
                             this.showColumnasProcesos();
                             this.cargarProcesos(this.matrizRiesgo.idEmpresa, 0);
                         }
@@ -750,10 +752,10 @@ export class FormMatrizRiesgoComponent implements OnInit {
             cartera: ['', Validators.required],
             periodo: ['', Validators.required],
             idTipoMatriz: ['', Validators.required],
-            idMatrizRiesgo: ['', ],
+            idMatrizRiesgo: ['',],
             idMatrizNivel: ['', Validators.required],
             descripcionGerencia: [''],
-            idEstado:'0'
+            idEstado: '0'
         });
     }
 
@@ -774,7 +776,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
         );
     }
 
-    obtenerEmpresa(idEmpresa:number){
+    obtenerEmpresa(idEmpresa: number) {
 
         this.matrizRiesgoService.obtenerEmpresa(idEmpresa).subscribe(
             resp => {
@@ -878,12 +880,12 @@ export class FormMatrizRiesgoComponent implements OnInit {
     }
 
     onChangeArea(deviceValue): void {
-       // this.idEstado = deviceValue.target.value;
+        // this.idEstado = deviceValue.target.value;
     }
 
     onChangeResponsable(deviceValue): void {
         // this.idEstado = deviceValue.target.value;
-     }
+    }
 
     onChangeEmpresa(deviceValue): void {
         for (let i = 0; i < this.listaEmpresas.length; i++) {
@@ -917,7 +919,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
         const idTipoMatriz = input.target.value;
         this.idTipoMatriz = idTipoMatriz;
         var tipomatriz = "";
-        this.idTipoMatrizSelect =  input.target.value;
+        this.idTipoMatrizSelect = input.target.value;
 
         for (var j = 0; j < this.listaTiposMatriz.length; j++) {
 
@@ -954,8 +956,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 ordenadmiento: 'codMatriz',
                 headerClass: 'text-center tdsmall',
                 styleClass: 'width: 10%',
-                colspan:"1",
-                placeholder:''
+                colspan: "1",
+                placeholder: ''
             },
             {
                 field: 'idMatrizNivel',
@@ -963,7 +965,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdlarge',
                 ordenadmiento: 'idMatrizNivel',
                 headerClass: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 styleClass: 'width: 10%'
             },
             {
@@ -972,8 +974,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdxlarge',
                 ordenadmiento: 'idGerencia',
                 headerClass: 'text-center tdxlarge',
-                colspan:"4",
-                placeholder:''
+                colspan: "4",
+                placeholder: ''
             },
             {
                 field: 'deTitulo',
@@ -981,15 +983,15 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdzlarge',
                 ordenadmiento: 'deTitulo',
                 headerClass: 'text-center tdzlarge',
-                colspan:"3",
-                placeholder:''
+                colspan: "3",
+                placeholder: ''
             },
             {
                 field: 'codRiesgo',
                 header: 'Código del Riesgo',
                 class: 'text-center  static-sticky-col tdlarge',
                 ordenadmiento: 'codRiesgo',
-                colspan:"2",
+                colspan: "2",
                 headerClass: 'text-center static-sticky-col tdlarge'
             },
             {
@@ -997,36 +999,36 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'Descripción del Riesgo',
                 class: 'text-center  static-sticky-col1 tdzlarge',
                 ordenadmiento: 'deRiesgo',
-                colspan:"3",
+                colspan: "3",
                 headerClass: 'text-center static-sticky-col1 tdzlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'deProcesoImpactado',
                 header: 'Procesos Impactados',
                 class: 'text-center tdlarge',
                 ordenadmiento: 'deProcesoImpactado',
-                colspan:"2",
+                colspan: "2",
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'deFoda',
                 header: 'FODA',
                 class: 'text-center tdlarge',
                 ordenadmiento: 'deFoda',
-                colspan:"2",
+                colspan: "2",
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'deGrupoInteres',
                 header: 'Grupos de Interés',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'deGrupoInteres',
                 headerClass: 'text-center tdsmall',
-                placeholder:''
+                placeholder: ''
             },
 
 
@@ -1034,71 +1036,71 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'idOrigenRiesgo',
                 header: 'Origen',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'idOrigenRiesgo',
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'idFrecuenciaRiesgo',
                 header: 'Frecuencia del Riesgo',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'idFrecuenciaRiesgo',
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'idTipoRiesgo',
                 header: 'Tipo de Riesgo',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'idTipoRiesgo',
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'nuProbabilidadInherente',
                 header: 'Probabilidad (1-4)',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'nuProbabilidadInherente',
                 headerClass: 'text-center tdsmall',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'nuImpactoInherente',
                 header: 'Impacto (1-4)',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'nuImpactoInherente',
                 headerClass: 'text-center tdsmall',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'nuPuntajeInherente',
                 header: 'Puntaje',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'nuPuntajeInherente',
                 headerClass: 'text-center tdsmall',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'deSeveridadInherente',
                 header: 'Severidad',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'deSeveridadInherente',
                 headerClass: 'text-center tdsmall',
-                placeholder:''
+                placeholder: ''
             },
 
             {
                 field: 'codControl',
                 header: 'Código del Control',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'codControl',
                 headerClass: 'text-center tdsmall'
             },
@@ -1106,109 +1108,109 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'deControl',
                 header: 'Descripción del Control',
                 class: 'text-center tdzlarge',
-                colspan:"3",
+                colspan: "3",
                 ordenadmiento: 'deControl',
                 headerClass: 'text-center tdzlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'idAreaControl',
                 header: 'Área a la que pertenece el responsable del control',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'idAreaControl',
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'idResponsableControl',
                 header: 'Responsable del Control',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'idResponsableControl',
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'idFrecuenciaControl',
                 header: 'Frecuencia del Control',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'idFrecuenciaControl',
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'idOportunidadControl',
                 header: 'Oportunidad del Control',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'idOportunidadControl',
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'idAutomatizacionControl',
                 header: 'Automatización del Control',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'idAutomatizacionControl',
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'deEvidenciaControl',
                 header: 'Evidencia del Control',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'deEvidenciaControl',
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'sustentoControl',
                 header: 'Sustento de Control',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'sustentoControl',
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'nuProbabilidadResidual',
                 header: 'Probabilidad (1-4)',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'nuProbabilidadResidual',
                 headerClass: 'text-center tdsmall',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'nuImpactoResidual',
                 header: 'Impacto (1-4)',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'nuImpactoResidual',
                 headerClass: 'text-center tdsmall',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'nuPuntajeResidual',
                 header: 'Puntaje',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'nuPuntajeResidual',
                 headerClass: 'text-center tdsmall',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'deSeveridadResidual',
                 header: 'Severidad',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'deSeveridadResidual',
                 headerClass: 'text-center tdsmall',
-                placeholder:''
+                placeholder: ''
             },
 
             //PLAN ACCON
@@ -1216,7 +1218,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'idEstrategiaResp',
                 header: 'Estrategia de Respuesta',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'idEstrategiaResp',
                 headerClass: 'text-center tdlarge'
             },
@@ -1224,7 +1226,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'codPlanAccion',
                 header: 'Código del Plan de acción',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'codPlanAccion',
                 headerClass: 'text-center tdsmall'
             },
@@ -1232,7 +1234,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'desPlanAccion',
                 header: 'Descripción del Plan de acción',
                 class: 'text-center tdzlarge',
-                colspan:"3",
+                colspan: "3",
                 ordenadmiento: 'desPlanAccion',
                 headerClass: 'text-center tdzlarge'
             },
@@ -1240,7 +1242,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'idAreaPlanAccion',
                 header: 'Área a la que pertenece el responsable de realizar el plan de acción',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'idAreaPlanAccion',
                 headerClass: 'text-center tdlarge'
             },
@@ -1248,7 +1250,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'idResponsablePlanAccion',
                 header: ' Responsable de realizar el plan de acción',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'idResponsablePlanAccion',
                 headerClass: 'text-center tdlarge'
             },
@@ -1256,7 +1258,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'fechaInicioPlanAccion',
                 header: 'Inicio de Plan de Acción',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'fechaInicioPlanAccion',
                 headerClass: 'text-center tdlarge'
             },
@@ -1264,7 +1266,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'estadoPlanAccion',
                 header: 'Estado de Plan de Acción',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'estadoPlanAccion',
                 headerClass: 'text-center tdlarge'
             },
@@ -1272,7 +1274,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'fechaFinPlanAccion',
                 header: 'Fin del plan de acción',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'fechaFinPlanAccion',
                 headerClass: 'text-center tdlarge'
             },
@@ -1280,16 +1282,16 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'evidenciaPlanAccion',
                 header: 'Sustento de Plan de Acción',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'evidenciaPlanAccion',
                 headerClass: 'text-center tdlarge'
             },
 
-//Verificacion eficacia
+            //Verificacion eficacia
             {
                 field: 'fechaPrevista',
                 header: 'Fecha Prevista',
-                colspan:"2",
+                colspan: "2",
                 class: 'text-center tdlarge',
                 ordenadmiento: 'fechaPrevista',
                 headerClass: 'text-center tdlarge'
@@ -1299,7 +1301,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'fueEficaz',
                 header: '¿El plan de acción fue eficaz?',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'fueEficaz',
                 headerClass: 'text-center tdsmall'
             },
@@ -1307,7 +1309,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'fechaVerificacion',
                 header: 'Fecha Verificación',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'fechaVerificacion',
                 headerClass: 'text-center tdlarge'
             },
@@ -1315,7 +1317,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'verificadoPor',
                 header: 'Verificado Por',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'verificadoPor',
                 headerClass: 'text-center tdlarge'
             },
@@ -1323,7 +1325,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'evidenciaEficacia',
                 header: 'Evidencia',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'evidenciaEficacia',
                 headerClass: 'text-center tdlarge'
             },
@@ -1331,7 +1333,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'observaciones',
                 header: 'Observaciones',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'observaciones',
                 headerClass: 'text-center tdlarge'
             },
@@ -1341,7 +1343,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'Código KRI',
                 class: 'text-center tdsmall',
                 ordenadmiento: 'codkri',
-                colspan:"1",
+                colspan: "1",
                 headerClass: 'text-center tdsmall'
             },
 
@@ -1350,7 +1352,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'Definición del KRI',
                 class: 'text-center tdzlarge',
                 ordenadmiento: 'defKri',
-                colspan:"3",
+                colspan: "3",
                 headerClass: 'text-center tdzlarge'
             },
             {
@@ -1358,7 +1360,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'Frecuencia',
                 class: 'text-center tdsmall',
                 ordenadmiento: 'frecuencia',
-                colspan:"1",
+                colspan: "1",
                 headerClass: 'text-center tdsmall'
             },
             {
@@ -1366,7 +1368,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'Meta del KRI',
                 class: 'text-center tdsmall',
                 ordenadmiento: 'metkri',
-                colspan:"1",
+                colspan: "1",
                 headerClass: 'text-center tdsmall'
             },
             {
@@ -1374,14 +1376,14 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'KRI Actual',
                 class: 'text-center tdsmall',
                 ordenadmiento: 'kriActual',
-                colspan:"1",
+                colspan: "1",
                 headerClass: 'text-center tdsmall'
             },
             {
                 field: 'kriResponsable',
                 header: 'Responsable de asegurar su cumplimiento',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'kriResponsable',
                 headerClass: 'text-center tdlarge'
             },
@@ -1398,8 +1400,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 ordenadmiento: 'codMatriz',
                 headerClass: 'text-center tdsmall',
                 styleClass: 'width: 10%',
-                colspan:"1",
-                placeholder:''
+                colspan: "1",
+                placeholder: ''
             },
             {
                 field: 'idMatrizNivel',
@@ -1407,7 +1409,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdlarge',
                 ordenadmiento: 'idMatrizNivel',
                 headerClass: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 styleClass: 'width: 10%'
             },
             {
@@ -1416,8 +1418,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdxlarge',
                 ordenadmiento: 'idGerencia',
                 headerClass: 'text-center tdxlarge',
-                colspan:"4",
-                placeholder:''
+                colspan: "4",
+                placeholder: ''
             },
             {
                 field: 'idProceso',
@@ -1425,8 +1427,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdzlarge',
                 ordenadmiento: 'idProceso',
                 headerClass: 'text-center tdzlarge',
-                colspan:"3",
-                placeholder:''
+                colspan: "3",
+                placeholder: ''
             },
             {
                 field: 'idSubProceso',
@@ -1434,15 +1436,15 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdzlarge',
                 ordenadmiento: 'idSubProceso',
                 headerClass: 'text-center tdzlarge',
-                colspan:"3",
-                placeholder:''
+                colspan: "3",
+                placeholder: ''
             },
             {
                 field: 'codRiesgo',
                 header: 'Código del Riesgo',
                 class: 'text-center static-sticky-col tdlarge',
                 ordenadmiento: 'codRiesgo',
-                colspan:"2",
+                colspan: "2",
                 headerClass: 'text-center  static-sticky-col tdlarge'
             },
             {
@@ -1451,8 +1453,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center static-sticky-col1 tdzlarge',
                 ordenadmiento: 'deRiesgo',
                 headerClass: 'text-center static-sticky-col1 tdzlarge',
-                colspan:"3",
-                placeholder:'Registra Consecuencia y Causa'
+                colspan: "3",
+                placeholder: 'Registra Consecuencia y Causa'
             },
 
             {
@@ -1461,8 +1463,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdlarge',
                 ordenadmiento: 'idOrigenRiesgo',
                 headerClass: 'text-center tdlarge',
-                colspan:"2",
-                placeholder:''
+                colspan: "2",
+                placeholder: ''
             },
             {
                 field: 'idFrecuenciaRiesgo',
@@ -1470,8 +1472,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdlarge',
                 ordenadmiento: 'idFrecuenciaRiesgo',
                 headerClass: 'text-center tdlarge',
-                colspan:"2",
-                placeholder:''
+                colspan: "2",
+                placeholder: ''
             },
             {
                 field: 'idTipoRiesgo',
@@ -1479,8 +1481,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdlarge',
                 ordenadmiento: 'idTipoRiesgo',
                 headerClass: 'text-center tdlarge',
-                colspan:"2",
-                placeholder:''
+                colspan: "2",
+                placeholder: ''
             },
             {
                 field: 'nuProbabilidadInherente',
@@ -1488,8 +1490,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdsmall',
                 ordenadmiento: 'nuProbabilidadInherente',
                 headerClass: 'text-center tdsmall',
-                colspan:"1",
-                placeholder:''
+                colspan: "1",
+                placeholder: ''
             },
             {
                 field: 'nuImpactoInherente',
@@ -1497,8 +1499,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdsmall',
                 ordenadmiento: 'nuImpactoInherente',
                 headerClass: 'text-center tdsmall',
-                colspan:"1",
-                placeholder:''
+                colspan: "1",
+                placeholder: ''
             },
             {
                 field: 'nuPuntajeInherente',
@@ -1506,8 +1508,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdsmall',
                 ordenadmiento: 'nuPuntajeInherente',
                 headerClass: 'text-center tdsmall',
-                colspan:"1",
-                placeholder:''
+                colspan: "1",
+                placeholder: ''
             },
             {
                 field: 'deSeveridadInherente',
@@ -1515,8 +1517,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdsmall',
                 ordenadmiento: 'deSeveridadInherente',
                 headerClass: 'text-center tdsmall',
-                colspan:"1",
-                placeholder:''
+                colspan: "1",
+                placeholder: ''
             },
 
             {
@@ -1525,8 +1527,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdsmall',
                 ordenadmiento: 'codControl',
                 headerClass: 'text-center tdsmall',
-                colspan:"1",
-                placeholder:''
+                colspan: "1",
+                placeholder: ''
             },
             {
                 field: 'deControl',
@@ -1534,17 +1536,17 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdzlarge',
                 ordenadmiento: 'deControl',
                 headerClass: 'text-center tdzlarge',
-                colspan:"3",
-                placeholder:''
+                colspan: "3",
+                placeholder: ''
             },
             {
                 field: 'idAreaControl',
                 header: 'Área a la que pertenece el responsable del control',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'idAreaControl',
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'idResponsableControl',
@@ -1552,8 +1554,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdlarge',
                 ordenadmiento: 'idResponsableControl',
                 headerClass: 'text-center tdlarge',
-                colspan:"2",
-                placeholder:''
+                colspan: "2",
+                placeholder: ''
             },
             {
                 field: 'idFrecuenciaControl',
@@ -1561,8 +1563,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdlarge',
                 ordenadmiento: 'idFrecuenciaControl',
                 headerClass: 'text-center tdlarge',
-                colspan:"2",
-                placeholder:''
+                colspan: "2",
+                placeholder: ''
             },
             {
                 field: 'idOportunidadControl',
@@ -1570,8 +1572,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdlarge',
                 ordenadmiento: 'idOportunidadControl',
                 headerClass: 'text-center tdlarge',
-                colspan:"2",
-                placeholder:''
+                colspan: "2",
+                placeholder: ''
             },
             {
                 field: 'idAutomatizacionControl',
@@ -1579,17 +1581,17 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdlarge',
                 ordenadmiento: 'idAutomatizacionControl',
                 headerClass: 'text-center tdlarge',
-                colspan:"2",
-                placeholder:''
+                colspan: "2",
+                placeholder: ''
             },
             {
                 field: 'deEvidenciaControl',
                 header: 'Evidencia del Control',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'deEvidenciaControl',
                 headerClass: 'text-center tdlarge',
-                placeholder:''
+                placeholder: ''
             },
             {
                 field: 'sustentoControl',
@@ -1597,8 +1599,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdlarge',
                 ordenadmiento: 'sustentoControl',
                 headerClass: 'text-center tdlarge',
-                colspan:"2",
-                placeholder:''
+                colspan: "2",
+                placeholder: ''
             },
             {
                 field: 'nuProbabilidadResidual',
@@ -1606,8 +1608,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdsmall',
                 ordenadmiento: 'nuProbabilidadResidual',
                 headerClass: 'text-center tdsmall',
-                colspan:"1",
-                placeholder:''
+                colspan: "1",
+                placeholder: ''
             },
             {
                 field: 'nuImpactoResidual',
@@ -1615,8 +1617,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdsmall',
                 ordenadmiento: 'nuImpactoResidual',
                 headerClass: 'text-center tdsmall',
-                colspan:"1",
-                placeholder:''
+                colspan: "1",
+                placeholder: ''
             },
             {
                 field: 'nuPuntajeResidual',
@@ -1624,8 +1626,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdsmall',
                 ordenadmiento: 'nuPuntajeResidual',
                 headerClass: 'text-center tdsmall',
-                colspan:"1",
-                placeholder:''
+                colspan: "1",
+                placeholder: ''
             },
             {
                 field: 'deSeveridadResidual',
@@ -1633,8 +1635,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdsmall',
                 ordenadmiento: 'deSeveridadResidual',
                 headerClass: 'text-center tdsmall',
-                colspan:"1",
-                placeholder:''
+                colspan: "1",
+                placeholder: ''
             },
 
             //PLAN ACCON
@@ -1643,7 +1645,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'Estrategia de Respuesta',
                 class: 'text-center tdlarge',
                 ordenadmiento: 'idEstrategiaResp',
-                colspan:"2",
+                colspan: "2",
                 headerClass: 'text-center tdlarge'
             },
             {
@@ -1651,7 +1653,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'Código del Plan de acción',
                 class: 'text-center tdsmall',
                 ordenadmiento: 'codPlanAccion',
-                colspan:"1",
+                colspan: "1",
                 headerClass: 'text-center tdsmall'
             },
             {
@@ -1659,7 +1661,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'Descripción del Plan de acción',
                 class: 'text-center tdzlarge',
                 ordenadmiento: 'desPlanAccion',
-                colspan:"3",
+                colspan: "3",
                 headerClass: 'text-center tdzlarge'
             },
             {
@@ -1667,7 +1669,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'Área a la que pertenece el responsable de realizar el plan de acción',
                 class: 'text-center tdlarge',
                 ordenadmiento: 'idAreaPlanAccion',
-                colspan:"2",
+                colspan: "2",
                 headerClass: 'text-center tdlarge'
             },
             {
@@ -1675,7 +1677,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: ' Responsable de realizar el plan de acción',
                 class: 'text-center tdlarge',
                 ordenadmiento: 'idResponsablePlanAccion',
-                colspan:"2",
+                colspan: "2",
                 headerClass: 'text-center tdlarge'
             },
             {
@@ -1683,7 +1685,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'Inicio de Plan de Acción',
                 class: 'text-center tdlarge',
                 ordenadmiento: 'fechaInicioPlanAccion',
-                colspan:"2",
+                colspan: "2",
                 headerClass: 'text-center tdlarge'
             },
             {
@@ -1691,14 +1693,14 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'Estado de Plan de Acción',
                 class: 'text-center tdlarge',
                 ordenadmiento: 'estadoPlanAccion',
-                colspan:"2",
+                colspan: "2",
                 headerClass: 'text-center tdlarge'
             },
             {
                 field: 'fechaFinPlanAccion',
                 header: 'Fin del plan de acción',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'fechaFinPlanAccion',
                 headerClass: 'text-center tdlarge'
             },
@@ -1708,15 +1710,15 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 class: 'text-center tdlarge',
                 ordenadmiento: 'evidenciaPlanAccion',
                 headerClass: 'text-center tdlarge',
-                colspan:"2"
+                colspan: "2"
             },
 
-//Verificacion eficacia
+            //Verificacion eficacia
             {
                 field: 'fechaPrevista',
                 header: 'Fecha Prevista',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'fechaPrevista',
                 headerClass: 'text-center tdlarge'
             },
@@ -1725,7 +1727,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'fueEficaz',
                 header: '¿El plan de acción fue eficaz?',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'fueEficaz',
                 headerClass: 'text-center tdlarge'
             },
@@ -1733,7 +1735,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'fechaVerificacion',
                 header: 'Fecha de verificación',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'fechaVerificacion',
                 headerClass: 'text-center tdlarge'
             },
@@ -1741,7 +1743,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'verificadoPor',
                 header: 'Verificado Por',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'verificadoPor',
                 headerClass: 'text-center tdlarge'
             },
@@ -1749,7 +1751,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'evidenciaEficacia',
                 header: 'Evidencia',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'evidenciaEficacia',
                 headerClass: 'text-center tdlarge'
             },
@@ -1757,7 +1759,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'observaciones',
                 header: 'Observaciones',
                 class: 'text-center tdzlarge',
-                colspan:"3",
+                colspan: "3",
                 ordenadmiento: 'observaciones',
                 headerClass: 'text-center tdzlarge'
             },
@@ -1766,7 +1768,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'codkri',
                 header: 'Código KRI',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'codkri',
                 headerClass: 'text-center tdsmall'
             },
@@ -1776,14 +1778,14 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 header: 'Definición del KRI',
                 class: 'text-center tdzlarge',
                 ordenadmiento: 'defKri',
-                colspan:"3",
+                colspan: "3",
                 headerClass: 'text-center tdzlarge'
             },
             {
                 field: 'frecuencia',
                 header: 'Frecuencia',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'frecuencia',
                 headerClass: 'text-center tdsmall'
             },
@@ -1791,7 +1793,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'metkri',
                 header: 'Meta del KRI',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'metkri',
                 headerClass: 'text-center tdsmall'
             },
@@ -1799,7 +1801,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'kriActual',
                 header: 'KRI Actual',
                 class: 'text-center tdsmall',
-                colspan:"1",
+                colspan: "1",
                 ordenadmiento: 'kriActual',
                 headerClass: 'text-center tdsmall'
             },
@@ -1807,7 +1809,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 field: 'kriResponsable',
                 header: 'Responsable de asegurar su cumplimiento',
                 class: 'text-center tdlarge',
-                colspan:"2",
+                colspan: "2",
                 ordenadmiento: 'kriResponsable',
                 headerClass: 'text-center tdlarge'
             },
@@ -1916,29 +1918,29 @@ export class FormMatrizRiesgoComponent implements OnInit {
         return this.matrizRiesgoService.obtenerProcesosMatriz(idEmpresa, MATRIZ_OPERACIONAL).subscribe(
             resp => {
                 // @ts-ignore
-                 this.listaProcesos= resp.listaProceso.filter(proceso =>
+                this.listaProcesos = resp.listaProceso.filter(proceso =>
                     proceso.indicadorBaja == this.indicadorBaja
                 );
 
-                if(this.editar || this.ver){
-                    for (let idProceso of this.idListaProceso){
+                if (this.editar || this.ver) {
+                    for (let idProceso of this.idListaProceso) {
                         this.listaProcesos.forEach((proceso) => {
-                            if(idProceso==proceso.idProceso){
+                            if (idProceso == proceso.idProceso) {
                                 this.procesoList.push(proceso);
                             }
                         });
                     }
                     let uniqueProc = new Set(this.procesoList);
                     let ArrayProc = [...uniqueProc];
-                    this.listaProcesosSelected=ArrayProc;
-                }else{
-                    this.listaProcesosSelected=this.listaProcesos;
+                    this.listaProcesosSelected = ArrayProc;
+                } else {
+                    this.listaProcesosSelected = this.listaProcesos;
                 }
 
                 for (var j = 0; j < this.matricesRiesgo.length; j++) {
 
                     this.matricesRiesgo[j].listaProcesos = this.listaProcesos;
-                    this.cargarSubProcesos(this.matricesRiesgo[j].idProceso,j);
+                    this.cargarSubProcesos(this.matricesRiesgo[j].idProceso, j);
                     //console.log("ProcesosSel " + JSON.stringify(this.matricesRiesgo[j].listaProcesos));
 
                 }
@@ -1949,7 +1951,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
     }
 
-    cargarSubProcesos(idProceso,indice) {
+    cargarSubProcesos(idProceso, indice) {
 
         const idEmpresa = this.idEmpresa;
         const idSede = this.payload.data.datosSede.idSede;
@@ -1988,10 +1990,6 @@ export class FormMatrizRiesgoComponent implements OnInit {
         const idControl = this.matricesRiesgo.length;
         const orden = this.matricesRiesgo.length;
         const idMatrizRiesgo = this.getIdMatrizNextVal();
-        /*console.log("AGREGANDO MATRIZ "+idMatrizRiesgo);
-        const codRiesgo = this.getCorrelativoRiesgo(idMatrizRiesgo);
-        const codControl = this.getCorrelativoControl(idMatrizRiesgo,0);
-        const codPlan = this.getCorrelativoPlan(idMatrizRiesgo,0);*/
         const datosToken = this.authLoginService.obtenerDatosToken(this.authLoginService.userToken);
         const usuarioCreacion = datosToken.data.username;
         const ipCreacion = this.dataIp; //"127.0.0.1";
@@ -2006,7 +2004,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
             idSede: idSede,
             idPeriodo: idPeriodo,
             idTipoMatriz: idTipoMatriz,
-            idCodigoControl:idControl,
+            idCodigoControl: idControl,
             listaProcesos: [],
             listaSubProcesos: [],
             idGerencia: 0,
@@ -2014,12 +2012,10 @@ export class FormMatrizRiesgoComponent implements OnInit {
             ipCreacion: ipCreacion,
             deCartera: "",
             idMatrizNivel: idMatrizNivel,
-            listaDetalleMatriz:[],
-            codRiesgo:"",
-            codControl:"",
-            codPlanAccion:""
-
-
+            listaDetalleMatriz: [],
+            codRiesgo: "",
+            codControl: "",
+            codPlanAccion: ""
         };
 
         var control: MatrizRiesgo = new MatrizRiesgo();
@@ -2044,49 +2040,39 @@ export class FormMatrizRiesgoComponent implements OnInit {
         matrizRiesgo.listaDetalleMatriz.push(control);
         matrizRiesgo.listaProcesos = this.listaProcesos;
 
-        /*if(idTipoMatriz==0){
-            matrizRiesgo.idProceso = this.listaProcesosSelected[0].idProceso;
-            // matrizRiesgo.idMatrizNivel = this.listaProcesosSelected[0].idMatrizNivel;
-
-        }*/
-
-      //  console.log("La lista procesos a " + JSON.stringify(this.listaProcesosSelected));
-      //  console.log("La lista procesos a agregar mat " + JSON.stringify(matrizRiesgo));
-      //  console.log("La lista procesos a agregar " + JSON.stringify(matrizRiesgo.listaProcesos));
-
         this.matricesRiesgo.push(matrizRiesgo);
 
         this.matricesRiesgo = [...this.matricesRiesgo];
 
         this.activeImport = false;
 
-        console.log("JSON IMPORT "+JSON.stringify(this.matricesRiesgo));
+        console.log("JSON IMPORT " + JSON.stringify(this.matricesRiesgo));
 
-
+        this.cdr.detectChanges();
     }
 
-    getCorrelativoRiesgo(idRiesgo:number):string{
+    getCorrelativoRiesgo(idRiesgo: number): string {
 
-        var inicial:string = "R";
-        var correlativo:string = idRiesgo.toString()+inicial+"0";
+        var inicial: string = "R";
+        var correlativo: string = idRiesgo.toString() + inicial + "0";
 
         return correlativo;
 
     }
 
-    getCorrelativoControl(idRiesgo:number,idControl:number):string{
+    getCorrelativoControl(idRiesgo: number, idControl: number): string {
 
-        var inicial:string = "C";
-        var correlativo:string = idRiesgo.toString()+inicial+idControl;
+        var inicial: string = "C";
+        var correlativo: string = idRiesgo.toString() + inicial + idControl;
 
         return correlativo;
 
     }
 
-    getCorrelativoPlan(idRiesgo:number,idFraude:number):string{
+    getCorrelativoPlan(idRiesgo: number, idFraude: number): string {
 
-        var inicial:string = "F";
-        var correlativo:string = idRiesgo.toString()+inicial+idFraude;
+        var inicial: string = "F";
+        var correlativo: string = idRiesgo.toString() + inicial + idFraude;
 
         return correlativo;
 
@@ -2100,33 +2086,33 @@ export class FormMatrizRiesgoComponent implements OnInit {
         for (var j = 0; j < this.matricesRiesgo.length; j++) {
 
 
-                nextid = this.matricesRiesgo[j].idMatrizRiesgo;
-                console.log("NEXTID "+nextid);
+            nextid = this.matricesRiesgo[j].idMatrizRiesgo;
+            console.log("NEXTID " + nextid);
 
         }
-        nextid=nextid+1;
+        nextid = nextid + 1;
 
 
         return nextid;
     }
 
-    getIdControlNextVal(idMatriz:number): number {
+    getIdControlNextVal(idMatriz: number): number {
 
         var nextid: number = 0;
 
         for (var j = 0; j < this.matricesRiesgo.length; j++) {
 
 
-            console.log("GET ID MATRIZ "+this.matricesRiesgo[j].idMatrizRiesgo +" idma "+idMatriz);
-                if(this.matricesRiesgo[j].idMatrizRiesgo==idMatriz){
-                    nextid = this.matricesRiesgo[j].idCodigoControl;
-                }
+            console.log("GET ID MATRIZ " + this.matricesRiesgo[j].idMatrizRiesgo + " idma " + idMatriz);
+            if (this.matricesRiesgo[j].idMatrizRiesgo == idMatriz) {
+                nextid = this.matricesRiesgo[j].idCodigoControl;
+            }
 
 
 
         }
-        nextid=nextid+1;
-        console.log("GET ID MATRIZ N "+nextid);
+        nextid = nextid + 1;
+        console.log("GET ID MATRIZ N " + nextid);
 
 
         return nextid;
@@ -2142,17 +2128,17 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 this.listaGerencias = resp.listaGerencias.filter(gerencia =>
                     gerencia.indicadorBaja == this.indicadorBaja
                 );
-                if(this.editar|| this.ver){
-                    for (let idGerencia of this.idListaGerencia){
+                if (this.editar || this.ver) {
+                    for (let idGerencia of this.idListaGerencia) {
                         this.listaGerencias.forEach((gerencia) => {
-                            if(idGerencia==gerencia.idGerencia){
+                            if (idGerencia == gerencia.idGerencia) {
                                 this.gerenciaList.push(gerencia);
                             }
                         });
                     }
                     let uniqueGer = new Set(this.gerenciaList);
                     let ArrayGer = [...uniqueGer];
-                    this.listaGerenciasSel=ArrayGer;
+                    this.listaGerenciasSel = ArrayGer;
                 }
             });
     }
@@ -2179,8 +2165,8 @@ export class FormMatrizRiesgoComponent implements OnInit {
         this.matrizRiesgoTemp = matrizRiesgoTemp;
         this.ri = ri;*/
         console.log('abriendo dialog crear matriz');
-        this.ref = this.dialogService.open(CreateRiesgoComponent ,{
-           
+        this.ref = this.dialogService.open(CreateRiesgoComponent, {
+
         });
 
         //this.matricesRiesgo.push(matrizRiesgoTemp);
@@ -2207,7 +2193,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
         const idMatrizNivel = this.formularioMatrizRiesgo.get('idTipoMatriz').value;
 
         const usuarioCreacion = datosToken.data.username;
-        const ipCreacion =this.dataIp; //"127.0.0.1";
+        const ipCreacion = this.dataIp; //"127.0.0.1";
         console.log("La cantidad " + cantidad);
 
         if (cantidad > 0) {
@@ -2254,7 +2240,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                             control.nuProbabilidadInherente = this.matrizRiesgoTemp.nuProbabilidadInherente;
                             control.nuImpactoInherente = this.matrizRiesgoTemp.nuImpactoInherente;
 
-                            const sev_riesgo = this.getProbabilidad(control.nuProbabilidadInherente,control.nuImpactoInherente);
+                            const sev_riesgo = this.getProbabilidad(control.nuProbabilidadInherente, control.nuImpactoInherente);
                             control.nuPuntajeInherente = sev_riesgo;
                             control.deSeveridadInherente = this.obtener_severidad(control.nuProbabilidadInherente, control.nuImpactoInherente);
 
@@ -2269,7 +2255,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
                             control.nuProbabilidadResidual = this.matrizRiesgoTemp.nuProbabilidadResidual;
                             control.nuImpactoResidual = this.matrizRiesgoTemp.nuImpactoResidual;
-                            const sev_control = this.getProbabilidad(control.nuProbabilidadResidual,control.nuImpactoResidual);
+                            const sev_control = this.getProbabilidad(control.nuProbabilidadResidual, control.nuImpactoResidual);
                             control.nuPuntajeResidual = sev_control;
                             control.deSeveridadResidual = this.obtener_severidad(control.nuProbabilidadResidual, control.nuImpactoResidual);
 
@@ -2278,9 +2264,9 @@ export class FormMatrizRiesgoComponent implements OnInit {
                             control.usuarioCreacion = usuarioCreacion;
                             control.ipCreacion = ipCreacion;
 
-                            control.listaDetalleMatriz =[];
+                            control.listaDetalleMatriz = [];
 
-                        //    this.matricesRiesgo[j] = control;
+                            //    this.matricesRiesgo[j] = control;
                             this.matricesRiesgo.push(control);
                             if (this.matricesRiesgo[this.ri].listaDetalleMatriz != undefined) {
                                 this.matricesRiesgo[this.ri].listaDetalleMatriz.push(control);
@@ -2300,10 +2286,10 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
 
                 }
-                else{
-                //    this.matricesRiesgo[j].idCodigoControl = j;
-                //    this.matricesRiesgo.push(control);
-                //    cant--;
+                else {
+                    //    this.matricesRiesgo[j].idCodigoControl = j;
+                    //    this.matricesRiesgo.push(control);
+                    //    cant--;
                 }
 
             }
@@ -2338,7 +2324,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 control.nuProbabilidadInherente = this.matrizRiesgoTemp.nuProbabilidadInherente;
                 control.nuImpactoInherente = this.matrizRiesgoTemp.nuImpactoInherente;
 
-                const sev_riesgo = this.getProbabilidad(control.nuProbabilidadInherente,control.nuImpactoInherente);
+                const sev_riesgo = this.getProbabilidad(control.nuProbabilidadInherente, control.nuImpactoInherente);
                 control.nuPuntajeInherente = sev_riesgo;
                 control.deSeveridadInherente = this.obtener_severidad(control.nuProbabilidadInherente, control.nuImpactoInherente);
 
@@ -2353,7 +2339,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
                 control.nuProbabilidadResidual = this.matrizRiesgoTemp.nuProbabilidadResidual;
                 control.nuImpactoResidual = this.matrizRiesgoTemp.nuImpactoResidual;
-                const sev_control = this.getProbabilidad(control.nuProbabilidadResidual,control.nuImpactoResidual);
+                const sev_control = this.getProbabilidad(control.nuProbabilidadResidual, control.nuImpactoResidual);
                 control.nuPuntajeResidual = sev_control;
                 control.deSeveridadResidual = this.obtener_severidad(control.nuProbabilidadResidual, control.nuImpactoResidual);
 
@@ -2372,7 +2358,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 }
                 this.matricesRiesgo = [...this.matricesRiesgo];
 
-                console.log("Matriz "+this.ri);
+                console.log("Matriz " + this.ri);
             }
             this.DisplayControl = false;
 
@@ -2388,7 +2374,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
         //   this.matrizRiesgoTemp=matrizRiesgoTemp;
         //   if (matrizRiesgoTemp.idMatrizRiesgo == idMatriz) {
-        this.matrizRiesgoTemporal[matrizRiesgoTemp.idMatrizRiesgo] = {...matrizRiesgoTemp};
+        this.matrizRiesgoTemporal[matrizRiesgoTemp.idMatrizRiesgo] = { ...matrizRiesgoTemp };
         console.log("Matriz Edit " + JSON.stringify(matrizRiesgoTemp));
         //  }
     }
@@ -2398,170 +2384,170 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
             var lista = [];
 
-            if(this.idTipoMatrizSelect== TipoMatrizRiesgo.entidad){
-                for(var j=0;j<this.matricesRiesgo.length;j++){
+            if (this.idTipoMatrizSelect == TipoMatrizRiesgo.entidad) {
+                for (var j = 0; j < this.matricesRiesgo.length; j++) {
 
                     var obj = new Object();
                     let idGerencia = this.matricesRiesgo[j]['idGerencia'];
-                    obj['COD'] =this.matricesRiesgo[j]['codMatriz'];
-                    obj['Nivel'] =this.obtenerDescIdMatrizNivel(this.matricesRiesgo[j]['idMatrizNivel']);
+                    obj['COD'] = this.matricesRiesgo[j]['codMatriz'];
+                    obj['Nivel'] = this.obtenerDescIdMatrizNivel(this.matricesRiesgo[j]['idMatrizNivel']);
                     obj['Gerencia Responsable'] = this.obtenerDescIdGerencia(this.matricesRiesgo[j]['idGerencia']);
                     obj['Título'] = this.matricesRiesgo[j]['deTitulo'];
-                    obj['Código del Riesgo'] =this.matricesRiesgo[j]['codRiesgo'];
-                    obj['Descripción del Riesgo'] =this.matricesRiesgo[j]['deRiesgo'];
-                    obj['Procesos Impactados'] =this.matricesRiesgo[j]['deProcesoImpactado'];
-                    obj['FODA'] =this.matricesRiesgo[j]['deFoda'];
-                    obj['Grupos de Interés'] =this.matricesRiesgo[j]['deGrupoInteres'];
-                    obj['Origen'] =this.obtenerDescIdOrigenRiesgo(this.matricesRiesgo[j]['idOrigenRiesgo']);
-                    obj['Frecuencia de Riesgo'] =this.obtenerDescIdFrecuenciaRiesgo(this.matricesRiesgo[j]['idFrecuenciaRiesgo']);
-                    obj['Tipo de Riesgo'] =this.obtenerDescIdTipoRiesgo(this.matricesRiesgo[j]['idTipoRiesgo']);
-                    obj['Probabilidad (1-4)'] =this.matricesRiesgo[j]['nuProbabilidadInherente'];
-                    obj['Impacto (1-4)'] =this.matricesRiesgo[j]['nuImpactoInherente'];
-                    obj['Severidad'] =this.matricesRiesgo[j]['nuPuntajeInherente'];
-                    obj['Severidad Inherente'] =this.matricesRiesgo[j]['deSeveridadInherente'];
-                    obj['Código Control'] =this.matricesRiesgo[j]['codControl'];
-                    obj['Descripción del Control'] =this.matricesRiesgo[j]['deControl'];
-                    obj['Area a la que pertenece el responsable del Control'] =this.matricesRiesgo[j]['idAreaControl'];
-                    obj['Responsable del Control'] =this.matricesRiesgo[j]['idResponsableControl'];
-                    obj['Frecuencia del Control'] =this.obtenerDescIdFrecuenciaControl(this.matricesRiesgo[j]['idFrecuenciaControl']);
-                    obj['Oportunidad del Control'] =this.obtenerDescIdOportunidadControl(this.matricesRiesgo[j]['idOportunidadControl']);
-                    obj['Automatización del Control'] =this.obtenerDescIdAutomatizacionControl(this.matricesRiesgo[j]['idAutomatizacionControl']);
-                    obj['Evidencia del Control'] =this.matricesRiesgo[j]['deEvidenciaControl'];
-                    obj['Probabilidad (1-4) '] =this.matricesRiesgo[j]['nuProbabilidadResidual'];
-                    obj['Impacto (1-4) '] =this.matricesRiesgo[j]['nuImpactoResidual'];
-                    obj['Severidad '] =this.matricesRiesgo[j]['nuPuntajeResidual'];
-                    obj['Severidad Residual'] =this.matricesRiesgo[j]['deSeveridadResidual'];
-                    obj['Estrategia de Respuesta'] =this.obtenerDescIdEstrategiaRespuesta(this.matricesRiesgo[j]['idEstrategiaResp']);
-                    obj['Código del Plan de Acción'] =this.matricesRiesgo[j]['codPlanAccion'];
-                    obj['Descripción del Plan de Acción'] =this.matricesRiesgo[j]['desPlanAccion'];
-                    obj['Área a la que pertenece el responsable de realizar el plan de acción'] =this.matricesRiesgo[j]['idAreaPlanAccion'];
-                    obj['Responsable de realizar el plan de acción'] =this.matricesRiesgo[j]['idResponsablePlanAccion'];
+                    obj['Código del Riesgo'] = this.matricesRiesgo[j]['codRiesgo'];
+                    obj['Descripción del Riesgo'] = this.matricesRiesgo[j]['deRiesgo'];
+                    obj['Procesos Impactados'] = this.matricesRiesgo[j]['deProcesoImpactado'];
+                    obj['FODA'] = this.matricesRiesgo[j]['deFoda'];
+                    obj['Grupos de Interés'] = this.matricesRiesgo[j]['deGrupoInteres'];
+                    obj['Origen'] = this.obtenerDescIdOrigenRiesgo(this.matricesRiesgo[j]['idOrigenRiesgo']);
+                    obj['Frecuencia de Riesgo'] = this.obtenerDescIdFrecuenciaRiesgo(this.matricesRiesgo[j]['idFrecuenciaRiesgo']);
+                    obj['Tipo de Riesgo'] = this.obtenerDescIdTipoRiesgo(this.matricesRiesgo[j]['idTipoRiesgo']);
+                    obj['Probabilidad (1-4)'] = this.matricesRiesgo[j]['nuProbabilidadInherente'];
+                    obj['Impacto (1-4)'] = this.matricesRiesgo[j]['nuImpactoInherente'];
+                    obj['Severidad'] = this.matricesRiesgo[j]['nuPuntajeInherente'];
+                    obj['Severidad Inherente'] = this.matricesRiesgo[j]['deSeveridadInherente'];
+                    obj['Código Control'] = this.matricesRiesgo[j]['codControl'];
+                    obj['Descripción del Control'] = this.matricesRiesgo[j]['deControl'];
+                    obj['Area a la que pertenece el responsable del Control'] = this.matricesRiesgo[j]['idAreaControl'];
+                    obj['Responsable del Control'] = this.matricesRiesgo[j]['idResponsableControl'];
+                    obj['Frecuencia del Control'] = this.obtenerDescIdFrecuenciaControl(this.matricesRiesgo[j]['idFrecuenciaControl']);
+                    obj['Oportunidad del Control'] = this.obtenerDescIdOportunidadControl(this.matricesRiesgo[j]['idOportunidadControl']);
+                    obj['Automatización del Control'] = this.obtenerDescIdAutomatizacionControl(this.matricesRiesgo[j]['idAutomatizacionControl']);
+                    obj['Evidencia del Control'] = this.matricesRiesgo[j]['deEvidenciaControl'];
+                    obj['Probabilidad (1-4) '] = this.matricesRiesgo[j]['nuProbabilidadResidual'];
+                    obj['Impacto (1-4) '] = this.matricesRiesgo[j]['nuImpactoResidual'];
+                    obj['Severidad '] = this.matricesRiesgo[j]['nuPuntajeResidual'];
+                    obj['Severidad Residual'] = this.matricesRiesgo[j]['deSeveridadResidual'];
+                    obj['Estrategia de Respuesta'] = this.obtenerDescIdEstrategiaRespuesta(this.matricesRiesgo[j]['idEstrategiaResp']);
+                    obj['Código del Plan de Acción'] = this.matricesRiesgo[j]['codPlanAccion'];
+                    obj['Descripción del Plan de Acción'] = this.matricesRiesgo[j]['desPlanAccion'];
+                    obj['Área a la que pertenece el responsable de realizar el plan de acción'] = this.matricesRiesgo[j]['idAreaPlanAccion'];
+                    obj['Responsable de realizar el plan de acción'] = this.matricesRiesgo[j]['idResponsablePlanAccion'];
                     obj['Inicio de Plan de Acción'] = this.invertirFecha(this.matricesRiesgo[j]['fechaInicioPlanAccion']);
-                    obj['Estado de plan de acción'] =this.obtenerDescIdEstadoPlanAccion(this.matricesRiesgo[j]['estadoPlanAccion']);
+                    obj['Estado de plan de acción'] = this.obtenerDescIdEstadoPlanAccion(this.matricesRiesgo[j]['estadoPlanAccion']);
                     obj['Fin Plan de Acción'] = this.invertirFecha(this.matricesRiesgo[j]['fechaFinPlanAccion']);
-                    obj['Evidencia de Plan de Acción'] =this.matricesRiesgo[j]['evidenciaPlanAccion'];
+                    obj['Evidencia de Plan de Acción'] = this.matricesRiesgo[j]['evidenciaPlanAccion'];
                     obj['Fecha Prevista'] = this.invertirFecha(this.matricesRiesgo[j]['fechaPrevista']);
-                    obj['¿El plan de acción fue eficaz?'] =this.obtenerDescIdAccionEficaz(this.matricesRiesgo[j]['fueEficaz']);
+                    obj['¿El plan de acción fue eficaz?'] = this.obtenerDescIdAccionEficaz(this.matricesRiesgo[j]['fueEficaz']);
                     obj['Fecha Verificacion'] = this.invertirFecha(this.matricesRiesgo[j]['fechaVerificacion']);
-                    obj['Verificado por'] =this.matricesRiesgo[j]['verificadoPor'];
-                    obj['Evidencia'] =this.matricesRiesgo[j]['evidenciaEficacia'];
-                    obj['Observaciones'] =this.matricesRiesgo[j]['observaciones'];
-                    obj['Código KRI'] =this.matricesRiesgo[j]['codkri'];
-                    obj['Definición del KRI'] =this.matricesRiesgo[j]['defKri'];
-                    obj['Frecuencia'] =this.matricesRiesgo[j]['frecuencia'];
-                    obj['Meta del KRI'] =this.matricesRiesgo[j]['metkri'];
-                    obj['KRI Actual'] =this.matricesRiesgo[j]['kriActual'];
-                    obj['Responsable de asegurar su cumplimiento'] =this.matricesRiesgo[j]['kriResponsable'];
+                    obj['Verificado por'] = this.matricesRiesgo[j]['verificadoPor'];
+                    obj['Evidencia'] = this.matricesRiesgo[j]['evidenciaEficacia'];
+                    obj['Observaciones'] = this.matricesRiesgo[j]['observaciones'];
+                    obj['Código KRI'] = this.matricesRiesgo[j]['codkri'];
+                    obj['Definición del KRI'] = this.matricesRiesgo[j]['defKri'];
+                    obj['Frecuencia'] = this.matricesRiesgo[j]['frecuencia'];
+                    obj['Meta del KRI'] = this.matricesRiesgo[j]['metkri'];
+                    obj['KRI Actual'] = this.matricesRiesgo[j]['kriActual'];
+                    obj['Responsable de asegurar su cumplimiento'] = this.matricesRiesgo[j]['kriResponsable'];
 
 
                     lista.push(obj);
                 }
 
-                var worksheet = xlsx.utils.aoa_to_sheet([["DATOS GENERALES DEL RIESGO","","","","","","","","","","","",
-                                                    "EVALUACIÓN DE RIEGO INHERENTE","","","",
-                                                    "CONTROL","","","","","","","",
-                                                    "EVALUACIÓN DE RIESGO RESIDUAL","","","",
-                                                    "PLAN DE ACCIÓN","","","","","","","","",
-                                                    "VERIFICACIÓN DE EFICACIA","","","","","",
-                                                    "INDICADORES","","","","",""]]);
-                xlsx.utils.sheet_add_json(worksheet,lista,{origin:1,skipHeader: false});
+                var worksheet = xlsx.utils.aoa_to_sheet([["DATOS GENERALES DEL RIESGO", "", "", "", "", "", "", "", "", "", "", "",
+                    "EVALUACIÓN DE RIEGO INHERENTE", "", "", "",
+                    "CONTROL", "", "", "", "", "", "", "",
+                    "EVALUACIÓN DE RIESGO RESIDUAL", "", "", "",
+                    "PLAN DE ACCIÓN", "", "", "", "", "", "", "", "",
+                    "VERIFICACIÓN DE EFICACIA", "", "", "", "", "",
+                    "INDICADORES", "", "", "", "", ""]]);
+                xlsx.utils.sheet_add_json(worksheet, lista, { origin: 1, skipHeader: false });
 
-                if(!worksheet['!merges'])
-                worksheet['!merges'] = [];
-                worksheet["!merges"].push({s:{r:0,c:0},e:{r:0,c:11}},
-                                            {s:{r:0,c:12},e:{r:0,c:15}},
-                                            {s:{r:0,c:16},e:{r:0,c:23}},
-                                            {s:{r:0,c:24},e:{r:0,c:27}},
-                                            {s:{r:0,c:28},e:{r:0,c:36}},
-                                            {s:{r:0,c:37},e:{r:0,c:42}},
-                                            {s:{r:0,c:43},e:{r:0,c:48}},);
+                if (!worksheet['!merges'])
+                    worksheet['!merges'] = [];
+                worksheet["!merges"].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 11 } },
+                    { s: { r: 0, c: 12 }, e: { r: 0, c: 15 } },
+                    { s: { r: 0, c: 16 }, e: { r: 0, c: 23 } },
+                    { s: { r: 0, c: 24 }, e: { r: 0, c: 27 } },
+                    { s: { r: 0, c: 28 }, e: { r: 0, c: 36 } },
+                    { s: { r: 0, c: 37 }, e: { r: 0, c: 42 } },
+                    { s: { r: 0, c: 43 }, e: { r: 0, c: 48 } },);
 
 
-                const workbook = {Sheets: {data: worksheet}, SheetNames: ['data']};
-                const excelBuffer: any = xlsx.write(workbook, {bookType: 'xlsx', type: 'array'});
+                const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+                const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
                 this.saveAsExcelFile(excelBuffer, 'MatrizRiesgoEntidad');
 
 
             }
-            if(this.idTipoMatrizSelect==TipoMatrizRiesgo.proceso){
-                for(var j=0;j<this.matricesRiesgo.length;j++){
+            if (this.idTipoMatrizSelect == TipoMatrizRiesgo.proceso) {
+                for (var j = 0; j < this.matricesRiesgo.length; j++) {
 
                     var obj = new Object();
                     let idGerencia = this.matricesRiesgo[j]['idGerencia'];
-                    obj['COD'] =this.matricesRiesgo[j]['codMatriz'];
-                    obj['Nivel'] =this.obtenerDescIdMatrizNivel(this.matricesRiesgo[j]['idMatrizNivel']);
+                    obj['COD'] = this.matricesRiesgo[j]['codMatriz'];
+                    obj['Nivel'] = this.obtenerDescIdMatrizNivel(this.matricesRiesgo[j]['idMatrizNivel']);
                     obj['Gerencia Responsable'] = this.obtenerDescIdGerencia(this.matricesRiesgo[j]['idGerencia']);
-                    obj['Proceso'] =this.obtenerDescIdProceso(this.matricesRiesgo[j]['idProceso']);
-                    obj['Subproceso'] =this.obtenerDescIdSubProceso(this.matricesRiesgo[j]['idSubProceso']);
-                    obj['Código del Riesgo'] =this.matricesRiesgo[j]['codRiesgo'];
-                    obj['Descripción del Riesgo'] =this.matricesRiesgo[j]['deRiesgo'];
-                    obj['Origen del Riesgo'] =this.obtenerDescIdOrigenRiesgo(this.matricesRiesgo[j]['idOrigenRiesgo']);
-                    obj['Frecuencia de Riesgo'] =this.obtenerDescIdFrecuenciaRiesgo(this.matricesRiesgo[j]['idFrecuenciaRiesgo']);
-                    obj['Tipo de Riesgo'] =this.obtenerDescIdTipoRiesgo(this.matricesRiesgo[j]['idTipoRiesgo']);
-                    obj['Probabilidad (1-4)'] =this.matricesRiesgo[j]['nuProbabilidadInherente'];
-                    obj['Impacto (1-4)'] =this.matricesRiesgo[j]['nuImpactoInherente'];
-                    obj['Severidad'] =this.matricesRiesgo[j]['nuPuntajeInherente'];
-                    obj['Severidad Inherente'] =this.matricesRiesgo[j]['deSeveridadInherente'];
-                    obj['Código Control'] =this.matricesRiesgo[j]['codControl'];
-                    obj['Descripción del Control'] =this.matricesRiesgo[j]['deControl'];
+                    obj['Proceso'] = this.obtenerDescIdProceso(this.matricesRiesgo[j]['idProceso']);
+                    obj['Subproceso'] = this.obtenerDescIdSubProceso(this.matricesRiesgo[j]['idSubProceso']);
+                    obj['Código del Riesgo'] = this.matricesRiesgo[j]['codRiesgo'];
+                    obj['Descripción del Riesgo'] = this.matricesRiesgo[j]['deRiesgo'];
+                    obj['Origen del Riesgo'] = this.obtenerDescIdOrigenRiesgo(this.matricesRiesgo[j]['idOrigenRiesgo']);
+                    obj['Frecuencia de Riesgo'] = this.obtenerDescIdFrecuenciaRiesgo(this.matricesRiesgo[j]['idFrecuenciaRiesgo']);
+                    obj['Tipo de Riesgo'] = this.obtenerDescIdTipoRiesgo(this.matricesRiesgo[j]['idTipoRiesgo']);
+                    obj['Probabilidad (1-4)'] = this.matricesRiesgo[j]['nuProbabilidadInherente'];
+                    obj['Impacto (1-4)'] = this.matricesRiesgo[j]['nuImpactoInherente'];
+                    obj['Severidad'] = this.matricesRiesgo[j]['nuPuntajeInherente'];
+                    obj['Severidad Inherente'] = this.matricesRiesgo[j]['deSeveridadInherente'];
+                    obj['Código Control'] = this.matricesRiesgo[j]['codControl'];
+                    obj['Descripción del Control'] = this.matricesRiesgo[j]['deControl'];
                     obj['Area a la que pertenece el responsable del Control'] = this.matricesRiesgo[j]['idAreaControl'];
-                    obj['Responsable del Control'] =this.matricesRiesgo[j]['idResponsableControl'];
-                    obj['Frecuencia del Control'] =this.obtenerDescIdFrecuenciaControl(this.matricesRiesgo[j]['idFrecuenciaControl']);
-                    obj['Oportunidad del Control'] =this.obtenerDescIdOportunidadControl(this.matricesRiesgo[j]['idOportunidadControl']);
-                    obj['Automatización del Control'] =this.obtenerDescIdAutomatizacionControl(this.matricesRiesgo[j]['idAutomatizacionControl']);
-                    obj['Evidencia del Control'] =this.matricesRiesgo[j]['deEvidenciaControl'];
-                    obj['Probabilidad (1-4) '] =this.matricesRiesgo[j]['nuProbabilidadResidual'];
-                    obj['Impacto (1-4) '] =this.matricesRiesgo[j]['nuImpactoResidual'];
-                    obj['Severidad '] =this.matricesRiesgo[j]['nuPuntajeResidual'];
-                    obj['Severidad Residual'] =this.matricesRiesgo[j]['deSeveridadResidual'];
-                    obj['Estrategia de Respuesta'] =this.obtenerDescIdEstrategiaRespuesta(this.matricesRiesgo[j]['idEstrategiaResp']);
-                    obj['Código del Plan de Acción'] =this.matricesRiesgo[j]['codPlanAccion'];
-                    obj['Descripción del Plan de Acción'] =this.matricesRiesgo[j]['desPlanAccion'];
-                    obj['Área a la que pertenece el responsable de realizar el plan de acción'] =this.matricesRiesgo[j]['idAreaPlanAccion'];
+                    obj['Responsable del Control'] = this.matricesRiesgo[j]['idResponsableControl'];
+                    obj['Frecuencia del Control'] = this.obtenerDescIdFrecuenciaControl(this.matricesRiesgo[j]['idFrecuenciaControl']);
+                    obj['Oportunidad del Control'] = this.obtenerDescIdOportunidadControl(this.matricesRiesgo[j]['idOportunidadControl']);
+                    obj['Automatización del Control'] = this.obtenerDescIdAutomatizacionControl(this.matricesRiesgo[j]['idAutomatizacionControl']);
+                    obj['Evidencia del Control'] = this.matricesRiesgo[j]['deEvidenciaControl'];
+                    obj['Probabilidad (1-4) '] = this.matricesRiesgo[j]['nuProbabilidadResidual'];
+                    obj['Impacto (1-4) '] = this.matricesRiesgo[j]['nuImpactoResidual'];
+                    obj['Severidad '] = this.matricesRiesgo[j]['nuPuntajeResidual'];
+                    obj['Severidad Residual'] = this.matricesRiesgo[j]['deSeveridadResidual'];
+                    obj['Estrategia de Respuesta'] = this.obtenerDescIdEstrategiaRespuesta(this.matricesRiesgo[j]['idEstrategiaResp']);
+                    obj['Código del Plan de Acción'] = this.matricesRiesgo[j]['codPlanAccion'];
+                    obj['Descripción del Plan de Acción'] = this.matricesRiesgo[j]['desPlanAccion'];
+                    obj['Área a la que pertenece el responsable de realizar el plan de acción'] = this.matricesRiesgo[j]['idAreaPlanAccion'];
                     obj['Responsable de realizar el plan de acción'] = this.matricesRiesgo[j]['idResponsablePlanAccion'];
                     obj['Inicio de Plan de Acción'] = this.invertirFecha(this.matricesRiesgo[j]['fechaInicioPlanAccion']);
-                    obj['Estado de plan de acción'] =this.obtenerDescIdEstadoPlanAccion(this.matricesRiesgo[j]['estadoPlanAccion']);
+                    obj['Estado de plan de acción'] = this.obtenerDescIdEstadoPlanAccion(this.matricesRiesgo[j]['estadoPlanAccion']);
                     obj['Fin Plan de Acción'] = this.invertirFecha(this.matricesRiesgo[j]['fechaFinPlanAccion']);
-                    obj['Evidencia de Plan de Accion'] =this.matricesRiesgo[j]['evidenciaPlanAccion'];
+                    obj['Evidencia de Plan de Accion'] = this.matricesRiesgo[j]['evidenciaPlanAccion'];
                     obj['Fecha Prevista'] = this.invertirFecha(this.matricesRiesgo[j]['fechaPrevista']);
-                    obj['¿El plan de acción fue eficaz?'] =this.obtenerDescIdAccionEficaz(this.matricesRiesgo[j]['fueEficaz']);
+                    obj['¿El plan de acción fue eficaz?'] = this.obtenerDescIdAccionEficaz(this.matricesRiesgo[j]['fueEficaz']);
                     obj['Fecha Verificacion'] = this.invertirFecha(this.matricesRiesgo[j]['fechaVerificacion']);
-                    obj['Verificado por'] =this.matricesRiesgo[j]['verificadoPor'];
-                    obj['Evidencia'] =this.matricesRiesgo[j]['evidenciaEficacia'];
-                    obj['Observaciones'] =this.matricesRiesgo[j]['observaciones'];
-                    obj['Código KRI'] =this.matricesRiesgo[j]['codkri'];
-                    obj['Definición del KRI'] =this.matricesRiesgo[j]['defKri'];
-                    obj['Frecuencia'] =this.matricesRiesgo[j]['frecuencia'];
-                    obj['Meta del KRI'] =this.matricesRiesgo[j]['metkri'];
-                    obj['KRI Actual'] =this.matricesRiesgo[j]['kriActual'];
-                    obj['Responsable de asegurar su cumplimiento'] =this.matricesRiesgo[j]['kriResponsable'];
+                    obj['Verificado por'] = this.matricesRiesgo[j]['verificadoPor'];
+                    obj['Evidencia'] = this.matricesRiesgo[j]['evidenciaEficacia'];
+                    obj['Observaciones'] = this.matricesRiesgo[j]['observaciones'];
+                    obj['Código KRI'] = this.matricesRiesgo[j]['codkri'];
+                    obj['Definición del KRI'] = this.matricesRiesgo[j]['defKri'];
+                    obj['Frecuencia'] = this.matricesRiesgo[j]['frecuencia'];
+                    obj['Meta del KRI'] = this.matricesRiesgo[j]['metkri'];
+                    obj['KRI Actual'] = this.matricesRiesgo[j]['kriActual'];
+                    obj['Responsable de asegurar su cumplimiento'] = this.matricesRiesgo[j]['kriResponsable'];
 
 
                     lista.push(obj);
                 }
 
-                var worksheet = xlsx.utils.aoa_to_sheet([["DATOS GENERALES DEL RIESGO","","","","","","","","","",
-                                                    "EVALUACIÓN DE RIEGO INHERENTE","","","",
-                                                    "CONTROL","","","","","","","",
-                                                    "EVALUACIÓN DE RIESGO RESIDUAL","","","",
-                                                    "PLAN DE ACCIÓN","","","","","","","","",
-                                                    "VERIFICACIÓN DE EFICACIA","","","","","",
-                                                    "INDICADORES","","","","",""]]);
-                xlsx.utils.sheet_add_json(worksheet,lista,{origin:1,skipHeader: false});
+                var worksheet = xlsx.utils.aoa_to_sheet([["DATOS GENERALES DEL RIESGO", "", "", "", "", "", "", "", "", "",
+                    "EVALUACIÓN DE RIEGO INHERENTE", "", "", "",
+                    "CONTROL", "", "", "", "", "", "", "",
+                    "EVALUACIÓN DE RIESGO RESIDUAL", "", "", "",
+                    "PLAN DE ACCIÓN", "", "", "", "", "", "", "", "",
+                    "VERIFICACIÓN DE EFICACIA", "", "", "", "", "",
+                    "INDICADORES", "", "", "", "", ""]]);
+                xlsx.utils.sheet_add_json(worksheet, lista, { origin: 1, skipHeader: false });
 
-                if(!worksheet['!merges'])
-                worksheet['!merges'] = [];
-                worksheet["!merges"].push({s:{r:0,c:0},e:{r:0,c:9}},
-                                            {s:{r:0,c:10},e:{r:0,c:13}},
-                                            {s:{r:0,c:14},e:{r:0,c:21}},
-                                            {s:{r:0,c:22},e:{r:0,c:25}},
-                                            {s:{r:0,c:26},e:{r:0,c:34}},
-                                            {s:{r:0,c:35},e:{r:0,c:40}},
-                                            {s:{r:0,c:41},e:{r:0,c:46}},);
+                if (!worksheet['!merges'])
+                    worksheet['!merges'] = [];
+                worksheet["!merges"].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 9 } },
+                    { s: { r: 0, c: 10 }, e: { r: 0, c: 13 } },
+                    { s: { r: 0, c: 14 }, e: { r: 0, c: 21 } },
+                    { s: { r: 0, c: 22 }, e: { r: 0, c: 25 } },
+                    { s: { r: 0, c: 26 }, e: { r: 0, c: 34 } },
+                    { s: { r: 0, c: 35 }, e: { r: 0, c: 40 } },
+                    { s: { r: 0, c: 41 }, e: { r: 0, c: 46 } },);
 
 
-                const workbook = {Sheets: {data: worksheet}, SheetNames: ['data']};
-                const excelBuffer: any = xlsx.write(workbook, {bookType: 'xlsx', type: 'array'});
+                const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+                const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
                 this.saveAsExcelFile(excelBuffer, 'MatrizRiesgoProceso');
             }
         });
@@ -2578,146 +2564,146 @@ export class FormMatrizRiesgoComponent implements OnInit {
         FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
     }
 
-    invertirFecha(fechaAinvertir: string){
+    invertirFecha(fechaAinvertir: string) {
 
-        if(fechaAinvertir != undefined){
-            var fecha = fechaAinvertir.split('-',3);
+        if (fechaAinvertir != undefined) {
+            var fecha = fechaAinvertir.split('-', 3);
             var dia = fecha[2];
             var mes = fecha[1];
             var anio = fecha[0];
-            return dia+"/"+mes+"/"+anio;
+            return dia + "/" + mes + "/" + anio;
         }
     }
 
-    obtenerDescIdMatrizNivel(idMatrizNivel:number){
+    obtenerDescIdMatrizNivel(idMatrizNivel: number) {
         let descIdMatrizNivel = "";
-        for(var j=0;j<this.listaTiposMatriz.length;j++){
-            if(this.listaTiposMatriz[j]['nombreParametro']==idMatrizNivel){
+        for (var j = 0; j < this.listaTiposMatriz.length; j++) {
+            if (this.listaTiposMatriz[j]['nombreParametro'] == idMatrizNivel) {
                 descIdMatrizNivel = this.listaTiposMatriz[j]['deValor1'];
             }
         }
         return descIdMatrizNivel;
     }
-    obtenerDescIdProceso(idProceso:number){
+    obtenerDescIdProceso(idProceso: number) {
         let descIdProceso = "";
-        for(let lista of this.matricesRiesgo){
-            for(let proceso of lista.listaProcesos){
-                if(proceso.idProceso == idProceso) descIdProceso=proceso.deProceso;
+        for (let lista of this.matricesRiesgo) {
+            for (let proceso of lista.listaProcesos) {
+                if (proceso.idProceso == idProceso) descIdProceso = proceso.deProceso;
             }
         }
         return descIdProceso;
     }
 
-    obtenerDescIdSubProceso(idSubProceso:number){
+    obtenerDescIdSubProceso(idSubProceso: number) {
         let descIdSubProceso = "";
-        for(let lista of this.matricesRiesgo){
-            for(let subProceso of lista.listaSubProcesos){
-                if(subProceso.idSubProceso == idSubProceso) descIdSubProceso=subProceso.deSubProceso;
+        for (let lista of this.matricesRiesgo) {
+            for (let subProceso of lista.listaSubProcesos) {
+                if (subProceso.idSubProceso == idSubProceso) descIdSubProceso = subProceso.deSubProceso;
             }
         }
         return descIdSubProceso;
     }
 
-    obtenerDescIdOrigenRiesgo(idOrigenRiesgo:number){
+    obtenerDescIdOrigenRiesgo(idOrigenRiesgo: number) {
         let descIdOrigenRiesgo = "";
-        for (let fila of this.listaOrigenRiesgo){
-            if(fila.idParametro==idOrigenRiesgo) descIdOrigenRiesgo = fila.nombreParametro;
+        for (let fila of this.listaOrigenRiesgo) {
+            if (fila.idParametro == idOrigenRiesgo) descIdOrigenRiesgo = fila.nombreParametro;
         }
         return descIdOrigenRiesgo;
     }
 
-    obtenerDescIdGerencia(idGerencia:number){
+    obtenerDescIdGerencia(idGerencia: number) {
         let descIdGerencia = "";
-        for(let lista of this.listaGerencias){
-            if(lista.idGerencia==idGerencia) descIdGerencia= lista.descripcionGerencia
+        for (let lista of this.listaGerencias) {
+            if (lista.idGerencia == idGerencia) descIdGerencia = lista.descripcionGerencia
         }
         return descIdGerencia;
     }
 
-    obtenerDescIdFrecuenciaRiesgo(idFrecuenciaRiesgo : number){
+    obtenerDescIdFrecuenciaRiesgo(idFrecuenciaRiesgo: number) {
         let descIdFrecuenciaRiesgo = "";
-        for(let fila of this.listaFrecuenciaRiesgo){
-            if(fila.idParametro==idFrecuenciaRiesgo) descIdFrecuenciaRiesgo= fila.nombreParametro
+        for (let fila of this.listaFrecuenciaRiesgo) {
+            if (fila.idParametro == idFrecuenciaRiesgo) descIdFrecuenciaRiesgo = fila.nombreParametro
         }
         return descIdFrecuenciaRiesgo;
     }
 
-    obtenerDescIdTipoRiesgo(idTipoRiesgo : number){
+    obtenerDescIdTipoRiesgo(idTipoRiesgo: number) {
         let descIdTipoRiesgo = "";
-        for(let fila of this.listaTipoRiesgo){
-            if(fila.idParametro==idTipoRiesgo) descIdTipoRiesgo= fila.nombreParametro
+        for (let fila of this.listaTipoRiesgo) {
+            if (fila.idParametro == idTipoRiesgo) descIdTipoRiesgo = fila.nombreParametro
         }
         return descIdTipoRiesgo;
     }
 
-    obtenerDescIdAreaControl(idAreaControl : number){
+    obtenerDescIdAreaControl(idAreaControl: number) {
         let descIdAreaControl = "";
-        for(let fila of this.listaAreaResponsable){
-            if(fila.idParametro==idAreaControl) descIdAreaControl= fila.nombreParametro
+        for (let fila of this.listaAreaResponsable) {
+            if (fila.idParametro == idAreaControl) descIdAreaControl = fila.nombreParametro
         }
         return descIdAreaControl;
     }
 
-    obtenerDescIdFrecuenciaControl(idFrecuenciaControl : number){
+    obtenerDescIdFrecuenciaControl(idFrecuenciaControl: number) {
         let descIdFrecuenciaControl = "";
-        for(let fila of this.listaFrecuenciaControl){
-            if(fila.idParametro==idFrecuenciaControl) descIdFrecuenciaControl= fila.nombreParametro
+        for (let fila of this.listaFrecuenciaControl) {
+            if (fila.idParametro == idFrecuenciaControl) descIdFrecuenciaControl = fila.nombreParametro
         }
         return descIdFrecuenciaControl;
     }
 
-    obtenerDescIdOportunidadControl(idOportunidadControl : number){
+    obtenerDescIdOportunidadControl(idOportunidadControl: number) {
         let descIdOportunidadControl = "";
-        for(let fila of this.listaOportunidadControl){
-            if(fila.idParametro==idOportunidadControl) descIdOportunidadControl= fila.nombreParametro
+        for (let fila of this.listaOportunidadControl) {
+            if (fila.idParametro == idOportunidadControl) descIdOportunidadControl = fila.nombreParametro
         }
         return descIdOportunidadControl;
     }
 
-    obtenerDescIdAutomatizacionControl(idAutomatizacionControl : number){
+    obtenerDescIdAutomatizacionControl(idAutomatizacionControl: number) {
         let descIdAutomatizacionControl = "";
-        for(let fila of this.listaAutomatizacionControl){
-            if(fila.idParametro==idAutomatizacionControl) descIdAutomatizacionControl= fila.nombreParametro
+        for (let fila of this.listaAutomatizacionControl) {
+            if (fila.idParametro == idAutomatizacionControl) descIdAutomatizacionControl = fila.nombreParametro
         }
         return descIdAutomatizacionControl;
     }
 
-    obtenerDescIdEstrategiaRespuesta(idEstrategiaResp : number){
+    obtenerDescIdEstrategiaRespuesta(idEstrategiaResp: number) {
         let descIdEstrategiaResp = "";
-        for(let fila of this.listaEstrategiaRespuesta){
-            if(fila.idParametro==idEstrategiaResp) descIdEstrategiaResp= fila.nombreParametro
+        for (let fila of this.listaEstrategiaRespuesta) {
+            if (fila.idParametro == idEstrategiaResp) descIdEstrategiaResp = fila.nombreParametro
         }
         return descIdEstrategiaResp;
     }
 
-    obtenerDescIdResposablePlanAccion(idResponsablePlanAccion : number){
+    obtenerDescIdResposablePlanAccion(idResponsablePlanAccion: number) {
         let descIdResponsablePlanAccion = "";
-        for(let fila of this.listaResponsableControl){
-            if(fila.idParametro==idResponsablePlanAccion) descIdResponsablePlanAccion= fila.nombreParametro
+        for (let fila of this.listaResponsableControl) {
+            if (fila.idParametro == idResponsablePlanAccion) descIdResponsablePlanAccion = fila.nombreParametro
         }
         return descIdResponsablePlanAccion;
     }
 
-    obtenerDescIdEstadoPlanAccion(idEstadoPlanAccion : string){
+    obtenerDescIdEstadoPlanAccion(idEstadoPlanAccion: string) {
         let descIdEstadoPlanAccion = "";
-        for(let fila of this.listaEstadoPlanAccion){
-            if(fila.idParametro== Number(idEstadoPlanAccion)) descIdEstadoPlanAccion= fila.nombreParametro
+        for (let fila of this.listaEstadoPlanAccion) {
+            if (fila.idParametro == Number(idEstadoPlanAccion)) descIdEstadoPlanAccion = fila.nombreParametro
         }
         return descIdEstadoPlanAccion;
     }
 
-    obtenerDescIdAccionEficaz(idFueEficaz : string){
+    obtenerDescIdAccionEficaz(idFueEficaz: string) {
         let descIdEstadoPlanAccion = "";
-        for(let fila of this.listaEficazPlanAccion){
-            if(fila.deValor1== idFueEficaz) descIdEstadoPlanAccion= fila.nombreParametro;
+        for (let fila of this.listaEficazPlanAccion) {
+            if (fila.deValor1 == idFueEficaz) descIdEstadoPlanAccion = fila.nombreParametro;
         }
         return descIdEstadoPlanAccion;
     }
 
-    obtenerDescIdResponsableAsegurarCumplimiento(idResponsableAsegurarCumplimiento : string){
+    obtenerDescIdResponsableAsegurarCumplimiento(idResponsableAsegurarCumplimiento: string) {
         let descIdEstadoPlanAccion = "";
-        for(let fila of this.listaAreaResponsable){
-            if(fila.idParametro==Number(idResponsableAsegurarCumplimiento)) descIdEstadoPlanAccion= fila.nombreParametro
+        for (let fila of this.listaAreaResponsable) {
+            if (fila.idParametro == Number(idResponsableAsegurarCumplimiento)) descIdEstadoPlanAccion = fila.nombreParametro
         }
         return descIdEstadoPlanAccion;
     }
@@ -2767,10 +2753,10 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
         }
 
-        if (matrizRiesgo.listaDetalleMatriz.length == 0){
+        if (matrizRiesgo.listaDetalleMatriz.length == 0) {
             Swal.fire("Debe de ingresar el detalle de la Matriz de Riesgo Operacional");
 
-        } else{
+        } else {
 
             Swal.fire({
                 title: '¿Está seguro de crear la Matriz de Riesgo Operacional?',
@@ -2799,7 +2785,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                                 Swal.fire('¡Creación exitosa!', "La Matriz de Riesgo Operacional se creó con éxito", 'success');
                                 this.router.navigate(['/pages', 'main', 'transaccion', 'matrizRiesgo']);
 
-                            }else {
+                            } else {
                                 if (Swal.isLoading()) {
                                     Swal.close();
                                     Swal.fire('Ocurrió un error', resp.mensaje, 'error');
@@ -2852,13 +2838,11 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
         };
 
-
         for (var j = 0; j < this.matricesRiesgo.length; j++) {
 
             matrizRiesgo.listaDetalleMatriz.push(this.matricesRiesgo[j]);
 
         }
-
         for (var j = 0; j < this.matrizRiesgoEliminado.length; j++) {
 
             matrizRiesgo.listaDetalleMatriz.push(this.matrizRiesgoEliminado[j]);
@@ -2892,7 +2876,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
                             Swal.fire('¡Actualización exitosa!', "La Matriz de Riesgo Operacional se actualizó con éxito", 'success');
                             this.router.navigate(['/pages', 'main', 'transaccion', 'matrizRiesgo']);
 
-                        }else {
+                        } else {
                             if (Swal.isLoading()) {
                                 Swal.close();
                                 Swal.fire('Ocurrió un error', resp.mensaje, 'error');
@@ -2915,7 +2899,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
         //      if (matrizRiesgoTemp.idMatrizRiesgo > 0) {
         delete this.matrizRiesgoTemporal[matrizRiesgoTemp.idMatrizRiesgo];
         //this.matrizRiesgoService.registrarEdicionRegistroMatrizRiesgo(matrizRiesgoTemp, {severity: 'success', summary: 'Success', detail: 'Product is updated'});
-        this.messageService.add({severity: 'success', summary: 'Success', detail: 'Registro actualizado'});
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Registro actualizado' });
         //      } else {
         //        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Proceso inválido'});
         //     }
@@ -2925,11 +2909,11 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
         this.matrizRiesgoService.obtenerListaTipoMatriz().subscribe(
             resp => {
-                 console.log('lista de Tipo MatrizR1 : ' + JSON.stringify(resp.listaParametros));
+                console.log('lista de Tipo MatrizR1 : ' + JSON.stringify(resp.listaParametros));
                 this.listaTiposMatrizRiesgo = resp.listaParametros;
                 this.formularioMatrizRiesgo.get('idMatrizNivel').setValue(this.listaTiposMatrizRiesgo[0].idParametro);
                 // this.obtenerProcesosMatriz(this.listaTiposMatrizRiesgo[0].idParametro);
-              //  this.formularioMatrizRiesgo.get('idMatrizNivel').disable();
+                //  this.formularioMatrizRiesgo.get('idMatrizNivel').disable();
 
             }
         );
@@ -2959,7 +2943,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
     }
 
-    obtenerListaEstrategiaRespuesta(){
+    obtenerListaEstrategiaRespuesta() {
         return this.matrizRiesgoService.obtenerListaEstrategiaRespuesta().subscribe(
             resp => {
                 // @ts-ignore
@@ -2992,7 +2976,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
         //console.log(this.matricesRiesgo);
 
-        if (matrizRiesgoTemp.idDetaMatrizRiesgo > 0 ){
+        if (matrizRiesgoTemp.idDetaMatrizRiesgo > 0) {
 
             matrizRiesgoTemp.indicadorBaja = '0';
 
@@ -3000,12 +2984,12 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
             this.matricesRiesgo.splice(index, 1);
 
-            this.messageService.add({severity:'success', summary: '¡Eliminación exitosa!', detail: 'El registro se eliminó correctamente', life: 3000});
+            this.messageService.add({ severity: 'success', summary: '¡Eliminación exitosa!', detail: 'El registro se eliminó correctamente', life: 3000 });
 
-        }else {
+        } else {
             this.matricesRiesgo.splice(index, 1);
 
-            this.messageService.add({severity:'success', summary: '¡Eliminación exitosa!', detail: 'El registro se eliminó correctamente', life: 3000});
+            this.messageService.add({ severity: 'success', summary: '¡Eliminación exitosa!', detail: 'El registro se eliminó correctamente', life: 3000 });
 
         }
 
@@ -3079,15 +3063,15 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
     }
 
-    onchangecod(limitfield,indice){
+    onchangecod(limitfield, indice) {
         const codRiesgo = limitfield.target.value;
-        var acceso  =this;
+        var acceso = this;
 
         return this.matrizRiesgoService.obtenerDescripcion(codRiesgo).subscribe(
             resp => {
                 // @ts-ignore
                 var descripcion = resp.DetalleMatrizRiesgo.deRiesgo;
-                this.matricesRiesgo[indice].deRiesgo=descripcion;
+                this.matricesRiesgo[indice].deRiesgo = descripcion;
 
             });
 
@@ -3097,7 +3081,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
         let index = -1;
 
 
-        if (matrizRiesgoTemp.idDetaMatrizRiesgo != null){
+        if (matrizRiesgoTemp.idDetaMatrizRiesgo != null) {
 
             for (let i = 0; i < this.matricesRiesgo.length; i++) {
                 if (this.matricesRiesgo[i].idDetaMatrizRiesgo === matrizRiesgoTemp.idDetaMatrizRiesgo) {
@@ -3110,7 +3094,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
         return index;
     }
 
-    limit_number_prob_riesgo(limitfield,matrizTemp: MatrizRiesgo,indice){
+    /*limit_number_prob_riesgo(limitfield,matrizTemp: MatrizRiesgo,indice){
 
         const valor:number = limitfield.target.value;
         //console.log("LIMIT "+valor);
@@ -3148,15 +3132,15 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 var calculo_result:number = Number(calculo_limited);
                 this.matricesRiesgo[indice].nuPuntajeInherente = calculo_result;
                 var severidad = this.obtener_severidad(probabilidadRiesgo, impactoRiesgo);
-               this.matricesRiesgo[indice].deSeveridadInherente = severidad;
+                this.matricesRiesgo[indice].deSeveridadInherente = severidad;
 
             }
 
         }
 
-    }
+    }*/
 
-    limit_number_impa_riesgo(limitfield,matrizTemp: MatrizRiesgo, indice){
+    /*limit_number_impa_riesgo(limitfield,matrizTemp: MatrizRiesgo, indice){
 
         const valor:number = limitfield.target.value;
         //console.log("LIMIT "+valor);
@@ -3178,9 +3162,9 @@ export class FormMatrizRiesgoComponent implements OnInit {
             if (calculo > 0) {
                 var calculo_result:number = Number(calculo_limited);
 
-               this.matricesRiesgo[indice].nuPuntajeInherente = calculo_result;
-               var severidad = this.obtener_severidad(probabilidadRiesgo, impactoRiesgo);
-               this.matricesRiesgo[indice].deSeveridadInherente = severidad;
+                this.matricesRiesgo[indice].nuPuntajeInherente = calculo_result;
+                var severidad = this.obtener_severidad(probabilidadRiesgo, impactoRiesgo);
+                this.matricesRiesgo[indice].deSeveridadInherente = severidad;
             }
         }
         else{
@@ -3205,68 +3189,217 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
 
 
-    }
+    }*/
+    limit_number_prob_riesgo(event: any, matrizTemp: MatrizRiesgo, indice) {
+        const valor: number = event.target.value;
 
-
-    limit_number_prob_control(limitfield,matrizTemp: MatrizRiesgo,indice){
-
-        const valor:number = limitfield.target.value;
-        //console.log("LIMIT "+valor);
-
-        if (matrizTemp.idDetaMatrizRiesgo != null){
+        if (matrizTemp.idDetaMatrizRiesgo != null) {
             indice = this.findIndexById(matrizTemp);
         }
 
-        if (valor>4) {
+        this.matricesRiesgo[indice].nuProbabilidadInherente = valor === 0 ? null : valor;
+        const probabilidadRiesgo: number = valor;
+        const impactoRiesgo: number = this.matricesRiesgo[indice].nuImpactoInherente;
+
+        if (probabilidadRiesgo > 0 && impactoRiesgo > 0) {
+            const calculo: number = probabilidadRiesgo * impactoRiesgo;
+            const calculo_result: number = Number(calculo.toFixed(2));
+
+            this.matricesRiesgo[indice].nuPuntajeInherente = calculo_result;
+            const severidad = this.obtener_severidad(probabilidadRiesgo, impactoRiesgo);
+            this.matricesRiesgo[indice].deSeveridadInherente = severidad;
+
+            this.copiarValoresRiesgoInherenteAlResidual(indice);
+        } else {
+            this.matricesRiesgo[indice].deSeveridadInherente = '';
+            this.matricesRiesgo[indice].nuPuntajeInherente = null;
+            this.matricesRiesgo[indice].nuPuntajeInherente = 0;
+            this.matricesRiesgo[indice].nuPuntajeInherente = undefined;
+        }
+    }
+
+    limit_number_impa_riesgo(event: any, matrizTemp: MatrizRiesgo, indice) {
+        const valor: number = event.target.value;
+
+        if (matrizTemp.idDetaMatrizRiesgo != null) {
+            indice = this.findIndexById(matrizTemp);
+        }
+
+        this.matricesRiesgo[indice].nuImpactoInherente = valor === 0 ? null : valor;
+        const probabilidadRiesgo: number = this.matricesRiesgo[indice].nuProbabilidadInherente;
+        const impactoRiesgo: number = valor;
+
+        if (probabilidadRiesgo > 0 && impactoRiesgo > 0) {
+            const calculo: number = probabilidadRiesgo * impactoRiesgo;
+            const calculo_result: number = Number(calculo.toFixed(2));
+
+            this.matricesRiesgo[indice].nuPuntajeInherente = calculo_result;
+            const severidad = this.obtener_severidad(probabilidadRiesgo, impactoRiesgo);
+            this.matricesRiesgo[indice].deSeveridadInherente = severidad;
+
+            this.copiarValoresRiesgoInherenteAlResidual(indice);
+        } else {
+            this.matricesRiesgo[indice].deSeveridadInherente = '';
+            this.matricesRiesgo[indice].nuPuntajeInherente = null;
+            this.matricesRiesgo[indice].nuPuntajeInherente = 0;
+            this.matricesRiesgo[indice].nuPuntajeInherente = undefined;
+        }
+    }
+
+    validarYActualizar(event: Event) {
+        event.preventDefault();
+    
+        const probabilidadInvalida = this.matricesRiesgo.some(matriz => 
+            matriz.nuProbabilidadInherente === undefined || 
+            matriz.nuProbabilidadInherente === null || 
+            matriz.nuProbabilidadInherente == 0
+        );
+    
+        const impactoInvalido = this.matricesRiesgo.some(matriz => 
+            matriz.nuImpactoInherente === undefined || 
+            matriz.nuImpactoInherente === null || 
+            matriz.nuImpactoInherente == 0
+        );
+    
+        if (probabilidadInvalida || impactoInvalido) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campos incompletos',
+                text: 'Debe completar ambos campos de Probabilidad e Impacto antes de actualizar. Ninguno puede ser 0.',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }    
+    
+        this.actualizarMatrizRiesgo(); 
+    }
+    
+    
+
+
+    copiarValoresRiesgoInherenteAlResidual(indice: number) {
+        this.matricesRiesgo[indice].nuProbabilidadResidual = this.matricesRiesgo[indice].nuProbabilidadInherente;
+        this.matricesRiesgo[indice].nuImpactoResidual = this.matricesRiesgo[indice].nuImpactoInherente;
+        this.matricesRiesgo[indice].nuPuntajeResidual = this.matricesRiesgo[indice].nuPuntajeInherente;
+        this.matricesRiesgo[indice].deSeveridadResidual = this.matricesRiesgo[indice].deSeveridadInherente;
+    }
+
+
+    calcularPuntajeYSeveridadResidual(probabilidad: number, impacto: number, indice: number) {
+        if (probabilidad > 0 && impacto > 0) {
+            const puntajeResidual = probabilidad * impacto;
+            this.matricesRiesgo[indice].nuPuntajeResidual = puntajeResidual;
+
+            const severidad = this.obtener_severidad(probabilidad, impacto);
+            this.matricesRiesgo[indice].deSeveridadResidual = severidad;
+        }
+    }
+
+    validarProbabilidadImpactoResidual(event: any, indice: number, tipo: 'probabilidad' | 'impacto') {
+        const valor = event.target.value;
+
+        if (tipo === 'probabilidad') {
+            const probabilidadInherente = this.matricesRiesgo[indice].nuProbabilidadInherente;
+            if (valor > probabilidadInherente) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos inválidos',
+                    text: 'La probabilidad residual no puede ser mayor que la probabilidad inherente',
+                    confirmButtonText: 'Aceptar'
+                });
+                this.matricesRiesgo[indice].nuProbabilidadResidual = probabilidadInherente;
+            } else {
+                this.matricesRiesgo[indice].nuProbabilidadResidual = valor;
+            }
+        }
+
+        if (tipo === 'impacto') {
+            const impactoInherente = this.matricesRiesgo[indice].nuImpactoInherente;
+            if (valor > impactoInherente) {
+                alert('El impacto residual no puede ser mayor que el impacto inherente');
+                this.matricesRiesgo[indice].nuImpactoResidual = impactoInherente;
+            } else {
+                this.matricesRiesgo[indice].nuImpactoResidual = valor;
+            }
+        }
+
+        this.calcularPuntajeYSeveridadResidual(this.matricesRiesgo[indice].nuProbabilidadResidual, this.matricesRiesgo[indice].nuImpactoResidual, indice);
+    }
+
+
+    calcularRiesgoInherente(indice: number) {
+        const probabilidadInherente = this.matricesRiesgo[indice].nuProbabilidadInherente;
+        const impactoInherente = this.matricesRiesgo[indice].nuImpactoInherente;
+
+        if (probabilidadInherente > 0 && impactoInherente > 0) {
+            const puntajeInherente = probabilidadInherente * impactoInherente;
+            this.matricesRiesgo[indice].nuPuntajeInherente = puntajeInherente;
+            const severidadInherente = this.obtener_severidad(probabilidadInherente, impactoInherente);
+            this.matricesRiesgo[indice].deSeveridadInherente = severidadInherente;
+
+            this.copiarValoresRiesgoInherenteAlResidual(indice);
+        }
+    }
+
+    limit_number_prob_control(limitfield, matrizTemp: MatrizRiesgo, indice) {
+
+        const valor: number = limitfield.target.value;
+        //console.log("LIMIT "+valor);
+
+        if (matrizTemp.idDetaMatrizRiesgo != null) {
+            indice = this.findIndexById(matrizTemp);
+        }
+
+        if (valor > 4) {
 
             limitfield.target.value = 4;
-            this.matricesRiesgo[indice].nuProbabilidadResidual= 4;
+            this.matricesRiesgo[indice].nuProbabilidadResidual = 4;
 
             const probabilidadControl: number = 4;
             const impactoControl: number = this.matricesRiesgo[indice].nuImpactoResidual;
 
             var calculo: number = probabilidadControl * impactoControl;
-            var calculo_limited:string = calculo.toFixed(2);
+            var calculo_limited: string = calculo.toFixed(2);
 
             if (calculo > 0) {
-                var calculo_result:number = Number(calculo_limited);
+                var calculo_result: number = Number(calculo_limited);
 
-               this.matricesRiesgo[indice].nuPuntajeResidual = calculo_result;
-               var severidad = this.obtener_severidad(probabilidadControl, impactoControl);
-               this.matricesRiesgo[indice].deSeveridadResidual = severidad;
+                this.matricesRiesgo[indice].nuPuntajeResidual = calculo_result;
+                var severidad = this.obtener_severidad(probabilidadControl, impactoControl);
+                this.matricesRiesgo[indice].deSeveridadResidual = severidad;
             }
 
         }
-        else{
+        else {
 
             const probabilidadControl: number = valor;
             const impactoControl: number = this.matricesRiesgo[indice].nuImpactoResidual;
 
             var calculo: number = probabilidadControl * impactoControl;
-            var calculo_limited:string = calculo.toFixed(2);
+            var calculo_limited: string = calculo.toFixed(2);
 
             if (calculo > 0) {
-                var calculo_result:number = Number(calculo_limited);
+                var calculo_result: number = Number(calculo_limited);
 
-               this.matricesRiesgo[indice].nuPuntajeResidual = calculo_result;
-               var severidad = this.obtener_severidad(probabilidadControl, impactoControl);
-               this.matricesRiesgo[indice].deSeveridadResidual = severidad;
+                this.matricesRiesgo[indice].nuPuntajeResidual = calculo_result;
+                var severidad = this.obtener_severidad(probabilidadControl, impactoControl);
+                this.matricesRiesgo[indice].deSeveridadResidual = severidad;
             }
 
         }
 
     }
 
-    limit_number_impa_control(limitfield,matrizTemp: MatrizRiesgo,indice){
+    limit_number_impa_control(limitfield, matrizTemp: MatrizRiesgo, indice) {
 
-        const valor:number = limitfield.target.value;
+        const valor: number = limitfield.target.value;
         //console.log("LIMIT "+valor);
 
-        if (matrizTemp.idDetaMatrizRiesgo != null){
+        if (matrizTemp.idDetaMatrizRiesgo != null) {
             indice = this.findIndexById(matrizTemp);
         }
 
-        if (valor>4) {
+        if (valor > 4) {
             limitfield.target.value = 4;
             this.matricesRiesgo[indice].nuImpactoResidual = 4;
 
@@ -3274,46 +3407,46 @@ export class FormMatrizRiesgoComponent implements OnInit {
             const impactoControl: number = 4;
 
             var calculo: number = probabilidadControl * impactoControl;
-            var calculo_limited:string = calculo.toFixed(2);
+            var calculo_limited: string = calculo.toFixed(2);
 
             if (calculo > 0) {
-                var calculo_result:number = Number(calculo_limited);
+                var calculo_result: number = Number(calculo_limited);
 
-               this.matricesRiesgo[indice].nuPuntajeResidual = calculo_result;
-               var severidad = this.obtener_severidad(probabilidadControl, impactoControl);
-               this.matricesRiesgo[indice].deSeveridadResidual = severidad;
+                this.matricesRiesgo[indice].nuPuntajeResidual = calculo_result;
+                var severidad = this.obtener_severidad(probabilidadControl, impactoControl);
+                this.matricesRiesgo[indice].deSeveridadResidual = severidad;
             }
         }
-        else{
+        else {
 
             const probabilidadControl: number = this.matricesRiesgo[indice].nuProbabilidadResidual;
             const impactoControl: number = valor;
 
             var calculo: number = probabilidadControl * impactoControl;
-            var calculo_limited:string = calculo.toFixed(2);
+            var calculo_limited: string = calculo.toFixed(2);
 
             if (calculo > 0) {
-                var calculo_result:number = Number(calculo_limited);
+                var calculo_result: number = Number(calculo_limited);
 
-               this.matricesRiesgo[indice].nuPuntajeResidual = calculo_result;
-               var severidad = this.obtener_severidad(probabilidadControl, impactoControl);
-               this.matricesRiesgo[indice].deSeveridadResidual = severidad;
+                this.matricesRiesgo[indice].nuPuntajeResidual = calculo_result;
+                var severidad = this.obtener_severidad(probabilidadControl, impactoControl);
+                this.matricesRiesgo[indice].deSeveridadResidual = severidad;
             }
         }
 
     }
 
-    getProbabilidad(probabilidad,impacto):number{
+    getProbabilidad(probabilidad, impacto): number {
 
         var calculo: number = probabilidad * impacto;
-        var calculo_limited:string = calculo.toFixed(2);
-        var calculo_result:number = 0;
+        var calculo_limited: string = calculo.toFixed(2);
+        var calculo_result: number = 0;
 
-        if(calculo>0){
+        if (calculo > 0) {
             calculo_result = Number(calculo_limited);
 
         }
-        else{
+        else {
             calculo_result = 0;
 
         }
@@ -3322,7 +3455,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
     }
 
-    obtener_severidad(proba: number, impa: number){
+    obtener_severidad(proba: number, impa: number) {
         let severidad: string;
 
         if (proba < 2.5 && impa < 2.5) {
@@ -3369,12 +3502,12 @@ export class FormMatrizRiesgoComponent implements OnInit {
     openDiagramRiesgoInherente() {
 
 
-        this.probImpInherente[0]=this.matricesRiesgo[0].nuProbabilidadInherente;
-        this.impInherente[0]=this.matricesRiesgo[0].nuImpactoInherente;
-        let cartesianPoints:cartesianPoint[] = [];
+        this.probImpInherente[0] = this.matricesRiesgo[0].nuProbabilidadInherente;
+        this.impInherente[0] = this.matricesRiesgo[0].nuImpactoInherente;
+        let cartesianPoints: cartesianPoint[] = [];
         this.matricesRiesgo.forEach((matriz) => {
 
-            let cartesianPoint:cartesianPoint=new Object();
+            let cartesianPoint: cartesianPoint = new Object();
             cartesianPoint.label = matriz.codRiesgo;
             cartesianPoint.x = matriz.nuProbabilidadInherente;
             cartesianPoint.y = matriz.nuImpactoInherente;
@@ -3388,34 +3521,34 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 x2: this.probImpInherente[1],
                 y1: this.impInherente[0],
                 y2: this.impInherente[1],
-                cartesianPoints:cartesianPoints,
+                cartesianPoints: cartesianPoints,
                 label: 'Riesgo Inherente',
-                labelx:'Probabilidad',
-                labely:'Impacto'
+                labelx: 'Probabilidad',
+                labely: 'Impacto'
             },
             // closable:false,
             header: 'Riesgo Inherente',
             //width: '67%',
             width: '50%',
-            contentStyle: {"max-height": "700px", "max-width": "100%", "overflow": "auto"},
+            contentStyle: { "max-height": "700px", "max-width": "100%", "overflow": "auto" },
             baseZIndex: 10000
         });
 
         this.ref.onClose.subscribe((object: any) => {
             if (object) {
-                this.messageService.add({severity: 'info', summary: 'Product Selected', detail: object});
+                this.messageService.add({ severity: 'info', summary: 'Product Selected', detail: object });
             }
         });
     }
 
     openDiagramRiesgoResidual() {
 
-        this.probImpResidual[0]=this.matricesRiesgo[0].nuProbabilidadResidual;
-        this.ImpResidual[0]=this.matricesRiesgo[0].nuImpactoResidual;
-        let cartesianPoints:cartesianPoint[] = [];
+        this.probImpResidual[0] = this.matricesRiesgo[0].nuProbabilidadResidual;
+        this.ImpResidual[0] = this.matricesRiesgo[0].nuImpactoResidual;
+        let cartesianPoints: cartesianPoint[] = [];
         this.matricesRiesgo.forEach((matriz) => {
 
-            let cartesianPoint:cartesianPoint=new Object();
+            let cartesianPoint: cartesianPoint = new Object();
             cartesianPoint.label = matriz.codRiesgo;
             cartesianPoint.x = matriz.nuProbabilidadResidual;
             cartesianPoint.y = matriz.nuImpactoResidual;
@@ -3429,27 +3562,27 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 x2: this.probImpResidual[1],
                 y1: this.ImpResidual[0],
                 y2: this.ImpResidual[1],
-                cartesianPoints:cartesianPoints,
+                cartesianPoints: cartesianPoints,
                 label: 'Riesgo Residual',
-                labelx:'Probabilidad',
-                labely:'Impacto'
+                labelx: 'Probabilidad',
+                labely: 'Impacto'
             },
             header: 'Riesgo Residual',
             //width: '67%',
             width: '50%',
-            contentStyle: {"max-height": "700px", "max-width": "100%", "overflow": "auto"},
+            contentStyle: { "max-height": "700px", "max-width": "100%", "overflow": "auto" },
             baseZIndex: 10000
         });
 
 
         this.ref.onClose.subscribe((object: any) => {
             if (object) {
-                this.messageService.add({severity: 'info', summary: 'Product Selected', detail: object});
+                this.messageService.add({ severity: 'info', summary: 'Product Selected', detail: object });
             }
         });
     }
 
-    obtenerMatrizPeriodo(){
+    obtenerMatrizPeriodo() {
 
         if (this.formularioMatrizRiesgo.invalid) {
             return Object.values(this.formularioMatrizRiesgo.controls).forEach(control => {
@@ -3464,27 +3597,27 @@ export class FormMatrizRiesgoComponent implements OnInit {
         });
         Swal.showLoading();
 
-        this.matrizRiesgoService.obtenerMatrizPeriodo(this.idEmpresa,MATRIZ_OPERACIONAL,this.idTipoMatriz).subscribe(
+        this.matrizRiesgoService.obtenerMatrizPeriodo(this.idEmpresa, MATRIZ_OPERACIONAL, this.idTipoMatriz).subscribe(
             resp => {
 
 
-              this.matricesRiesgo = resp.DetalleMatrizRiesgo;
+                this.matricesRiesgo = resp.DetalleMatrizRiesgo;
 
-              /*for (var j = 0; j < resp.DetalleMatrizRiesgo.length; j++) {
+                /*for (var j = 0; j < resp.DetalleMatrizRiesgo.length; j++) {
 
-                this.matricesRiesgo.push(resp.DetalleMatrizRiesgo[j]);
+                  this.matricesRiesgo.push(resp.DetalleMatrizRiesgo[j]);
 
-              }*/
+                }*/
 
-              if(this.idTipoMatriz == 1){
+                if (this.idTipoMatriz == 1) {
 
-                this.cargarProcesos(this.idEmpresa, this.idTipoMatriz);
+                    this.cargarProcesos(this.idEmpresa, this.idTipoMatriz);
 
-              }
+                }
 
-              this.formularioMatrizRiesgo.disable();
+                this.formularioMatrizRiesgo.disable();
 
-              Swal.close();
+                Swal.close();
             }
         );
     }
@@ -3515,102 +3648,102 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 const ws: XLSX.WorkSheet = wb.Sheets[wsname];
 
                 /* save data */
-                data = XLSX.utils.sheet_to_json(ws, {defval:""});
-              };
+                data = XLSX.utils.sheet_to_json(ws, { defval: "" });
+            };
 
             reader.readAsBinaryString(target.files[0]);
 
             reader.onloadend = (e) => {
 
-            this.keys = Object.keys(data[0]);
-            
-            if(this.idTipoMatriz==0){
+                this.keys = Object.keys(data[0]);
 
-                if(this.keys.length != 48){
-                    this.file1.nativeElement.value = '';
-                    Swal.fire("El archivo no coincide con el formato entidad", "", 'error');
-                    return
-                }else{
-                    this.formularioMatrizRiesgo.disable();
-                    console.log('Aqui entidad');
-                    Swal.fire({
-                        title: 'Espere por favor',
-                        html: 'Cargando datos',
-                        allowOutsideClick: () => !Swal.isLoading(),
-                        allowEscapeKey: () => !Swal.isLoading()
-                    });
-                    Swal.showLoading();
-                    
-                    const idEmpresa = this.formularioMatrizRiesgo.get('empresa').value;
-                    const idSede = this.formularioMatrizRiesgo.get('sede').value;
-                    const idPeriodo = this.formularioMatrizRiesgo.get('periodo').value;
-                    let file:File =evt.target.files[0];
-                    let idTipo=this.idTipoMatriz.toString();
-            
-                    let form = new FormData();
-                    form.append("file",file);
-                    form.append("idEmpresa",idEmpresa);
-                    form.append("idSede",idSede);
-                    form.append("idPeriodo",idPeriodo);
-                    form.append("idTipo",idTipo);
-            
-                    this.matrizRiesgoService.processFileMatrizRiesgo(form).subscribe(resp => {
-                        Swal.close();
-                        this.matricesRiesgo=resp['listado'];
-            
-                    });
+                if (this.idTipoMatriz == 0) {
 
-                    this.activeImport = false;
+                    if (this.keys.length != 48) {
+                        this.file1.nativeElement.value = '';
+                        Swal.fire("El archivo no coincide con el formato entidad", "", 'error');
+                        return
+                    } else {
+                        this.formularioMatrizRiesgo.disable();
+                        console.log('Aqui entidad');
+                        Swal.fire({
+                            title: 'Espere por favor',
+                            html: 'Cargando datos',
+                            allowOutsideClick: () => !Swal.isLoading(),
+                            allowEscapeKey: () => !Swal.isLoading()
+                        });
+                        Swal.showLoading();
+
+                        const idEmpresa = this.formularioMatrizRiesgo.get('empresa').value;
+                        const idSede = this.formularioMatrizRiesgo.get('sede').value;
+                        const idPeriodo = this.formularioMatrizRiesgo.get('periodo').value;
+                        let file: File = evt.target.files[0];
+                        let idTipo = this.idTipoMatriz.toString();
+
+                        let form = new FormData();
+                        form.append("file", file);
+                        form.append("idEmpresa", idEmpresa);
+                        form.append("idSede", idSede);
+                        form.append("idPeriodo", idPeriodo);
+                        form.append("idTipo", idTipo);
+
+                        this.matrizRiesgoService.processFileMatrizRiesgo(form).subscribe(resp => {
+                            Swal.close();
+                            this.matricesRiesgo = resp['listado'];
+
+                        });
+
+                        this.activeImport = false;
+
+                    }
+
+                }
+                else {
+                    if (this.keys.length != 46) {
+                        this.file1.nativeElement.value = '';
+                        Swal.fire("El archivo no coincide con el formato proceso", "", 'error');
+                        return
+                    } else {
+                        console.log('Aqui proceso');
+                        this.formularioMatrizRiesgo.disable();
+
+                        Swal.fire({
+                            title: 'Espere por favor',
+                            html: 'Cargando datos',
+                            allowOutsideClick: () => !Swal.isLoading(),
+                            allowEscapeKey: () => !Swal.isLoading()
+                        });
+                        Swal.showLoading();
+
+                        const idEmpresa = this.formularioMatrizRiesgo.get('empresa').value;
+                        const idSede = this.formularioMatrizRiesgo.get('sede').value;
+                        const idPeriodo = this.formularioMatrizRiesgo.get('periodo').value;
+                        let file: File = evt.target.files[0];
+                        let idTipo = this.idTipoMatriz.toString();
+
+                        let form = new FormData();
+                        form.append("file", file);
+                        form.append("idEmpresa", idEmpresa);
+                        form.append("idSede", idSede);
+                        form.append("idPeriodo", idPeriodo);
+                        form.append("idTipo", idTipo);
+
+                        this.matrizRiesgoService.processFileMatrizRiesgo(form).subscribe(resp => {
+                            Swal.close();
+                            this.matricesRiesgo = resp['listado'];
+
+                        });
+
+                        this.activeImport = false;
+
+                    }
 
                 }
 
             }
-            else{
-                if(this.keys.length != 46){
-                    this.file1.nativeElement.value = '';
-                    Swal.fire("El archivo no coincide con el formato proceso", "", 'error');
-                    return
-                }else{
-                    console.log('Aqui proceso');
-                    this.formularioMatrizRiesgo.disable();
 
-                    Swal.fire({
-                        title: 'Espere por favor',
-                        html: 'Cargando datos',
-                        allowOutsideClick: () => !Swal.isLoading(),
-                        allowEscapeKey: () => !Swal.isLoading()
-                    });
-                    Swal.showLoading();
-                    
-                    const idEmpresa = this.formularioMatrizRiesgo.get('empresa').value;
-                    const idSede = this.formularioMatrizRiesgo.get('sede').value;
-                    const idPeriodo = this.formularioMatrizRiesgo.get('periodo').value;
-                    let file:File =evt.target.files[0];
-                    let idTipo=this.idTipoMatriz.toString();
-            
-                    let form = new FormData();
-                    form.append("file",file);
-                    form.append("idEmpresa",idEmpresa);
-                    form.append("idSede",idSede);
-                    form.append("idPeriodo",idPeriodo);
-                    form.append("idTipo",idTipo);
-            
-                    this.matrizRiesgoService.processFileMatrizRiesgo(form).subscribe(resp => {
-                        Swal.close();
-                        this.matricesRiesgo=resp['listado'];
-            
-                    });
 
-                    this.activeImport = false;
-
-                }
-
-            }
-            
-            }
-            
-
-        }else{
+        } else {
             Swal.close();
             Swal.fire("El archivo no tiene la extensión adecuada", "", 'error');
             this.file1.nativeElement.value = '';
@@ -3650,47 +3783,47 @@ export class FormMatrizRiesgoComponent implements OnInit {
                 const ws: XLSX.WorkSheet = wb.Sheets[wsname];
 
                 /* save data */
-                data = XLSX.utils.sheet_to_json(ws, {defval:""});
-              };
+                data = XLSX.utils.sheet_to_json(ws, { defval: "" });
+            };
 
-              reader.readAsBinaryString(target.files[0]);
+            reader.readAsBinaryString(target.files[0]);
 
-              reader.onloadend = (e) => {
+            reader.onloadend = (e) => {
 
                 this.keys = Object.keys(data[0]);
-                console.log("JSON IMPORT "+JSON.stringify(data));
+                console.log("JSON IMPORT " + JSON.stringify(data));
                 this.dataSheet.next(data);
                 Swal.close();
-                
-                if(this.idTipoMatriz==0){
+
+                if (this.idTipoMatriz == 0) {
                     this.feedJsonToTableEntidad(data);
 
                 }
-                else{
+                else {
                     this.feedJsonToTableProceso(data);
 
                 }
-                
-              }
+
+            }
 
             this.formularioMatrizRiesgo.disable();
 
-        }else{
+        } else {
             Swal.close();
             Swal.fire("El archivo no tiene la extensión adecuada", "", 'error');
         }
     }
 
-    feedJsonToTableEntidad(data){
+    feedJsonToTableEntidad(data) {
 
         this.keys = Object.keys(data[0]);
 
-        if(this.keys.length != 48){
+        if (this.keys.length != 48) {
 
             Swal.fire("El archivo no coincide con el formato entidad", "", 'error');
             return
         }
-     //   console.log("JSON HEAD "+JSON.stringify(this.keys));
+        //   console.log("JSON HEAD "+JSON.stringify(this.keys));
         data.forEach((matriz) => {
 
             let c1 = matriz[this.keys[0]];
@@ -3746,19 +3879,19 @@ export class FormMatrizRiesgoComponent implements OnInit {
             let c47 = matriz[this.keys[46]];
             let c48 = matriz[this.keys[47]];
 
-            let matriz_temp:MatrizRiesgo = new MatrizRiesgo();
+            let matriz_temp: MatrizRiesgo = new MatrizRiesgo();
             matriz_temp.idEmpresa = this.formularioMatrizRiesgo.get('empresa').value;
             matriz_temp.idSede = this.formularioMatrizRiesgo.get('sede').value;
             matriz_temp.idPeriodo = this.formularioMatrizRiesgo.get('periodo').value;
-            matriz_temp.codMatriz      = c1;
-            matriz_temp.idMatrizNivel  = this.getMatrizNivel(c2);
-            matriz_temp.idGerencia     = this.getGerencia(c3);
-            matriz_temp.deTitulo       = c4;
-            matriz_temp.codRiesgo      = c5;
-            matriz_temp.deRiesgo       = c6;
+            matriz_temp.codMatriz = c1;
+            matriz_temp.idMatrizNivel = this.getMatrizNivel(c2);
+            matriz_temp.idGerencia = this.getGerencia(c3);
+            matriz_temp.deTitulo = c4;
+            matriz_temp.codRiesgo = c5;
+            matriz_temp.deRiesgo = c6;
 
-            matriz_temp.deProcesoImpactado       = c7;
-            matriz_temp.deFoda         = c8;
+            matriz_temp.deProcesoImpactado = c7;
+            matriz_temp.deFoda = c8;
             matriz_temp.deGrupoInteres = c9;
             matriz_temp.idOrigenRiesgo = this.getOrigen(c10);
             matriz_temp.idFrecuenciaRiesgo = this.getFrecuencia(c11);
@@ -3769,47 +3902,47 @@ export class FormMatrizRiesgoComponent implements OnInit {
             matriz_temp.deSeveridadInherente = c16;
 
             matriz_temp.codControl = c17;
-            matriz_temp.deControl  = c18;
+            matriz_temp.deControl = c18;
 
-            matriz_temp.idAreaControl        = c19;
+            matriz_temp.idAreaControl = c19;
             matriz_temp.idResponsableControl = c20;
 
-            matriz_temp.idFrecuenciaControl  = this.getFrecuenciaId(c21);
+            matriz_temp.idFrecuenciaControl = this.getFrecuenciaId(c21);
             matriz_temp.idOportunidadControl = this.getOportunidad(c22);
             matriz_temp.idAutomatizacionControl = this.getAutomatizacion(c23);
             matriz_temp.deEvidenciaControl = c24;
             matriz_temp.nuProbabilidadResidual = c25;
-            matriz_temp.nuImpactoResidual      = c26;
+            matriz_temp.nuImpactoResidual = c26;
 
-            matriz_temp.nuPuntajeResidual   = c27;
+            matriz_temp.nuPuntajeResidual = c27;
             matriz_temp.deSeveridadResidual = c28;
-            matriz_temp.idEstrategiaResp    = this.getEstrategia(c29);
-            matriz_temp.codPlanAccion       = c30;
-            matriz_temp.desPlanAccion       = c31;
-            matriz_temp.idAreaPlanAccion    = c32;
+            matriz_temp.idEstrategiaResp = this.getEstrategia(c29);
+            matriz_temp.codPlanAccion = c30;
+            matriz_temp.desPlanAccion = c31;
+            matriz_temp.idAreaPlanAccion = c32;
             matriz_temp.idResponsablePlanAccion = c33;
             var dateString = "10/23/2015"; // Oct 23
             var dateObject = new Date(dateString);
 
-            matriz_temp.fechaInicioPlanAccion   = this.convertFecha(c34);
-            matriz_temp.estadoPlanAccion        = this.getEstadoPlanAccion(c35);
-            matriz_temp.fechaFinPlanAccion      = this.convertFecha(c36);
-            matriz_temp.fechaPrevista      = this.convertFecha(c37);
-            matriz_temp.fueEficaz               = this.getFueEficaz(c38);
+            matriz_temp.fechaInicioPlanAccion = this.convertFecha(c34);
+            matriz_temp.estadoPlanAccion = this.getEstadoPlanAccion(c35);
+            matriz_temp.fechaFinPlanAccion = this.convertFecha(c36);
+            matriz_temp.fechaPrevista = this.convertFecha(c37);
+            matriz_temp.fueEficaz = this.getFueEficaz(c38);
 
 
-            matriz_temp.fechaVerificacion       = this.convertFecha(c39);
-            matriz_temp.verificadoPor           = c40;
-            matriz_temp.evidenciaEficacia       = c41;
+            matriz_temp.fechaVerificacion = this.convertFecha(c39);
+            matriz_temp.verificadoPor = c40;
+            matriz_temp.evidenciaEficacia = c41;
 
-            matriz_temp.observaciones    = c42;
-            matriz_temp.codkri           = c43;
-            matriz_temp.defKri           = c44;
+            matriz_temp.observaciones = c42;
+            matriz_temp.codkri = c43;
+            matriz_temp.defKri = c44;
 
-            matriz_temp.frecuencia       = c45;
-            matriz_temp.metkri           = c46;
-            matriz_temp.kriActual        = c47;
-            matriz_temp.kriResponsable   = c48;
+            matriz_temp.frecuencia = c45;
+            matriz_temp.metkri = c46;
+            matriz_temp.kriActual = c47;
+            matriz_temp.kriResponsable = c48;
 
 
             this.matricesRiesgo.push(matriz_temp);
@@ -3819,19 +3952,19 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
     }
 
-    feedJsonToTableProceso(data){
+    feedJsonToTableProceso(data) {
 
         this.keys = Object.keys(data[0]);
 
-        console.log("longitud"+this.keys.length);
+        console.log("longitud" + this.keys.length);
 
-        if(this.keys.length != 46){
+        if (this.keys.length != 46) {
 
             Swal.fire("El archivo no coincide con el formato proceso", "", 'error');
             return
         }
 
-     //   console.log("JSON HEAD "+JSON.stringify(this.keys));
+        //   console.log("JSON HEAD "+JSON.stringify(this.keys));
         data.forEach((matriz) => {
 
             let c1 = matriz[this.keys[0]];
@@ -3881,15 +4014,15 @@ export class FormMatrizRiesgoComponent implements OnInit {
             let c45 = matriz[this.keys[44]];
             let c46 = matriz[this.keys[45]];
 
-            let matriz_temp:MatrizRiesgo = new MatrizRiesgo();
+            let matriz_temp: MatrizRiesgo = new MatrizRiesgo();
             matriz_temp.idEmpresa = this.formularioMatrizRiesgo.get('empresa').value;
             matriz_temp.idSede = this.formularioMatrizRiesgo.get('sede').value;
             matriz_temp.idPeriodo = this.formularioMatrizRiesgo.get('periodo').value;
-            matriz_temp.codMatriz      = c1;
-            matriz_temp.idMatrizNivel  = this.getMatrizNivel(c2);
-            matriz_temp.idGerencia     = this.getGerencia(c3);
-            matriz_temp.listaProcesos  = this.listaProcesosSelected;
-            matriz_temp.idProceso      = this.getProceso(c4);
+            matriz_temp.codMatriz = c1;
+            matriz_temp.idMatrizNivel = this.getMatrizNivel(c2);
+            matriz_temp.idGerencia = this.getGerencia(c3);
+            matriz_temp.listaProcesos = this.listaProcesosSelected;
+            matriz_temp.idProceso = this.getProceso(c4);
 
             this.matrizRiesgoService.obtenerSubProcesos(matriz_temp.idProceso).subscribe(
                 resp => {
@@ -3901,52 +4034,52 @@ export class FormMatrizRiesgoComponent implements OnInit {
                     matriz_temp.idSubProceso = this.getSubProceso(c5);
 
                 });
-            matriz_temp.codRiesgo      = c6;
-            matriz_temp.deRiesgo       = c7;
+            matriz_temp.codRiesgo = c6;
+            matriz_temp.deRiesgo = c7;
             matriz_temp.idOrigenRiesgo = this.getOrigen(c8);
-            matriz_temp.idFrecuenciaRiesgo       = this.getFrecuencia(c9);
-            matriz_temp.idTipoRiesgo         = this.getTipo(c10);
+            matriz_temp.idFrecuenciaRiesgo = this.getFrecuencia(c9);
+            matriz_temp.idTipoRiesgo = this.getTipo(c10);
             matriz_temp.nuProbabilidadInherente = c11;
-            matriz_temp.nuImpactoInherente   = c12;
-            matriz_temp.nuPuntajeInherente   = c13;
+            matriz_temp.nuImpactoInherente = c12;
+            matriz_temp.nuPuntajeInherente = c13;
             matriz_temp.deSeveridadInherente = c14;
             matriz_temp.codControl = c15;
-            matriz_temp.deControl  = c16;
-            matriz_temp.idAreaControl        = c17;
+            matriz_temp.deControl = c16;
+            matriz_temp.idAreaControl = c17;
             matriz_temp.idResponsableControl = c18;
-            matriz_temp.idFrecuenciaControl  = this.getFrecuenciaId(c19);
+            matriz_temp.idFrecuenciaControl = this.getFrecuenciaId(c19);
             matriz_temp.idOportunidadControl = this.getOportunidad(c20);
             matriz_temp.idAutomatizacionControl = this.getAutomatizacion(c21);
             matriz_temp.deEvidenciaControl = c22;
             matriz_temp.nuProbabilidadResidual = c23;
-            matriz_temp.nuImpactoResidual      = c24;
-            matriz_temp.nuPuntajeResidual   = c25;
+            matriz_temp.nuImpactoResidual = c24;
+            matriz_temp.nuPuntajeResidual = c25;
             matriz_temp.deSeveridadResidual = c26;
-            matriz_temp.idEstrategiaResp    = this.getEstrategia(c27);
-            matriz_temp.codPlanAccion       = c28;
-            matriz_temp.desPlanAccion       = c29;
-            matriz_temp.idAreaPlanAccion    = c30;
+            matriz_temp.idEstrategiaResp = this.getEstrategia(c27);
+            matriz_temp.codPlanAccion = c28;
+            matriz_temp.desPlanAccion = c29;
+            matriz_temp.idAreaPlanAccion = c30;
             matriz_temp.idResponsablePlanAccion = c31;
-            matriz_temp.fechaInicioPlanAccion   = this.convertFecha(c32);
-            matriz_temp.estadoPlanAccion        = this.getEstadoPlanAccion(c33);
-            matriz_temp.fechaFinPlanAccion      = this.convertFecha(c34);
-            matriz_temp.fechaPrevista      = this.convertFecha(c35);
-            matriz_temp.fueEficaz               = this.getFueEficaz(c36);
+            matriz_temp.fechaInicioPlanAccion = this.convertFecha(c32);
+            matriz_temp.estadoPlanAccion = this.getEstadoPlanAccion(c33);
+            matriz_temp.fechaFinPlanAccion = this.convertFecha(c34);
+            matriz_temp.fechaPrevista = this.convertFecha(c35);
+            matriz_temp.fueEficaz = this.getFueEficaz(c36);
 
 
-            matriz_temp.fechaVerificacion       = this.convertFecha(c37);
-            matriz_temp.verificadoPor           = c38;
-            matriz_temp.evidenciaEficacia       = c39;
+            matriz_temp.fechaVerificacion = this.convertFecha(c37);
+            matriz_temp.verificadoPor = c38;
+            matriz_temp.evidenciaEficacia = c39;
 
-            matriz_temp.observaciones    = c40;
-            matriz_temp.codkri           = c41;
-            matriz_temp.defKri           = c42;
+            matriz_temp.observaciones = c40;
+            matriz_temp.codkri = c41;
+            matriz_temp.defKri = c42;
 
-            matriz_temp.frecuencia       = c43;
-            matriz_temp.metkri           = c44;
-           // console.log("POS 46 "+c46 +" mt "+matriz_temp.metKri+ " end");
-            matriz_temp.kriActual        = c45;
-            matriz_temp.kriResponsable   = c46;
+            matriz_temp.frecuencia = c43;
+            matriz_temp.metkri = c44;
+            // console.log("POS 46 "+c46 +" mt "+matriz_temp.metKri+ " end");
+            matriz_temp.kriActual = c45;
+            matriz_temp.kriResponsable = c46;
 
 
             this.matricesRiesgo.push(matriz_temp);
@@ -3956,30 +4089,30 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
     }
 
-    convertFecha(fecha:string){
+    convertFecha(fecha: string) {
 
         // console.log("CHECK FECHA" + fecha);
 
-        if (fecha != undefined){
-            if(this.checkFechaValid(fecha)){
+        if (fecha != undefined) {
+            if (this.checkFechaValid(fecha)) {
                 var dateString = fecha;
                 var dateParts = dateString.split("/");
-                var dateObject = dateParts[2]+"-"+dateParts[1]+"-"+dateParts[0];
+                var dateObject = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
                 return dateObject.toString();
             }
-            else{
+            else {
                 // Swal.fire("Existe fecha con formato inválido", "", 'error');
                 return;
             }
         }
     }
-        
 
-    getOrigen(origen_val:string):number{
 
-        let idOrigen =0;
+    getOrigen(origen_val: string): number {
+
+        let idOrigen = 0;
         this.listaOrigenRiesgo.forEach((origen) => {
-            if(origen_val==origen.nombreParametro){
+            if (origen_val == origen.nombreParametro) {
                 idOrigen = origen.idParametro;
             }
 
@@ -3988,11 +4121,11 @@ export class FormMatrizRiesgoComponent implements OnInit {
     }
 
 
-    getMatrizNivel(matrizNivel:string):number{
+    getMatrizNivel(matrizNivel: string): number {
 
         let idMatrizNivel;
         this.listaTiposMatriz.forEach((matriz) => {
-            if(matrizNivel==matriz.deValor1){
+            if (matrizNivel == matriz.deValor1) {
                 idMatrizNivel = matriz.nombreParametro;
             }
 
@@ -4000,11 +4133,11 @@ export class FormMatrizRiesgoComponent implements OnInit {
         return idMatrizNivel;
     }
 
-    getProceso(proceso_val:string):number{
+    getProceso(proceso_val: string): number {
 
-        let idProceso=0;
+        let idProceso = 0;
         this.listaProcesosSelected.forEach((proceso) => {
-            if(proceso_val==proceso.deProceso){
+            if (proceso_val == proceso.deProceso) {
                 idProceso = proceso.idProceso;
             }
 
@@ -4012,11 +4145,11 @@ export class FormMatrizRiesgoComponent implements OnInit {
         return idProceso;
     }
 
-    getSubProceso(subproceso_val:string):number{
+    getSubProceso(subproceso_val: string): number {
 
-        let idSubProceso=0;
+        let idSubProceso = 0;
         this.listaSubProcesosSelected.forEach((subproceso) => {
-            if(subproceso_val==subproceso.deSubProceso){
+            if (subproceso_val == subproceso.deSubProceso) {
                 idSubProceso = subproceso.idSubProceso;
             }
 
@@ -4024,11 +4157,11 @@ export class FormMatrizRiesgoComponent implements OnInit {
         return idSubProceso;
     }
 
-    getGerencia(gerencia_val:string):number{
+    getGerencia(gerencia_val: string): number {
 
-        let idGerencia =0;
+        let idGerencia = 0;
         this.listaGerencias.forEach((gerencia) => {
-            if(gerencia_val==gerencia.descripcionGerencia){
+            if (gerencia_val == gerencia.descripcionGerencia) {
                 idGerencia = gerencia.idGerencia;
             }
 
@@ -4036,11 +4169,11 @@ export class FormMatrizRiesgoComponent implements OnInit {
         return idGerencia;
     }
 
-    getFrecuencia(frecuencia_val:string):number{
+    getFrecuencia(frecuencia_val: string): number {
 
-        let idFrecuencia =0;
+        let idFrecuencia = 0;
         this.listaFrecuenciaRiesgo.forEach((frecuencia) => {
-            if(frecuencia_val==frecuencia.nombreParametro){
+            if (frecuencia_val == frecuencia.nombreParametro) {
                 idFrecuencia = frecuencia.idParametro;
             }
 
@@ -4048,11 +4181,11 @@ export class FormMatrizRiesgoComponent implements OnInit {
         return idFrecuencia;
     }
 
-    getTipo(tipo_val:string):number{
+    getTipo(tipo_val: string): number {
 
-        let idTipo =0;
+        let idTipo = 0;
         this.listaTipoRiesgo.forEach((tipo) => {
-            if(tipo_val==tipo.nombreParametro){
+            if (tipo_val == tipo.nombreParametro) {
                 idTipo = tipo.idParametro;
             }
 
@@ -4060,11 +4193,11 @@ export class FormMatrizRiesgoComponent implements OnInit {
         return idTipo;
     }
 
-    getResponsable(responsable_val:string):number{
+    getResponsable(responsable_val: string): number {
 
-        let idResponsable =0;
+        let idResponsable = 0;
         this.listaAreaResponsable.forEach((responsable) => {
-            if(responsable_val==responsable.nombreParametro){
+            if (responsable_val == responsable.nombreParametro) {
                 idResponsable = responsable.idParametro;
             }
 
@@ -4072,11 +4205,11 @@ export class FormMatrizRiesgoComponent implements OnInit {
         return idResponsable;
     }
 
-    getResponsableKri(responsable_val:string):string{
+    getResponsableKri(responsable_val: string): string {
 
-        let idResponsable ="0";
+        let idResponsable = "0";
         this.listaAreaResponsable.forEach((responsable) => {
-            if(responsable_val==responsable.nombreParametro){
+            if (responsable_val == responsable.nombreParametro) {
                 idResponsable = responsable.idParametro.toString();
             }
 
@@ -4084,10 +4217,10 @@ export class FormMatrizRiesgoComponent implements OnInit {
         return idResponsable;
     }
 
-    getEstrategia(estrategia_val:string):number{
+    getEstrategia(estrategia_val: string): number {
         let idEstrategia = 0;
         this.listaEstrategiaRespuesta.forEach((estrategia) => {
-            if(estrategia_val==estrategia.nombreParametro){
+            if (estrategia_val == estrategia.nombreParametro) {
                 idEstrategia = estrategia.idParametro;
             }
 
@@ -4095,11 +4228,11 @@ export class FormMatrizRiesgoComponent implements OnInit {
         return idEstrategia;
     }
 
-    getFrecuenciaId(frecuencia_val:string):number{
+    getFrecuenciaId(frecuencia_val: string): number {
 
         let idFrecuencia = 0;
         this.listaFrecuenciaControl.forEach((frecuencia) => {
-            if(frecuencia_val==frecuencia.nombreParametro){
+            if (frecuencia_val == frecuencia.nombreParametro) {
                 idFrecuencia = frecuencia.idParametro;
             }
 
@@ -4107,11 +4240,11 @@ export class FormMatrizRiesgoComponent implements OnInit {
         return idFrecuencia;
     }
 
-    getOportunidad(oportunidad_val:string):number{
+    getOportunidad(oportunidad_val: string): number {
 
-        let idOportunidad =0;
+        let idOportunidad = 0;
         this.listaOportunidadControl.forEach((oportunidad) => {
-            if(oportunidad_val==oportunidad.nombreParametro){
+            if (oportunidad_val == oportunidad.nombreParametro) {
                 idOportunidad = oportunidad.idParametro;
             }
 
@@ -4121,10 +4254,10 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
 
 
-    getAutomatizacion(automatizacion_val:string):number{
-        let idAutomatizacionControl =0;
+    getAutomatizacion(automatizacion_val: string): number {
+        let idAutomatizacionControl = 0;
         this.listaAutomatizacionControl.forEach((automatizacion) => {
-            if(automatizacion_val==automatizacion.nombreParametro){
+            if (automatizacion_val == automatizacion.nombreParametro) {
                 idAutomatizacionControl = automatizacion.idParametro;
             }
 
@@ -4132,10 +4265,10 @@ export class FormMatrizRiesgoComponent implements OnInit {
         return idAutomatizacionControl;
     }
 
-    getEstadoPlanAccion(estado_val:string):string{
-        let idEstadoPlanAccion ="";
+    getEstadoPlanAccion(estado_val: string): string {
+        let idEstadoPlanAccion = "";
         this.listaEstadoPlanAccion.forEach((estado) => {
-            if(estado_val==estado.nombreParametro){
+            if (estado_val == estado.nombreParametro) {
                 idEstadoPlanAccion = estado.idParametro.toString();
             }
 
@@ -4145,10 +4278,10 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
 
 
-    getFueEficaz(eficaz_val:string):string{
-        let idEficazPlanAccion ="";
+    getFueEficaz(eficaz_val: string): string {
+        let idEficazPlanAccion = "";
         this.listaEficazPlanAccion.forEach((eficaz) => {
-            if(eficaz_val==eficaz.nombreParametro){
+            if (eficaz_val == eficaz.nombreParametro) {
                 idEficazPlanAccion = eficaz.deValor1.toString();
             }
 
@@ -4157,51 +4290,57 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
     }
 
-    checkFechaValid(fecha){
+    checkFechaValid(fecha) {
 
-        let valid:boolean = true;
+        let valid: boolean = true;
         try {
             var dateParts = fecha.split("/");
         } catch (error) {
             // Swal.fire("Existe fecha con formato inválido", "", 'error');
         }
 
-        if(dateParts!=null){
+        if (dateParts != null) {
 
-            if(dateParts.length<3){
+            if (dateParts.length < 3) {
                 valid = false;
-    
+
             }
-            else{
-                valid=true;
+            else {
+                valid = true;
             }
 
 
         }
-        else{
-            valid=false;
+        else {
+            valid = false;
         }
-        
+
         return valid;
 
     }
 
-    onChangeFiltroGerencia(deviceValue){
+    onChangeFiltroGerencia(deviceValue) {
         this.gerenciaModel = deviceValue;
 
     }
 
-    onChangeFiltroSeveridad(deviceValue){
+    isEmpty(value: any): boolean {
+        return value === null || value === undefined || value === '' || value === 0 || value === '0';
+    }
+
+
+
+    onChangeFiltroSeveridad(deviceValue) {
         this.gerenciaModel = deviceValue;
 
     }
 
-    onChangeFiltroEstadoPlan(deviceValue){
+    onChangeFiltroEstadoPlan(deviceValue) {
         this.estadoPlanModel = deviceValue;
 
     }
 
-    onChangeFiltroProceso(deviceValue){
+    onChangeFiltroProceso(deviceValue) {
         this.gerenciaModel = deviceValue;
 
     }
@@ -4230,34 +4369,34 @@ export class FormMatrizRiesgoComponent implements OnInit {
         const usuarioCreacion = datosToken.data.username;
         const ipCreacion = this.dataIp; //"127.0.0.1";
 
-        if (dataRow.idDetaMatrizRiesgo != null){
+        if (dataRow.idDetaMatrizRiesgo != null) {
             ri = this.findIndexById(dataRow);
         }
 
         const modalRef = this.dialogService.open(SubirArchivosComponent, {
 
-           data: {
+            data: {
                 idMatrizRiesgo: idMatrizRiesgo,
-                idDetaMatrizRiesgo:idDetaMatrizRiesgo,
-                usuarioCreacion:usuarioCreacion,
+                idDetaMatrizRiesgo: idDetaMatrizRiesgo,
+                usuarioCreacion: usuarioCreacion,
                 ipCreacion: ipCreacion,
                 tipoEvidencia: tipoEvidencia
             },
-            closable:true,
+            closable: true,
             header: 'Sustentos de Control',
             width: '700px',
-            contentStyle: {"max-height": "700px", "max-width": "700px", "overflow": "auto"}
+            contentStyle: { "max-height": "700px", "max-width": "700px", "overflow": "auto" }
             //,baseZIndex: 10000
 
         });
 
         modalRef.onClose.subscribe((files: []) => {
-            if (files.length>0) {
-                this.matricesRiesgo[ri].cantidadArchivosControlString="Sustentos:"+files.length;
+            if (files.length > 0) {
+                this.matricesRiesgo[ri].cantidadArchivosControlString = "Sustentos:" + files.length;
                 //console.log("FILES "+files.length);
             }
-            else{
-                this.matricesRiesgo[ri].cantidadArchivosControlString="Sustento";
+            else {
+                this.matricesRiesgo[ri].cantidadArchivosControlString = "Sustento";
             }
         });
 
@@ -4275,7 +4414,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
         const usuarioCreacion = datosToken.data.username;
         const ipCreacion = this.dataIp; //"127.0.0.1";
 
-        if (dataRow.idDetaMatrizRiesgo != null){
+        if (dataRow.idDetaMatrizRiesgo != null) {
             ri = this.findIndexById(dataRow);
         }
 
@@ -4283,33 +4422,33 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
             data: {
                 idMatrizRiesgo: idMatrizRiesgo,
-                idDetaMatrizRiesgo:idDetaMatrizRiesgo,
-                usuarioCreacion:usuarioCreacion,
+                idDetaMatrizRiesgo: idDetaMatrizRiesgo,
+                usuarioCreacion: usuarioCreacion,
                 ipCreacion: ipCreacion,
                 tipoEvidencia: tipoEvidencia
             },
-            closable:true,
+            closable: true,
             header: 'Sustentos de Plan de Acción',
             width: '700px',
-            contentStyle: {"max-height": "700px", "max-width": "700px", "overflow": "auto"}
+            contentStyle: { "max-height": "700px", "max-width": "700px", "overflow": "auto" }
             //,baseZIndex: 10000
 
         });
 
         modalref.onClose.subscribe((files: []) => {
-            if (files.length>0) {
-                this.matricesRiesgo[ri].cantidadArchivosPlanString="Sustentos:"+files.length;
+            if (files.length > 0) {
+                this.matricesRiesgo[ri].cantidadArchivosPlanString = "Sustentos:" + files.length;
                 //console.log("FILES "+files.length);
             }
-            else{
-                this.matricesRiesgo[ri].cantidadArchivosPlanString="Sustento";
+            else {
+                this.matricesRiesgo[ri].cantidadArchivosPlanString = "Sustento";
             }
         });
 
 
     }
 
-    openComentarioAuditoria(dataRow: MatrizRiesgo, ri: number){
+    openComentarioAuditoria(dataRow: MatrizRiesgo, ri: number) {
         const idMatrizRiesgo = dataRow.idMatrizRiesgo;
         //const idDetaMatrizRiesgo = 4;
         const idDetaMatrizRiesgo = dataRow.idDetaMatrizRiesgo;
@@ -4318,21 +4457,21 @@ export class FormMatrizRiesgoComponent implements OnInit {
 
             data: {
                 idMatrizRiesgo: idMatrizRiesgo,
-                idDetaMatrizRiesgo:idDetaMatrizRiesgo,
+                idDetaMatrizRiesgo: idDetaMatrizRiesgo,
                 tipoMatrizGeneral: TipoMatriz.matrizRiesgoOperacional
             },
             header: 'Comentario de auditoria',
             width: '700px',
-            contentStyle: {"max-height": "700px", "max-width": "700px", "overflow": "auto"}
+            contentStyle: { "max-height": "700px", "max-width": "700px", "overflow": "auto" }
             //,baseZIndex: 10000
 
         });
     }
 
-    onClose(isVisible: boolean){
+    onClose(isVisible: boolean) {
         this.modalVisible = isVisible;
         this.modalVisible = true;
-       }
+    }
 
     downloadFileProceso() {
         window.open('assets/imagenes/Matriz Riesgos operacional procesos.xlsm', '_parent');
@@ -4342,7 +4481,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
         window.open('assets/imagenes/Matriz Riesgos operacional entidad.xlsm', '_parent');
     }
 
-    obtenermetodoIP (){
+    obtenermetodoIP() {
 
         this.authLoginService.obtenerIp().subscribe(
             resp => {
@@ -4351,5 +4490,7 @@ export class FormMatrizRiesgoComponent implements OnInit {
             }
         );
     }
+
+
 
 }

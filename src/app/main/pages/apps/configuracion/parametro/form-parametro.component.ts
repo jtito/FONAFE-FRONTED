@@ -74,7 +74,7 @@ export class FormParametroComponent implements OnInit {
             const idParametro = params.idParametro;
             if(idParametro){
                 this.parametroService.obtenerParametro(idParametro).subscribe(
-                    resp => {                        
+                    resp => {
                         this.parametro = resp.Parametro;
                         this.idEstado = this.parametro.indicadorBaja;
                         this.formularioParametro.get('coParametro').setValue(this.parametro.coParametro);
@@ -94,20 +94,21 @@ export class FormParametroComponent implements OnInit {
 
 
     public registrarParametro(): void {
-        
+
         if (this.formularioParametro.invalid) {
             return Object.values(this.formularioParametro.controls).forEach(control => {
                 control.markAsTouched();
             });
-        }       
+        }
 
-        const parametroBody: Parametro = {            
+        const parametroBody: Parametro = {
+
             coParametro: this.formularioParametro.get('coParametro').value,
             deParametro: this.formularioParametro.get('deParametro').value,
             usuarioCreacion: this.usuarioCreacion,
             ipCreacion: this.dataIp //"127.0.0.1"
         };
-        
+
         Swal.fire({
             title: '¿Está seguro de crear el parámetro?',
             showCancelButton: true,
@@ -161,14 +162,14 @@ export class FormParametroComponent implements OnInit {
                 control.markAsTouched();
             });
         }
-        
+
         const idParametro = this.parametro.idParametro;
         const deParametro = this.formularioParametro.get("deParametro").value;
         const coParametro = this.formularioParametro.get("coParametro").value;
-        const indicadorBaja = this.idEstado; 
-        
+        const indicadorBaja = this.idEstado;
+
         const datosToken = this.authLoginService.obtenerDatosToken(this.authLoginService.userToken);
-        const usuarioModificacion = datosToken.data.username; //"USER1"     
+        const usuarioModificacion = datosToken.data.username; //"USER1"
         const ipModificacion = this.dataIp //"127.0.0.1";
 
         var parametroBody: Parametro = {
@@ -199,13 +200,13 @@ export class FormParametroComponent implements OnInit {
 
                 this.parametroService.actualizarParametro(parametroBody).subscribe(
                     resp => {
-                        
+
                         if (resp.idParametro !== 0) {
                             if (Swal.isLoading()) {
                                 Swal.close();
                             }
                             Swal.fire('¡Actualización exitosa!', resp.mensaje, 'success');
-                            this.router.navigate(['/pages', 'main', 'configuracion', 'parametro']);                            
+                            this.router.navigate(['/pages', 'main', 'configuracion', 'parametro']);
 
                         } else {
                             if (Swal.isLoading()) {
@@ -236,5 +237,5 @@ export class FormParametroComponent implements OnInit {
             }
         );
     }
-    
+
 }

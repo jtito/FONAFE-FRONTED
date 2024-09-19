@@ -1,0 +1,140 @@
+<div style="height: 50px;" class="bg-light"></div>
+<div class="bg-light">
+    <div class="container pt-4 bg-white">
+        <div class="container sombraCards espacioBody pb-5">
+            <div class="row d-flex">
+                <div style="width: 4%">
+                    <button pButton type="button" icon="pi pi-arrow-left" class="p-button-danger p-button-rounded"
+                        [routerLink]="['../menu']"></button>
+                </div>
+                <div style="width: 96%">
+                    <h3 class="animated fadeIn fast" style="margin-bottom: -10px;">Configuración/Configuracion Matriz
+                    </h3>
+                </div>
+            </div>
+            <hr>
+            <form>
+                <br>
+                <fieldset class="border p-2 animated fadeIn" style="margin-bottom: 50px;">
+                    <legend class="w-auto">
+                        &nbsp; Búsqueda&nbsp;
+                    </legend>
+
+                    <div class="container">
+                        <div class="col-md-12 mb-2">
+                            <label for="idConfigMatriz" class="mb-2">Configuración Matriz</label>
+                            <select class="form-select" id="idConfigMatriz" (change)="onChangeConfigMatriz($event)">
+                                <option value="0">Todos</option>
+                                <option *ngFor="let configMatriz of listaConfigMatriz"
+                                    [value]="configMatriz.idConfigMatriz">{{configMatriz.nombreConfigMatriz}}</option>
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="container card-body">
+                        <h5>Lista de configuración de matriz</h5>
+                        <div class="container card-body" style="margin-left: -15px;margin-bottom: 10px;">
+                            <button pButton pRipple label="Crear ventana matriz" icon="pi pi-plus"
+                                class="p-button-success p-mr-2" [routerLink]="['registrar']"></button>
+                        </div>
+                        <!--Ponerlo a !loading, por ahora como no hay nada dentro entonces lo estoy poniendo sin !-->
+                        <div *ngIf="loading">
+                            <p-table #dt1 [value]="listaConfigMatriz" [columns]="cols" dataKey="id" [rows]="2"
+                                [showCurrentPageReport]="true" [rowsPerPageOptions]="[5,15,25]"
+                                styleClass="p-datatable-responsive-demo p-datatable-gridlines" [paginator]="true"
+                                currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros"
+                                [globalFilterFields]="['idConfigMatriz','nivel']">
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <span class="p-input-icon-left p-ml-auto">
+                                                <input pInputText type="text" class="form-control"
+                                                    (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                                    placeholder="Buscar" />
+                                            </span>
+                                        </div>
+                                        <div class="col-md-6 p-text-right">
+                                            <img src="assets/imagenes/btnxls.png" pTooltip="XLS"
+                                                tooltipPosition="bottom" class="btnxls" (click)="exportExcel()">
+                                        </div>
+                                    </div>
+                                </ng-template>
+                                <tr>
+                                    <th pSortableColumn="{{col.ordenadmiento}}" *ngFor="let col of columns"
+                                        class="{{col.headerClass}}">
+                                        {{col.header}}
+                                        <p-sortIcon field="{{col.ordenadmiento}}"></p-sortIcon>
+                                        <p-columnFilter field="niveles" matchMode="equals" display="menu"
+                                            [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+                                            <ng-template pTemplate="filter" let-listaIndicadoresBaja2
+                                                let-filter="filterCallback">
+                                                <p-dropdown [ngModel]="niveles" name="niveles"
+                                                    [options]="listaNiveles"
+                                                    (onChange)="onChange($event.value)">
+                                                    <ng-template let-niveles pTemplate="item">
+                                                        <div class="p-multiselect-listaNiveles-option">
+                                                            <span
+                                                                [class]="'customer-badge niveles-' + niveles">{{niveles}}</span>
+                                                        </div>
+                                                    </ng-template>
+                                                </p-dropdown>
+                                            </ng-template>
+                                        </p-columnFilter>
+                                    </th>
+                                    <th class="text-center" style="width: 15%;">
+                                        Acción
+                                    </th>
+                                </tr>
+                            </p-table>
+                        </div>
+
+                    </div>
+
+                </fieldset>
+            </form>
+
+
+
+
+
+            <div class="pb-5">
+                <div class="container pt-2 bg-white mb-5">
+                    <div class="container sombraCards espacioBody pb-5">
+
+                        <div style="text-align:left;">
+
+                            <table style="margin: 0 auto;">
+                                <header>
+                                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;">Registro de
+                                        matrices de riesgo</h3>
+                                </header>
+
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="container sombraCards espacioBody pb-5">
+                        <header>
+                            <h3 class="animated fadeIn fast mt-4">KRI: Cumplimiento de Planes de Acción</h3>
+                        </header>
+                        <td style="height: 30px;"></td>
+                        <table style="margin: 0 auto;">
+
+                            <tr>
+
+                            </tr>
+                            <tr>
+
+
+                            </tr>
+                        </table>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

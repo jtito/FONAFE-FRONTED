@@ -1,0 +1,166 @@
+<div style="height: 50px;" class="bg-light"></div>
+<div class="bg-light">
+  <div class="container pt-2 bg-white">
+    <div class="container sombraCards espacioBody pb-5" *ngIf="!loading">
+      <div class="row d-flex">
+        <div style="width: 4%" class="mt-4">
+          <button pButton type="button" icon="pi pi-arrow-left" class="p-button-danger p-button-rounded"
+            [routerLink]="[parametro == null ? '../':'../../']"></button>
+        </div>
+        <div style="width: 96%">
+          <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;" *ngIf="configMatriz == null">
+            Configuración/Crear Configuración de Matriz</h3>
+          <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;"
+            *ngIf="configMatriz != null && editar == true">Configuración/configuración/Actualizar Configuración Matriz
+          </h3>
+          <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;"
+            *ngIf="configMatriz != null && editar == false">Configuración/configuración/Ver Configuración Matriz</h3>
+        </div>
+      </div>
+      <hr>
+      <form [formGroup]="configuracionForm"
+        (ngSubmit)=" configMatriz == null ? registrarConfigMatriz() : actualizarConfigMatriz()">
+        <br>
+        <fieldset class="border p-2 animated fadeIn">
+          <div class="container">
+            <div class="row mb-4">
+              <div class="col-sm-6">
+                <div class="form-group mb-2">
+                  <label for="codigo" class="mb-2">Código</label>
+                  <input type="text" id="codigo" class="form-control" formControlName="codigo"
+                    placeholder="Ingrese el código" />
+                </div>
+
+                <div class="form-group mb-2">
+                  <label for="tipoMatriz" class="mb-2">Seleccione el tipo de Matriz</label>
+                  <select id="tipoMatriz" class="form-control" formControlName="tipoMatriz">
+                    <option value="" disabled selected>Seleccione el tipo de matriz</option>
+                    <option value="">Tipo 1</option>
+                    <option value="">Tipo 2</option>
+                    <option *ngFor="let tipo of listaTiposMatriz" [value]="tipo.id">{{ tipo.nombre }}</option>
+                  </select>
+                </div>
+
+                <div class="form-group mb-2">
+                  <label for="proceso" class="mb-2">Proceso</label>
+                  <select id="proceso" class="form-control" formControlName="proceso">
+                    <option value="" disabled selected>Seleccione un proceso</option>
+                    <option value="">Proceso 1</option>
+                    <option value="">Proceso 2</option>
+                    <option *ngFor="let proceso of listaProcesos" [value]="proceso.id">{{ proceso.nombre }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-sm-6">
+                <div class="form-group mb-2">
+                  <label for="nivel" class="mb-2">Nivel</label>
+                  <input type="text" id="nivel" class="form-control" formControlName="nivel"
+                    placeholder="Ingrese el nivel" />
+                </div>
+
+                <div class="form-group mb-2">
+                  <label for="cantidadRiesgos" class="mb-2">Cantidad de Riesgos</label>
+                  <input type="text" id="cantidadRiesgos" class="form-control" formControlName="cantidadRiesgos" />
+                </div>
+
+                <div class="form-group mb-2">
+                  <label for="periodo" class="mb-2">Periodo</label>
+                  <input type="text" id="periodo" class="form-control" formControlName="periodo" />
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-sm-10">
+                <div class="form-group mb-2">
+                  <label for="dimension" class="mb-2">Dimensiones del ATC</label>
+                  <div class="d-flex align-items-center">
+                    <select id="dimension" class="form-control" formControlName="dimension" style="width: 60%;">
+                      <option value="" disabled selected>Seleccione una dimensión</option>
+                      <option value="">Dimension 1</option>
+                      <option value="">Dimension 2</option>
+                      <option *ngFor="let dimension of listaDimensiones" [value]="dimension.id">{{ dimension.nombre }}
+                      </option>
+                    </select>
+                    <button type="button" class="btn p-button-success text-white" style="margin-left: 15px;">Visualizar
+                      ATC</button>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div class="col-sm-12">
+                <div class="form-group row mb-2">
+                  <label class="col-sm-3 col-form-label">Tipo de ATC:</label>
+                  <div class="col-sm-9 d-flex align-items-center">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="general" formControlName="tipoATC"
+                        value="general">
+                      <label class="form-check-label" for="general">General</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="especifico" formControlName="tipoATC"
+                        value="especifico">
+                      <label class="form-check-label" for="especifico">Específico</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-4">
+                <div class="col-sm-12 d-flex justify-content-end mb-2" style="gap: 15px;">
+                  <button type="button" class="btn btn-secondary">Definir ATC específico</button>
+                  <button type="button" class="btn btn-secondary">Cambiar el ATC</button>
+                </div>
+
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="nombreMatriz" class="mb-2">Nombre de la matriz</label>
+                    <input type="text" id="nombreMatriz" class="form-control" formControlName="nombreMatriz"
+                      placeholder="Ingrese el nombre de la matriz" style="width: 100%;" />
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="container card-body p-text-right" style="margin-left: -15px;">
+            <button type="submit" class="btn btn-primary" style="margin-right: 10px;"
+              *ngIf="configMatriz == null">Crear</button>
+            <button type="button" class="btn btn-danger" [routerLink]="['..']"
+              *ngIf="configMatriz == null">Cancelar</button>
+            <button type="button" class="btn btn-danger"
+              [routerLink]="['/pages','main','configuracion','configuracionMatriz']"
+              *ngIf="configMatriz != null">Cancelar</button>
+          </div>
+
+
+        </fieldset>
+      </form>
+    </div>
+
+    <!-- 
+
+<form [formGroup]="configuracionForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="campo1">Campo 1:</label>
+    <input id="campo1" formControlName="campo1" />
+    <div *ngIf="configuracionForm.get('campo1').invalid && configuracionForm.get('campo1').touched">
+      Campo 1 es requerido.
+    </div>
+  </div>
+
+  <div>
+    <label for="campo2">Campo 2:</label>
+    <input id="campo2" formControlName="campo2" />
+    <div *ngIf="configuracionForm.get('campo2').invalid && configuracionForm.get('campo2').touched">
+      Campo 2 es requerido.
+    </div>
+  </div>
+
+  <button type="submit" [disabled]="configuracionForm.invalid">Submit</button>
+  <button type="button" (click)="regresar()">Regresar</button>
+</form> -->

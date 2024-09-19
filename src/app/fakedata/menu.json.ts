@@ -85,7 +85,17 @@ export const OPCIONES: Menu[] = [
                 rutaSubmenu: '/pages/main/configuracion/encuesta',
                 iconoSubmenu: 'backup',
                 estado: '1',
+            },
+            {
+                idSubmenu: 24,
+                nombreSubmenu: 'Configuracion matriz',
+                rutaSubmenu: '/pages/main/configuracion/configuracionMatriz',
+                iconoSubmenu: 'backup',
+                estado: '1',
             }
+
+
+            // configuracionMatriz
 
             // {
             //     idSubmenu: 4,
