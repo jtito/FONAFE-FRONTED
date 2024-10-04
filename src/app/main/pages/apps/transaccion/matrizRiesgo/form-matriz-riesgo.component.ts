@@ -3316,7 +3316,12 @@ export class FormMatrizRiesgoComponent implements OnInit {
         if (tipo === 'impacto') {
             const impactoInherente = this.matricesRiesgo[indice].nuImpactoInherente;
             if (valor > impactoInherente) {
-                alert('El impacto residual no puede ser mayor que el impacto inherente');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo inválido',
+                    text: 'El impacto residual no puede ser mayor que el impacto inherente',
+                    confirmButtonText: 'Aceptar'
+                })
                 this.matricesRiesgo[indice].nuImpactoResidual = impactoInherente;
             } else {
                 this.matricesRiesgo[indice].nuImpactoResidual = valor;

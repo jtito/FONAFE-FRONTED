@@ -30,8 +30,18 @@ export class ConfigMatrizComponent implements OnInit{
     ngOnInit(): void {
         this.loading = true;
         this.cols = [
-            {field: 'idConfigMatriz', header: 'Configuración', class: 'text-center', ordenadmiento: 'idConfigMatriz', headerClass: 'text-center'},
-            {field: 'nivel', header: 'Cantidad de Niveles', class: 'text-center', ordenadmiento: 'nivel', headerClass: 'text-center'},
+            {field: 'idConfigMatriz', header: 'Código', class: 'text-center', ordenadmiento: 'idConfigMatriz', headerClass: 'text-center'},
+            {field: 'nivel', header: 'Nivel', class: 'text-center', ordenadmiento: 'nivel', headerClass: 'text-center'},
+            // {field: 'idConfigMatriz', header: 'Tipo de matriz', class: 'text-center', ordenadmiento: 'idConfigMatriz', headerClass: 'text-center'},
+            // {field: 'nivel', header: 'Nombre de Matriz', class: 'text-center', ordenadmiento: 'nivel', headerClass: 'text-center'},
+
+            // {field: 'idConfigMatriz', header: 'Proceso', class: 'text-center', ordenadmiento: 'idConfigMatriz', headerClass: 'text-center'},
+            // {field: 'nivel', header: 'Cantidad de Riesgos', class: 'text-center', ordenadmiento: 'nivel', headerClass: 'text-center'},
+
+            // {field: 'idConfigMatriz', header: 'Dimensiones ATC', class: 'text-center', ordenadmiento: 'idConfigMatriz', headerClass: 'text-center'},
+            // {field: 'nivel', header: 'Periodo', class: 'text-center', ordenadmiento: 'nivel', headerClass: 'text-center'},
+
+            // {field: 'idConfigMatriz', header: 'Tipo ATC', class: 'text-center', ordenadmiento: 'idConfigMatriz', headerClass: 'text-center'},
         ];
         this.listaVacia = [
             {idConfigMatriz: ''},

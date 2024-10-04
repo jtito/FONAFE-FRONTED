@@ -1,10 +1,10 @@
 <div class="bg-light pb-5">
     <div class="container matriz-amplitud pt-2 bg-white mb-5">
-        <div class="container matriz-amplitud sombraCards espacioBody pb-5" >
+        <div class="container matriz-amplitud sombraCards espacioBody pb-5">
             <div class="row d-flex">
-               
+
                 <div style="width: 96%">
-                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;" >
+                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;">
                         Crear Matriz de Riesgo Operacional</h3>
                 </div>
             </div>
@@ -12,48 +12,51 @@
             <br>
             <fieldset class="border p-2 animated fadeIn">
 
-            <form id="formMatriz" >
+                <form [formGroup]="matrizRiesgo" (ngSubmit)="onSubmit()" id="formMatriz">
 
                     <div class="container matriz-amplitud">
                         <div class="row">
 
                             <div class="form-group col-md-4 mb-4">
                                 <label for="inputCartera" class="mb-2">Tipo matriz</label>
-                                <select class="form-select" id="inputCartera" disabled
-                                        formControlName="cartera" >
+                                <select class="form-select" id="inputCartera" disabled formControlName="cartera">
                                     <option value="" selected>Seleccione</option>
-                                    
+
                                 </select>
                             </div>
 
                             <div class="form-group col-md-4 mb-4">
                                 <label for="inputEmpresa" class="mb-2">Area ó Gerencia</label>
-                                <select class="form-select " id="inputEmpresa"  aria-label="Default select example"
-                                        formControlName="empresa"  >
-                                    <option value="" selected>Seleccione</option>
-                                    
+                                <select class="form-select " id="inputEmpresa" aria-label="Default select example"
+                                    formControlName="empresa">
+                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">Área</option>
+                                    <option value="">Gerencia</option>
                                 </select>
                             </div>
 
                             <div class="form-group col-md-4 mb-4">
                                 <label for="inputSede" class="mb-2">Proceso</label>
-                                <select class="form-select" id="inputSede" 
-                                        formControlName="sede"  >
-                                    <option value="" selected>Seleccione</option>
-                                   
+                                <select class="form-select" id="inputSede" formControlName="sede">
+                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">E01 - Proceso General</option>
+                                    <option value="">E02 - Proceso Secundario</option>
+
                                 </select>
-                              
+
                             </div>
 
                             <div class="form-group col-md-4 mb-4">
                                 <label for="inputPeridoo" class="mb-2">Codigo de Riesgo</label>
                                 <select class="form-select" id="inputPeridoo">
-                                    <option value="" selected>Seleccione</option>
-                                    
+                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">RFCL01</option>
+                                    <option value="">RFCL02</option>
+
                                 </select>
-                               
+
                             </div>
-                            
+
                             <div class="form-group col-md-4 mb-4">
                                 <label class="mb-2"></label>
                             </div>
@@ -63,74 +66,135 @@
 
                             <div class="form-group col-md-4 mb-4">
                                 <label for="idTipoMatriz" class="mb-2">Atributos de riesgo</label>
-                                <select formControlName="idTipoMatriz" class="form-select" id="idTipoMatriz" >
-                                    <option value="" selected>Seleccione</option>
-                                    
+                                <select formControlName="idTipoMatriz" class="form-select" id="idTipoMatriz">
+                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">Biológicos</option>
+                                    <option value="">Químicos</option>
+
                                 </select>
-                             
+
                             </div>
 
                             <div class="form-group col-md-4 mb-4">
                                 <label for="inputMatrizNivel" class="mb-2">Tipo Matriz</label>
-                                <select formControlName="idMatrizNivel" class="form-select" disabled id="inputMatrizNivel" aria-label="Default select example"
-                                       >
+                                <select formControlName="idMatrizNivel" class="form-select" id="inputMatrizNivel"
+                                    aria-label="Default select example">
                                     <option value="" selected>Seleccione</option>
-                                    
+                                    <option value="">Fraude, corrupción y LAFT</option>
+                                    <option value="">Riesgo</option>
+
                                 </select>
                             </div>
 
-                             <div 
-                                 class="form-group col-md-4  mb-4">
+                            <div class="form-group col-md-4  mb-4">
                                 <label for="idEstado" class="mb-2">Estado</label>
-                                <select formControlName="idEstado" class="form-select" id="idEstado"
-                                        >
-                                    
+                                <select formControlName="idEstado" class="form-select" id="idEstado">
+                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">Activo</option>
+                                    <option value="">Inactivo</option>
+
                                 </select>
                             </div>
 
-                           
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="causa" class="mb-2">Causa</label>
+                                <input type="text" formControlName="causa" class="form-control" id="causa"
+                                    placeholder="Ingrese la causa">
+                            </div>
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="consecuencia" class="mb-2">Consecuencia</label>
+                                <input type="text" formControlName="consecuencia" class="form-control" id="consecuencia"
+                                    placeholder="Ingrese la consecuencia">
+                            </div>
+
+
+                            <div class="row">
+                                <div class="form-group col-md-12 mb-4">
+                                    <label for="riesgo" class="mb-2">Descripción del riesgo:</label>
+                                    <input type="text" formControlName="riesgo" class="form-control" id="riesgo">
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-4  mb-4">
+                                <label for="origen" class="mb-2">Origen:</label>
+                                <select formControlName="origen" class="form-select" id="origen">
+                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">Origen 1</option>
+                                    <option value="">Origen 2</option>
+
+                                </select>
+                            </div>
+
+
+                            <div class="form-group col-md-4 mb-4">
+                                <label for="agente" class="mb-2">Agente:</label>
+                                <input type="text" formControlName="agente" class="form-control" id="agente">
+                            </div>
+
+                            <div class="form-group col-md-4  mb-4">
+                                <label for="frecuencia" class="mb-2">Frecuencia:</label>
+                                <select formControlName="frecuencia" class="form-select" id="frecuencia">
+                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">Frecuencia 1</option>
+                                    <option value="">Frecuencia 2</option>
+
+                                </select>
+                            </div>
+
+                            <div class="form-group col-md-4  mb-4">
+                                <label for="sub_tipo" class="mb-2">Sub tipo:</label>
+                                <select formControlName="sub_tipo" class="form-select" id="sub_tipo">
+                                    <option value="" disabled selected>Seleccione</option>
+                                    <option value="">Sub tipo 1</option>
+                                    <option value="">Sub tipo 2</option>
+
+                                </select>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-4">
+                                    <label for="asociarRiesgo" class="form-label">Asociar al riesgo:</label>
+                                    <div class="d-flex flex-column">
+                                        <button type="button" class="btn btn-secondary mb-2">Consultar</button>
+                                        <textarea id="asociarRiesgo" class="form-control" rows="4" readonly></textarea>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="container card-body p-text-left">
 
-                               
+
                                 <button type="button" label="Añadir" pButton pRipple icon="pi pi-eye"
-                                        class="p-button-secondary p-mr-2"  pButton icon="pi pi-plus" ></button>
+                                    class="p-button-secondary p-mr-2" pButton icon="pi pi-plus"></button>
 
                                 <input #f1 type="file" style="display: none;">
 
-                                <button type="button" label="Importar" pButton pRipple icon="pi pi-eye" 
-                                        class="p-button-secondary p-mr-2" 
-                                       pButton icon="pi pi-plus"></button>
-                                
-                            
+                                <button type="button" label="Importar" pButton pRipple icon="pi pi-eye"
+                                    class="p-button-secondary p-mr-2" pButton icon="pi pi-plus"></button>
 
-                                <button type="button" label="Cargar Matriz de periodo anterior" pButton pRipple icon="pi"
-                                        class="p-button-secondary p-mr-2" style="float: right;"
-                                         pButton ></button>
-                            
-                                <button type="button" label="Formato Entidad" pButton pRipple icon="pi pi-file-excel" 
-                                        class="p-button-secondary p-mr-2" style="float: right;"
-                                       ></button>
 
-                               
 
-                               
-                                
+                                <button type="button" label="Cargar Matriz de periodo anterior" pButton pRipple
+                                    icon="pi" class="p-button-secondary p-mr-2" style="float: right;" pButton></button>
+
+                                <button type="button" label="Formato Entidad" pButton pRipple icon="pi pi-file-excel"
+                                    class="p-button-secondary p-mr-2" style="float: right;"></button>
+
+
+
+
+
                             </div>
-
-
-                            <!-- Tabla de matriz de riesgo-->
-
 
                         </div>
                         <br>
                     </div>
 
-            </form>
+                </form>
 
 
 
-        </fieldset>
+            </fieldset>
 
             <br>
 
@@ -139,6 +203,16 @@
         </div>
 
 
-    
+
     </div>
 </div>
+
+<!-- <div class="row">
+    <div class="col-md-4 mb-4">
+        <label for="asociarRiesgo" class="form-label">Riesgos</label>
+        <div class="d-flex flex-column">
+            <button type="button" class="btn btn-secondary mb-2">Consultar</button>
+            <textarea id="asociarRiesgo" class="form-control" rows="4" readonly></textarea>
+        </div>
+    </div>
+</div> -->

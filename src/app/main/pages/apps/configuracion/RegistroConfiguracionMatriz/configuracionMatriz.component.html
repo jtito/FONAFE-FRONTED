@@ -39,7 +39,7 @@
                                 class="p-button-success p-mr-2" [routerLink]="['registrar']"></button>
                         </div>
                         <!--Ponerlo a !loading, por ahora como no hay nada dentro entonces lo estoy poniendo sin !-->
-                        <div *ngIf="loading">
+                        <div *ngIf="!loading">
                             <p-table #dt1 [value]="listaConfigMatriz" [columns]="cols" dataKey="id" [rows]="2"
                                 [showCurrentPageReport]="true" [rowsPerPageOptions]="[5,15,25]"
                                 styleClass="p-datatable-responsive-demo p-datatable-gridlines" [paginator]="true"
@@ -80,12 +80,77 @@
                                                     </ng-template>
                                                 </p-dropdown>
                                             </ng-template>
+                                            <ng-template pTemplate="summary" class="mb-5">
+                                                <div class="p-d-flex p-ai-center p-jc-between">
+                                                    En total hay
+                                                    {{this.listaProcesoMatriz ? this.listaProcesoMatriz.length : 0 }}
+                                                    empresas que han registrado sus procesos.
+                                                </div>
+                                            </ng-template>
                                         </p-columnFilter>
                                     </th>
                                     <th class="text-center" style="width: 15%;">
-                                        Acción
+                                        Accióne
                                     </th>
                                 </tr>
+                            </p-table>
+                        </div>
+
+                        <div *ngIf="loading">
+                            <p-table [value]="listaVacia" [columns]="cols"
+                                     styleClass="p-datatable-responsive-demo p-datatable-gridlines"
+                                     [rows]="5" [showCurrentPageReport]="true">
+                                <ng-template pTemplate="caption">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                          <span class="p-input-icon-left p-ml-auto">
+                              <input pInputText type="text" class="form-control"
+                                     (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                     placeholder="Buscar"/>
+                          </span>
+                                        </div>
+                                        <div class="col-md-6 p-text-right">
+                                            <img src="assets/imagenes/btnxls.png"
+                                                    pTooltip="XLS"
+                                                    tooltipPosition="bottom"
+                                                    class="btnxls" (click)="exportExcel()">
+                                        </div>
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th *ngFor="let col of columns" class="text-center">
+                                            {{col.header}}
+                                        </th>
+                                        <th class="text-center">
+                                            Accióna
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="summary" class="mb-5">
+                                    <div class="p-d-flex p-ai-center p-jc-between">
+                                        En total hay
+                                        {{this.listaProcesoMatriz ? this.listaProcesoMatriz.length : 0 }}
+                                        empresas que hayan registrado su configuración de matriz.
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                    <tr>
+                                        <td>
+                                            <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2"></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2"></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2"></p-skeleton>
+                                        </td>
+                                        <td>
+                                            <p-skeleton class="col-sm-6" height="3rem" styleClass="p-mb-2"></p-skeleton>
+                                        </td>
+
+                                    </tr>
+                                </ng-template>
                             </p-table>
                         </div>
 
@@ -93,48 +158,6 @@
 
                 </fieldset>
             </form>
-
-
-
-
-
-            <div class="pb-5">
-                <div class="container pt-2 bg-white mb-5">
-                    <div class="container sombraCards espacioBody pb-5">
-
-                        <div style="text-align:left;">
-
-                            <table style="margin: 0 auto;">
-                                <header>
-                                    <h3 class="animated fadeIn fast mt-4" style="margin-bottom: -10px;">Registro de
-                                        matrices de riesgo</h3>
-                                </header>
-
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="container sombraCards espacioBody pb-5">
-                        <header>
-                            <h3 class="animated fadeIn fast mt-4">KRI: Cumplimiento de Planes de Acción</h3>
-                        </header>
-                        <td style="height: 30px;"></td>
-                        <table style="margin: 0 auto;">
-
-                            <tr>
-
-                            </tr>
-                            <tr>
-
-
-                            </tr>
-                        </table>
-                    </div>
-
-
-                </div>
-
-            </div>
         </div>
     </div>
 </div>
